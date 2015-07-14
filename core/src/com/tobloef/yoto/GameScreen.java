@@ -3,19 +3,19 @@ package com.tobloef.yoto;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
     private int segments;
     private int size = 64;
-    private Array<Texture> textures = new Array<Texture>();
+    private Texture dotImage;
+    private Texture shadowImage;
+    private Color testColor = new Color(60/255f, 143/255f, 215/255f, 1);
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -23,29 +23,8 @@ public class GameScreen implements Screen, InputProcessor {
         camera.setToOrtho(false, 1920, 1080);
         Gdx.input.setInputProcessor(this);
         segments = Math.max(3, (int) (10 * (float) Math.sqrt(size)));
-
-        Long t1 = TimeUtils.nanoTime();
-        textures.add(new Texture(Gdx.files.internal("dot_black.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_10.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_20.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_30.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_40.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_50.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_60.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_70.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_80.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_gray_90.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_white.png")));
-
-        textures.add(new Texture(Gdx.files.internal("dot_blue_dark.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_blue_light.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_green.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_orange.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_purple.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_red.png")));
-        textures.add(new Texture(Gdx.files.internal("dot_yellow.png")));
-
-        System.out.println(TimeUtils.nanosToMillis(TimeUtils.nanoTime() - t1)/1000f);
+        dotImage = new Texture(Gdx.files.internal("dot_small_white.png"));
+        shadowImage = new Texture(Gdx.files.internal("dot_small_black.png"));
     }
 
     @Override
@@ -55,20 +34,24 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
+        Gdx.gl.glClearColor(testColor.r, testColor.g, testColor.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
 
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
+        /*game.shapeRenderer.setProjectionMatrix(camera.combined);
         game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         game.shapeRenderer.setColor(0, 0, 0, 1);
         game.shapeRenderer.circle(camera.viewportWidth * 0.6f, camera.viewportHeight / 2, size, segments);
-        game.shapeRenderer.end();
+        game.shapeRenderer.end();*/
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(textures.first(), (camera.viewportWidth * 0.4f)-(textures.first().getWidth() / 8)/2, (camera.viewportHeight / 2)-(textures.first().getWidth() / 8)/2, textures.first().getWidth() / 8, textures.first().getHeight() / 8);
+        Color c = game.batch.getColor();
+        game.batch.setColor(c.r, c.g, c.b, 0.5f);
+        game.batch.draw(shadowImage, ((camera.viewportWidth * 0.5f) - shadowImage.getWidth() / 2) + (shadowImage.getWidth() * 0.1f), ((camera.viewportHeight / 2) - shadowImage.getWidth() / 2) - (shadowImage.getHeight() * 0.1f));
+        game.batch.setColor(c.r, c.g, c.b, 1f);
+        game.batch.draw(dotImage, (camera.viewportWidth * 0.5f) - dotImage.getWidth() / 2, (camera.viewportHeight / 2) - dotImage.getWidth() / 2);
         game.batch.end();
      }
 
