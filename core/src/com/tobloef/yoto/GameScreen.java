@@ -16,6 +16,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture dotImage;
     private Texture shadowImage;
     private Color testColor = new Color(60/255f, 143/255f, 215/255f, 1);
+    private Color c;
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -23,8 +24,8 @@ public class GameScreen implements Screen, InputProcessor {
         camera.setToOrtho(false, 1920, 1080);
         Gdx.input.setInputProcessor(this);
         segments = Math.max(3, (int) (10 * (float) Math.sqrt(size)));
-        dotImage = new Texture(Gdx.files.internal("dot_small_white.png"));
-        shadowImage = new Texture(Gdx.files.internal("dot_small_black.png"));
+        dotImage = new Texture(Gdx.files.internal("dot_white.png"));
+        shadowImage = new Texture(Gdx.files.internal("dot_white_on_blue_shadow.png"));
     }
 
     @Override
@@ -39,18 +40,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         camera.update();
 
-        /*game.shapeRenderer.setProjectionMatrix(camera.combined);
-        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        game.shapeRenderer.setColor(0, 0, 0, 1);
-        game.shapeRenderer.circle(camera.viewportWidth * 0.6f, camera.viewportHeight / 2, size, segments);
-        game.shapeRenderer.end();*/
-
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        Color c = game.batch.getColor();
-        game.batch.setColor(c.r, c.g, c.b, 0.5f);
         game.batch.draw(shadowImage, ((camera.viewportWidth * 0.5f) - shadowImage.getWidth() / 2) + (shadowImage.getWidth() * 0.1f), ((camera.viewportHeight / 2) - shadowImage.getWidth() / 2) - (shadowImage.getHeight() * 0.1f));
-        game.batch.setColor(c.r, c.g, c.b, 1f);
         game.batch.draw(dotImage, (camera.viewportWidth * 0.5f) - dotImage.getWidth() / 2, (camera.viewportHeight / 2) - dotImage.getWidth() / 2);
         game.batch.end();
      }
