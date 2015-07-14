@@ -7,15 +7,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Random;
 
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
-    private Texture dotImage;
-    private Texture shadowImage;
+    private Texture dotTexture;
+    private Texture shadowTexture;
+    private int dotTextureSize;
     private Color c;
     private Array<Dot> dots = new Array<Dot>();
+    private Random random = new Random();
+    private Vector2 screenSize;
 
     /*  Colors  */
     private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
@@ -23,17 +30,22 @@ public class GameScreen implements Screen, InputProcessor {
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
+        screenSize = new Vector2(1920, 1080);
     }
 
     @Override
     public void show() {
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1920, 1080);
+        camera.setToOrtho(false, screenSize.x, screenSize.y);
         Gdx.input.setInputProcessor(this);
-        dotImage = new Texture(Gdx.files.internal("dot_white.png"));
-        shadowImage = new Texture(Gdx.files.internal("dot_black.png"));
+        dotTexture = new Texture(Gdx.files.internal("dot_white.png"));
+        shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
+        dotTextureSize = dotTexture.getWidth();
         c = game.batch.getColor();
-        dots.add(new Dot());
+
+        for (int i = 0; i < 100; i++) {
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 2f));
+        }
     }
 
     @Override
@@ -43,22 +55,40 @@ public class GameScreen implements Screen, InputProcessor {
 
         camera.update();
 
+        /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowImage, ((camera.viewportWidth * 0.5f) - shadowImage.getWidth() / 2) + (shadowImage.getWidth() * 0.1f), ((camera.viewportHeight / 2) - shadowImage.getWidth() / 2) - (shadowImage.getHeight() * 0.1f));
+            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (shadowTexture.getWidth() * dot.getSize() * 0.1f), (dot.getPosition().y - shadowTexture.getWidth() * dot.getSize() / 2) - (shadowTexture.getHeight() * 0.1f), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
-            game.batch.draw(dotImage, (camera.viewportWidth * 0.5f) - dotImage.getWidth() / 2, (camera.viewportHeight / 2) - dotImage.getWidth() / 2);
+            game.batch.draw(dotTexture, dot.getPosition().x - dotTextureSize*dot.getSize() / 2, dot.getPosition().y - dotTextureSize*dot.getSize() / 2, dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
         }
         game.batch.end();
+
+        /*  Calculate Movement  */
+        for (Dot dot: dots) {
+            Vector3 position = dot.getPosition();
+            position.x += Math.min(Math.max(dot.getDirection().x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
+            position.y += Math.min(Math.max(dot.getDirection().y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
+            dot.setPosition(position);
+
+            /*  Physics  */
+            if (dot.getPosition().x <= 0+(dotTextureSize*dot.getSize()/2) || dot.getPosition().x+(dotTextureSize*dot.getSize()/2) >= screenSize.x) {
+                Vector3 direction = dot.getDirection();
+                direction.x = -direction.x;
+                dot.setDirection(direction);
+            }
+            if (dot.getPosition().y <= 0+(dotTextureSize*dot.getSize()/2) || dot.getPosition().y+(dotTextureSize*dot.getSize()/2) >= screenSize.y) {
+                Vector3 direction = dot.getDirection();
+                direction.y = -direction.y;
+                dot.setDirection(direction);
+            }
+        }
+
      }
-
-    public void spawnDot() {
-
-    }
 
     @Override
     public void resize(int width, int height) {
@@ -102,7 +132,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        System.out.println(Gdx.graphics.getDeltaTime() * 100 * 2f);
+        return true;
     }
 
     @Override
@@ -122,6 +153,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
-        return true;
+        return false;
     }
 }
