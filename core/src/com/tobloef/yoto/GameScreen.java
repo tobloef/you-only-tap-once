@@ -7,43 +7,52 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Array;
 
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
-    private int segments;
-    private int size = 64;
     private Texture dotImage;
     private Texture shadowImage;
-    private Color testColor = new Color(60/255f, 143/255f, 215/255f, 1);
     private Color c;
+    private Array<Dot> dots = new Array<Dot>();
+
+    /*  Colors  */
+    private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
+    private Color green = new Color(111/255f, 183/255f, 97/255f, 1);
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1920, 1080);
-        Gdx.input.setInputProcessor(this);
-        segments = Math.max(3, (int) (10 * (float) Math.sqrt(size)));
-        dotImage = new Texture(Gdx.files.internal("dot_white.png"));
-        shadowImage = new Texture(Gdx.files.internal("dot_white_on_blue_shadow.png"));
     }
 
     @Override
     public void show() {
-        spawnDot();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 1920, 1080);
+        Gdx.input.setInputProcessor(this);
+        dotImage = new Texture(Gdx.files.internal("dot_white.png"));
+        shadowImage = new Texture(Gdx.files.internal("dot_black.png"));
+        c = game.batch.getColor();
+        dots.add(new Dot());
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(testColor.r, testColor.g, testColor.b, 1);
+        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(shadowImage, ((camera.viewportWidth * 0.5f) - shadowImage.getWidth() / 2) + (shadowImage.getWidth() * 0.1f), ((camera.viewportHeight / 2) - shadowImage.getWidth() / 2) - (shadowImage.getHeight() * 0.1f));
-        game.batch.draw(dotImage, (camera.viewportWidth * 0.5f) - dotImage.getWidth() / 2, (camera.viewportHeight / 2) - dotImage.getWidth() / 2);
+        game.batch.setColor(c.r, c.g, c.b, 0.5f);
+        for (Dot dot: dots) {
+            game.batch.draw(shadowImage, ((camera.viewportWidth * 0.5f) - shadowImage.getWidth() / 2) + (shadowImage.getWidth() * 0.1f), ((camera.viewportHeight / 2) - shadowImage.getWidth() / 2) - (shadowImage.getHeight() * 0.1f));
+        }
+        game.batch.setColor(c);
+        for (Dot dot: dots) {
+            game.batch.draw(dotImage, (camera.viewportWidth * 0.5f) - dotImage.getWidth() / 2, (camera.viewportHeight / 2) - dotImage.getWidth() / 2);
+        }
         game.batch.end();
      }
 
