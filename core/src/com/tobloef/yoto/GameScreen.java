@@ -68,7 +68,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
         game.batch.end();
 
-        /*  Calculate Movement  */
+        /*  Calculate movement  */
         for (Dot dot: dots) {
             if (!dot.isActivated()) {
                 Vector3 position = dot.getPosition();
@@ -88,7 +88,7 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.setDirection(direction);
                 }
             } else {
-                /*  Dot Collision  */
+                /*  Dot collision  */
                 for (int i = 0; i < dots.size-1; i++) {
                     if (!dots.get(i).isActivated() && dots.get(i) != dot) {
                         if (dot.getPosition().dst(dots.get(i).getPosition()) < ((dotTextureSize * dot.getSize()) / 2) + ((dotTextureSize *  dots.get(i).getSize()) / 2)) {
