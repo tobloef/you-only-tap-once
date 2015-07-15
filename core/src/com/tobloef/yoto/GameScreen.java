@@ -44,7 +44,7 @@ public class GameScreen implements Screen, InputProcessor {
         c = game.batch.getColor();
 
         for (int i = 0; i < 100; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 2f));
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 3f));
         }
     }
 
@@ -60,7 +60,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (shadowTexture.getWidth() * dot.getSize() * 0.1f), (dot.getPosition().y - shadowTexture.getWidth() * dot.getSize() / 2) - (shadowTexture.getHeight() * 0.1f), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
+            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (dotTextureSize * dot.getSize() * 0.1f), (dot.getPosition().y - dotTextureSize * dot.getSize() / 2) - (dotTextureSize * 0.1f), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
@@ -70,21 +70,53 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Calculate Movement  */
         for (Dot dot: dots) {
-            Vector3 position = dot.getPosition();
-            position.x += Math.min(Math.max(dot.getDirection().x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
-            position.y += Math.min(Math.max(dot.getDirection().y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
-            dot.setPosition(position);
+            if (!dot.isActivated()) {
+                Vector3 position = dot.getPosition();
+                position.x += Math.min(Math.max(dot.getDirection().x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
+                position.y += Math.min(Math.max(dot.getDirection().y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
+                dot.setPosition(position);
 
-            /*  Physics  */
-            if (dot.getPosition().x <= 0+(dotTextureSize*dot.getSize()/2) || dot.getPosition().x+(dotTextureSize*dot.getSize()/2) >= screenSize.x) {
-                Vector3 direction = dot.getDirection();
-                direction.x = -direction.x;
-                dot.setDirection(direction);
+                /*  Physics  */
+                if (dot.getPosition().x <= 0 + (dotTextureSize * dot.getSize() / 2) || dot.getPosition().x + (dotTextureSize * dot.getSize() / 2) >= screenSize.x) {
+                    Vector3 direction = dot.getDirection();
+                    direction.x = -direction.x;
+                    dot.setDirection(direction);
+                }
+                if (dot.getPosition().y <= 0 + (dotTextureSize * dot.getSize() / 2) || dot.getPosition().y + (dotTextureSize * dot.getSize() / 2) >= screenSize.y) {
+                    Vector3 direction = dot.getDirection();
+                    direction.y = -direction.y;
+                    dot.setDirection(direction);
+                }
+            } else {
+                /*  Dot Collision  */
+                for (int i = 0; i < dots.size-1; i++) {
+                    if (!dots.get(i).isActivated() && dots.get(i) != dot) {
+                        if (dot.getPosition().dst(dots.get(i).getPosition()) < ((dotTextureSize * dot.getSize()) / 2) + ((dotTextureSize *  dots.get(i).getSize()) / 2)) {
+                            dots.get(i).activate();
+                        }
+                    }
+                }
             }
-            if (dot.getPosition().y <= 0+(dotTextureSize*dot.getSize()/2) || dot.getPosition().y+(dotTextureSize*dot.getSize()/2) >= screenSize.y) {
-                Vector3 direction = dot.getDirection();
-                direction.y = -direction.y;
-                dot.setDirection(direction);
+
+            /*  Expand/Shrink  */
+            if (dot.getState() != 0) {
+                dot.setSize(dot.getSize() + dot.getState() * Gdx.graphics.getDeltaTime() * 1f);
+                if (dot.getSize() < 0) {
+                    dots.removeValue(dot, true);
+                }
+                if (dot.getSize() > dot.getMaxSize()) {
+                    dot.setState(0);
+                    if (!dot.getShouldCount()) {
+                        dot.setShouldCount(true);
+                    }
+                }
+            }
+            if (dot.getShouldCount()) {
+                dot.setLifetime(dot.getLifetime() + Gdx.graphics.getDeltaTime());
+                if (dot.getLifetime() > 1.5f) {
+                    dot.setShouldCount(false);
+                    dot.setState(-1);
+                }
             }
         }
 
@@ -132,7 +164,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println(Gdx.graphics.getDeltaTime() * 100 * 2f);
+        Vector3 mousePos = new Vector3(screenX, screenY, 0);
+        camera.unproject(mousePos);
+        dots.add(new Dot(mousePos, true));
         return true;
     }
 

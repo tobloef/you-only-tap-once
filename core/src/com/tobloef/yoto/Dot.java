@@ -3,16 +3,14 @@ package com.tobloef.yoto;
 import com.badlogic.gdx.math.Vector3;
 
 public class Dot {
-    private final static int EXPANDING = 1;
-    private final static int IDLE = 0;
-    private final static int SHRINKING = -1;
-
     private Vector3 position;
     private Vector3 direction;
     private float speed;
     private float size;
+    private float maxSize;
     private boolean activated;
     private int state;
+    private boolean shouldCount;
     private float lifetime;
 
     public Dot() {}
@@ -20,9 +18,21 @@ public class Dot {
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        size = 0.5f;
+        size = 1f/3f;
+        maxSize = size*2f;
         activated = false;
-        state = IDLE;
+        state = 0;
+        shouldCount = false;
+        lifetime = 0;
+    }
+    public Dot(Vector3 position, boolean activated) {
+        this.position = position;
+        size = 1f/3f;
+        maxSize = size*2f;
+        size = 0f;
+        this.activated = activated;
+        state = 1;
+        shouldCount = false;
         lifetime = 0;
     }
 
@@ -38,11 +48,19 @@ public class Dot {
     public float getSize() { return size; }
     public void setSize(float size) { this.size = size; }
 
-    public boolean getActivated() { return activated; }
-    public void setActivated(boolean activated) { this.activated = activated; }
+    public float getMaxSize() { return maxSize; }
+
+    public boolean isActivated() { return activated; }
+    public void activate() {
+        activated = true;
+        state = 1;
+    }
 
     public int getState() { return state; }
     public void setState(int state) { this.state = state; }
+
+    public boolean getShouldCount() { return shouldCount; }
+    public void setShouldCount(boolean shouldCount) { this.shouldCount = shouldCount; }
 
     public float getLifetime() { return lifetime; }
     public void setLifetime(float lifetime) { this.lifetime = lifetime; }
