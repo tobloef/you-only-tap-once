@@ -23,10 +23,14 @@ public class GameScreen implements Screen, InputProcessor {
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
     private Vector2 screenSize;
+    private boolean haveBegun = false;
+    private boolean shouldEnd = false;
+    private boolean completed = false;
 
     /*  Colors  */
+    private Color background;
     private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
-    private Color green = new Color(111/255f, 183/255f, 97/255f, 1);
+    private Color green = new Color(100/255f, 204/255f, 80/255f, 1);
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -41,6 +45,7 @@ public class GameScreen implements Screen, InputProcessor {
         dotTexture = new Texture(Gdx.files.internal("dot_white.png"));
         shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
         dotTextureSize = dotTexture.getWidth();
+        background = blue;
         c = game.batch.getColor();
 
         for (int i = 0; i < 100; i++) {
@@ -68,7 +73,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
         game.batch.end();
 
-        /*  Calculate movement  */
+        /*  Calculate Movement  */
         for (Dot dot: dots) {
             if (!dot.isActivated()) {
                 Vector3 position = dot.getPosition();
@@ -88,8 +93,9 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.setDirection(direction);
                 }
             } else {
-                /*  Dot collision  */
-                for (int i = 0; i < dots.size-1; i++) {
+
+                /*  Dot Collision  */
+                for (int i = 0; i < dots.size; i++) {
                     if (!dots.get(i).isActivated() && dots.get(i) != dot) {
                         if (dot.getPosition().dst(dots.get(i).getPosition()) < ((dotTextureSize * dot.getSize()) / 2) + ((dotTextureSize *  dots.get(i).getSize()) / 2)) {
                             dots.get(i).activate();
@@ -100,7 +106,7 @@ public class GameScreen implements Screen, InputProcessor {
 
             /*  Expand/Shrink  */
             if (dot.getState() != 0) {
-                dot.setSize(dot.getSize() + dot.getState() * Gdx.graphics.getDeltaTime() * 1f);
+                dot.setSize(dot.getSize() + dot.getState() * Gdx.graphics.getDeltaTime() * 0.9f);
                 if (dot.getSize() < 0) {
                     dots.removeValue(dot, true);
                 }
@@ -120,7 +126,28 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
-     }
+        /*  Level Completion  */
+        if (dots.size <= 100*(1-0.9f) && (!shouldEnd || completed)) {
+            completed = true;
+            if (background != green) {
+                background.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
+            }
+        }
+        if (haveBegun && !shouldEnd) {
+            shouldEnd = true;
+            for (int i = 0; i < dots.size; i++) {
+                if (dots.get(i).isActivated()) {
+                    shouldEnd = false;
+                    break;
+                }
+            }
+            if (shouldEnd) {
+                for (int i = 0; i < dots.size; i++) {
+                    dots.get(i).setState(-1);
+                }
+            }
+        }
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -167,6 +194,7 @@ public class GameScreen implements Screen, InputProcessor {
         Vector3 mousePos = new Vector3(screenX, screenY, 0);
         camera.unproject(mousePos);
         dots.add(new Dot(mousePos, true));
+        haveBegun = true;
         return true;
     }
 

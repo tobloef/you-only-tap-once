@@ -18,8 +18,8 @@ public class Dot {
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        size = 1f/3f;
-        maxSize = size*2f;
+        size = 0.5f;
+        maxSize = size*1.5f;
         activated = false;
         state = 0;
         shouldCount = false;
@@ -27,8 +27,8 @@ public class Dot {
     }
     public Dot(Vector3 position, boolean activated) {
         this.position = position;
-        size = 1f/3f;
-        maxSize = size*2f;
+        size = 0.5f;
+        maxSize = size*1.5f;
         size = 0f;
         this.activated = activated;
         state = 1;
