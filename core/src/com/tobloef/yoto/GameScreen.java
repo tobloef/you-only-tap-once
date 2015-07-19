@@ -34,7 +34,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     public GameScreen(final YouOnlyTapOnce game) {
         this.game = game;
-        screenSize = new Vector2(1920, 1080);
+        screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -48,8 +48,8 @@ public class GameScreen implements Screen, InputProcessor {
         background = blue;
         c = game.batch.getColor();
 
-        for (int i = 0; i < 100; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 3f));
+        for (int i = 0; i < 250; i++) {
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 5f));
         }
     }
 
