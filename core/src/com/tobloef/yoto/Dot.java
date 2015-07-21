@@ -14,20 +14,20 @@ public class Dot {
     private float lifetime;
 
     public Dot() {}
-    public Dot(Vector3 position, Vector3 direction, float speed) {
+    public Dot(Vector3 position, Vector3 direction, float speed, float size) {
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        size = 0.2f;
+        this.size = size;
         maxSize = size*2f;
         activated = false;
         state = 0;
         shouldCount = false;
         lifetime = 0;
     }
-    public Dot(Vector3 position, boolean activated) {
+    public Dot(Vector3 position, boolean activated, float size) {
         this.position = position;
-        size = 0.2f;
+        this.size = size;
         maxSize = size*2f;
         size = 0f;
         this.activated = activated;

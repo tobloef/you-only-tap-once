@@ -19,6 +19,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture dotTexture;
     private Texture shadowTexture;
     private int dotTextureSize;
+    private float size;
     private Color c;
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
@@ -46,10 +47,11 @@ public class GameScreen implements Screen, InputProcessor {
         shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
         dotTextureSize = dotTexture.getWidth();
         background = blue;
+        size = 0.5f;
         c = game.batch.getColor();
 
-        for (int i = 0; i < 250; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-200)+100, random.nextFloat()*(screenSize.y-200)+100, 0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 5f));
+        for (int i = 0; i < 10; i++) {
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 2f, size));
         }
     }
 
@@ -65,7 +67,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (dotTextureSize * dot.getSize() * 0.1f), (dot.getPosition().y - dotTextureSize * dot.getSize() / 2) - (dotTextureSize * 0.1f), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
+            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (dotTextureSize * dot.getSize() * 0.1f * size), (dot.getPosition().y - dotTextureSize * dot.getSize() / 2) - (dotTextureSize * 0.1f * size), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
@@ -193,7 +195,7 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 mousePos = new Vector3(screenX, screenY, 0);
         camera.unproject(mousePos);
-        dots.add(new Dot(mousePos, true));
+        dots.add(new Dot(mousePos, true, size));
         haveBegun = true;
         return true;
     }
