@@ -19,7 +19,6 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture dotTexture;
     private Texture shadowTexture;
     private int dotTextureSize;
-    private float size;
     private Color c;
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
@@ -28,14 +27,26 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean shouldEnd = false;
     private boolean completed = false;
 
+    private int count;
+    private float size;
+    private float maxSize;
+    private float speed;
+    private float completionPercentage;
+
     /*  Colors  */
     private Color background;
     private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
     private Color green = new Color(100/255f, 204/255f, 80/255f, 1);
 
-    public GameScreen(final YouOnlyTapOnce game) {
+    public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        count = level.count;
+        size = level.size;
+        maxSize = level.maxSize;
+        speed = level.speed;
+        completionPercentage = level.completionPercentage;
     }
 
     @Override
@@ -47,11 +58,10 @@ public class GameScreen implements Screen, InputProcessor {
         shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
         dotTextureSize = dotTexture.getWidth();
         background = blue;
-        size = 0.5f;
         c = game.batch.getColor();
 
-        for (int i = 0; i < 10; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), 2f, size));
+        for (int i = 0; i < count; i++) {
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, size, maxSize));
         }
     }
 
@@ -67,69 +77,70 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.getPosition().x - dotTextureSize*dot.getSize() / 2) + (dotTextureSize * dot.getSize() * 0.1f * size), (dot.getPosition().y - dotTextureSize * dot.getSize() / 2) - (dotTextureSize * 0.1f * size), dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
+            game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize*dot.size / 2) + (dotTextureSize * dot.size * 0.2f * size), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * size), dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
-            game.batch.draw(dotTexture, dot.getPosition().x - dotTextureSize*dot.getSize() / 2, dot.getPosition().y - dotTextureSize*dot.getSize() / 2, dotTextureSize*dot.getSize(), dotTextureSize*dot.getSize());
+            game.batch.draw(dotTexture, dot.position.x - dotTextureSize*dot.size / 2, dot.position.y - dotTextureSize*dot.size / 2, dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
         game.batch.end();
 
         /*  Calculate Movement  */
         for (Dot dot: dots) {
-            if (!dot.isActivated()) {
-                Vector3 position = dot.getPosition();
-                position.x += Math.min(Math.max(dot.getDirection().x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
-                position.y += Math.min(Math.max(dot.getDirection().y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * dot.getSpeed();
-                dot.setPosition(position);
+            if (!dot.activated) {
+                Vector3 position = dot.position;
+                position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * speed;
+                position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * speed;
+                dot.position = position;
 
                 /*  Physics  */
-                if (dot.getPosition().x <= 0 + (dotTextureSize * dot.getSize() / 2) || dot.getPosition().x + (dotTextureSize * dot.getSize() / 2) >= screenSize.x) {
-                    Vector3 direction = dot.getDirection();
+                if (dot.position.x <= 0 + (dotTextureSize * dot.size / 2) || dot.position.x + (dotTextureSize * dot.size / 2) >= screenSize.x) {
+                    Vector3 direction = dot.direction;
                     direction.x = -direction.x;
-                    dot.setDirection(direction);
+                    dot.direction = direction;
                 }
-                if (dot.getPosition().y <= 0 + (dotTextureSize * dot.getSize() / 2) || dot.getPosition().y + (dotTextureSize * dot.getSize() / 2) >= screenSize.y) {
-                    Vector3 direction = dot.getDirection();
+                if (dot.position.y <= 0 + (dotTextureSize * dot.size / 2) || dot.position.y + (dotTextureSize * dot.size / 2) >= screenSize.y) {
+                    Vector3 direction = dot.direction;
                     direction.y = -direction.y;
-                    dot.setDirection(direction);
+                    dot.direction = direction;
                 }
             } else {
 
                 /*  Dot Collision  */
                 for (int i = 0; i < dots.size; i++) {
-                    if (!dots.get(i).isActivated() && dots.get(i) != dot) {
-                        if (dot.getPosition().dst(dots.get(i).getPosition()) < ((dotTextureSize * dot.getSize()) / 2) + ((dotTextureSize *  dots.get(i).getSize()) / 2)) {
-                            dots.get(i).activate();
+                    if (!dots.get(i).activated && dots.get(i) != dot) {
+                        if (dot.position.dst(dots.get(i).position) < ((dotTextureSize * dot.size) / 2) + ((dotTextureSize *  dots.get(i).size) / 2)) {
+                            dots.get(i).activated = true;
+                            dots.get(i).state = 1;
                         }
                     }
                 }
             }
 
             /*  Expand/Shrink  */
-            if (dot.getState() != 0) {
-                dot.setSize(dot.getSize() + dot.getState() * Gdx.graphics.getDeltaTime() * 0.9f);
-                if (dot.getSize() < 0) {
+            if (dot.state != 0) {
+                dot.size += dot.state * Gdx.graphics.getDeltaTime() * 0.9f;
+                if (dot.size < 0) {
                     dots.removeValue(dot, true);
                 }
-                if (dot.getSize() > dot.getMaxSize()) {
-                    dot.setState(0);
-                    if (!dot.getShouldCount()) {
-                        dot.setShouldCount(true);
+                if (dot.size > dot.maxSize) {
+                    dot.state = 0;
+                    if (!dot.shouldCount) {
+                        dot.shouldCount = true;
                     }
                 }
             }
-            if (dot.getShouldCount()) {
-                dot.setLifetime(dot.getLifetime() + Gdx.graphics.getDeltaTime());
-                if (dot.getLifetime() > 1.5f) {
-                    dot.setShouldCount(false);
-                    dot.setState(-1);
+            if (dot.shouldCount) {
+                dot.lifetime += Gdx.graphics.getDeltaTime();
+                if (dot.lifetime > 1.5f) {
+                    dot.shouldCount = false;
+                    dot.state = -1;
                 }
             }
         }
 
         /*  Level Completion  */
-        if (dots.size <= 100*(1-0.9f) && (!shouldEnd || completed)) {
+        if (dots.size <= count*completionPercentage && (!shouldEnd || completed)) {
             completed = true;
             if (background != green) {
                 background.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
@@ -138,14 +149,14 @@ public class GameScreen implements Screen, InputProcessor {
         if (haveBegun && !shouldEnd) {
             shouldEnd = true;
             for (int i = 0; i < dots.size; i++) {
-                if (dots.get(i).isActivated()) {
+                if (dots.get(i).activated) {
                     shouldEnd = false;
                     break;
                 }
             }
             if (shouldEnd) {
                 for (int i = 0; i < dots.size; i++) {
-                    dots.get(i).setState(-1);
+                    dots.get(i).state = -1;
                 }
             }
         }
