@@ -60,6 +60,7 @@ public class GameScreen implements Screen, InputProcessor {
         background = blue;
         c = game.batch.getColor();
 
+        /*  Spawn the dots  */
         for (int i = 0; i < count; i++) {
             dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, size, maxSize));
         }
