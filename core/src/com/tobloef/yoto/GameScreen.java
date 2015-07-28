@@ -33,6 +33,8 @@ public class GameScreen implements Screen, InputProcessor {
     private float speed;
     private float completionPercentage;
 
+    private int score = 0;
+
     /*  Colors  */
     private Color background;
     private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
@@ -84,6 +86,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTextureSize*dot.size / 2, dot.position.y - dotTextureSize*dot.size / 2, dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
+        game.font256.draw(game.batch, score + "/" + Math.round(count*completionPercentage), 200*size, screenSize.y-(200*size));
         game.batch.end();
 
         /*  Calculate Movement  */
@@ -113,6 +116,7 @@ public class GameScreen implements Screen, InputProcessor {
                         if (dot.position.dst(dots.get(i).position) < ((dotTextureSize * dot.size) / 2) + ((dotTextureSize *  dots.get(i).size) / 2)) {
                             dots.get(i).activated = true;
                             dots.get(i).state = 1;
+                            score += 1;
                         }
                     }
                 }
@@ -141,7 +145,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         /*  Level Completion  */
-        if (dots.size <= count*completionPercentage && (!shouldEnd || completed)) {
+        if (score >= count*completionPercentage && (!shouldEnd || completed)) {
             completed = true;
             if (background != green) {
                 background.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
