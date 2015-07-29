@@ -28,12 +28,13 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean completed = false;
 
     private int count;
-    private float size;
+    private float dotSize;
     private float maxSize;
     private float speed;
     private float completionPercentage;
 
     private int score = 0;
+    private float size;
 
     /*  Colors  */
     private Color background;
@@ -43,9 +44,9 @@ public class GameScreen implements Screen, InputProcessor {
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
+        size = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
         count = level.count;
-        size = level.size;
+        dotSize = level.size;
         maxSize = level.maxSize;
         speed = level.speed;
         completionPercentage = level.completionPercentage;
@@ -64,7 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Spawn the dots  */
         for (int i = 0; i < count; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*size/2))*2))+(dotTextureSize*size/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, size, maxSize));
+            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*dotSize/2))*2))+(dotTextureSize*dotSize/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*dotSize/2))*2))+(dotTextureSize*dotSize/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, dotSize, maxSize));
         }
     }
 
@@ -80,13 +81,13 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize*dot.size / 2) + (dotTextureSize * dot.size * 0.2f * size), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * size), dotTextureSize*dot.size, dotTextureSize*dot.size);
+            game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize*dot.size / 2) + (dotTextureSize * dot.size * 0.2f * dotSize), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * dotSize), dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTextureSize*dot.size / 2, dot.position.y - dotTextureSize*dot.size / 2, dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
-        game.font256.draw(game.batch, score + "/" + Math.round(count*completionPercentage), 200*size, screenSize.y-(200*size));
+        game.font256.draw(game.batch, score + "/" + Math.round(count*completionPercentage), 30*size, screenSize.y-(30*size));
         game.batch.end();
 
         /*  Calculate Movement  */
