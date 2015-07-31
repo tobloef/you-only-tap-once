@@ -87,7 +87,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTextureSize*dot.size / 2, dot.position.y - dotTextureSize*dot.size / 2, dotTextureSize*dot.size, dotTextureSize*dot.size);
         }
-        game.font256.draw(game.batch, score + "/" + Math.round(count*completionPercentage), 30*size, screenSize.y-(30*size));
+        game.fonts.get(256).draw(game.batch, score + "/" + Math.round(count*completionPercentage), 30*size, screenSize.y-(30*size));
         game.batch.end();
 
         /*  Calculate Movement  */
