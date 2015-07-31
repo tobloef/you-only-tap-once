@@ -14,7 +14,7 @@ import java.util.*;
 public class YouOnlyTapOnce extends Game {
 	public SpriteBatch batch;
 	public ArrayList<Level> levels;
-	private float size;
+	private float sizeModifier;
 	List<Integer> fontSizes;
 	public Map<Integer, BitmapFont> fonts;
 
@@ -22,7 +22,7 @@ public class YouOnlyTapOnce extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		size = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
+		sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
 		fonts = new HashMap<Integer, BitmapFont>();
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("arial.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -31,9 +31,9 @@ public class YouOnlyTapOnce extends Game {
 		parameter.shadowColor = new Color(0,0,0,0.5f);
 		fontSizes = new ArrayList<Integer>(Arrays.asList(8, 16, 24, 32, 48, 64, 96, 128, 192, 256));
 		for (int fontSize : fontSizes) {
-			parameter.shadowOffsetX = Math.round((size*fontSize)/30);
-			parameter.shadowOffsetY = Math.round((size*fontSize)/30);
-			parameter.size = Math.round(fontSize*size);
+			parameter.shadowOffsetX = Math.round((sizeModifier*fontSize)/30);
+			parameter.shadowOffsetY = Math.round((sizeModifier*fontSize)/30);
+			parameter.size = Math.round(fontSize*sizeModifier);
 			fonts.put(fontSize, generator.generateFont(parameter));
 		}
 		generator.dispose();
@@ -44,7 +44,7 @@ public class YouOnlyTapOnce extends Game {
 			Scanner scanner = new Scanner(new File("Levels.txt"));
 			while (scanner.hasNext()){
 				String[] s = scanner.next().split(",");
-				Level level = new Level(Integer.parseInt(s[0]), Math.round(Float.parseFloat(s[1])*size), Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
+				Level level = new Level(Integer.parseInt(s[0]), Float.parseFloat(s[1])*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
 				levels.add(level);
 			}
 			scanner.close();

@@ -34,7 +34,7 @@ public class GameScreen implements Screen, InputProcessor {
     private float completionPercentage;
 
     private int score = 0;
-    private float size;
+    private float sizeModifier;
 
     /*  Colors  */
     private Color background;
@@ -43,8 +43,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
-        screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        size = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
         count = level.count;
         dotSize = level.size;
         maxSize = level.maxSize;
@@ -54,9 +52,12 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
+        screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        sizeModifier = Math.min(screenSize.x, screenSize.y) / 1080f;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenSize.x, screenSize.y);
         Gdx.input.setInputProcessor(this);
+
         dotTexture = new Texture(Gdx.files.internal("dot_white.png"));
         shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
         dotTextureSize = dotTexture.getWidth();
@@ -65,7 +66,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Spawn the dots  */
         for (int i = 0; i < count; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat()*(screenSize.x-(((dotTextureSize*dotSize/2))*2))+(dotTextureSize*dotSize/2),random.nextFloat()*(screenSize.y-(((dotTextureSize*dotSize/2))*2))+(dotTextureSize*dotSize/2),0), new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, dotSize, maxSize));
+            dots.add(new Dot(new Vector3(random.nextFloat() * (screenSize.x - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2),
+                    random.nextFloat() * (screenSize.y - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2), 0),
+                    new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, dotSize, maxSize));
         }
     }
 
@@ -81,13 +84,13 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize*dot.size / 2) + (dotTextureSize * dot.size * 0.2f * dotSize), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * dotSize), dotTextureSize*dot.size, dotTextureSize*dot.size);
+            game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize * dot.size / 2) + (dotTextureSize * dot.size * 0.2f * dotSize), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * dotSize), dotTextureSize * dot.size, dotTextureSize * dot.size);
         }
         game.batch.setColor(c);
         for (Dot dot: dots) {
-            game.batch.draw(dotTexture, dot.position.x - dotTextureSize*dot.size / 2, dot.position.y - dotTextureSize*dot.size / 2, dotTextureSize*dot.size, dotTextureSize*dot.size);
+            game.batch.draw(dotTexture, dot.position.x - dotTextureSize * dot.size / 2, dot.position.y - dotTextureSize * dot.size / 2, dotTextureSize * dot.size, dotTextureSize * dot.size);
         }
-        game.fonts.get(256).draw(game.batch, score + "/" + Math.round(count*completionPercentage), 30*size, screenSize.y-(30*size));
+        game.fonts.get(256).draw(game.batch, score + "/" + Math.round(count * completionPercentage), 30 * sizeModifier, screenSize.y - (30 * sizeModifier));
         game.batch.end();
 
         /*  Calculate Movement  */
@@ -212,7 +215,7 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 mousePos = new Vector3(screenX, screenY, 0);
         camera.unproject(mousePos);
-        dots.add(new Dot(mousePos, true, size));
+        dots.add(new Dot(mousePos, maxSize));
         haveBegun = true;
         return true;
     }

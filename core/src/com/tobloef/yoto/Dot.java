@@ -21,11 +21,10 @@ public class Dot {
         activated = false;
         state = 0;
     }
-    public Dot(Vector3 position, boolean activated, float maxSize) {
+    public Dot(Vector3 position, float maxSize) {
         this.position = position;
-        size = 0f;
         this.maxSize = maxSize;
-        this.activated = activated;
+        activated = true;
         state = 1;
     }
 }
