@@ -2,16 +2,18 @@ package com.tobloef.yoto;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class YouOnlyTapOnce extends Game {
+	private long lastTime;
+	public Preferences prefs;
 	public SpriteBatch batch;
 	public ArrayList<Level> levels;
 	private float sizeModifier;
@@ -21,15 +23,19 @@ public class YouOnlyTapOnce extends Game {
 
 	@Override
 	public void create () {
+		lastTime = System.currentTimeMillis();
+		Preferences prefs = Gdx.app.getPreferences("Settings");
 		batch = new SpriteBatch();
 		sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
+
+		/*  Generate Fonts  */
 		fonts = new HashMap<Integer, BitmapFont>();
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("arial.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
 		parameter.color = Color.WHITE;
 		parameter.shadowColor = new Color(0,0,0,0.5f);
-		fontSizes = new ArrayList<Integer>(Arrays.asList(8, 16, 24, 32, 48, 64, 96, 128, 192, 256));
+		parameter.kerning = false;
+		fontSizes = new ArrayList<Integer>(Arrays.asList(256));
 		for (int fontSize : fontSizes) {
 			parameter.shadowOffsetX = Math.round((sizeModifier*fontSize)/30);
 			parameter.shadowOffsetY = Math.round((sizeModifier*fontSize)/30);
@@ -40,16 +46,11 @@ public class YouOnlyTapOnce extends Game {
 
 		/*  Load Levels  */
 		levels = new ArrayList<Level>();
-		try {
-			Scanner scanner = new Scanner(new File("Levels.txt"));
-			while (scanner.hasNext()){
-				String[] s = scanner.next().split(",");
-				Level level = new Level(Integer.parseInt(s[0]), Float.parseFloat(s[1])*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
-				levels.add(level);
-			}
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		FileHandle levelFile = Gdx.files.internal("Levels.txt");
+		for (String line : levelFile.readString().split("\\n")) {
+			String[] s = line.split(",");
+			Level level = new Level(Integer.parseInt(s[0]), Float.parseFloat(s[1])*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
+			levels.add(level);
 		}
 
 		//Temporary Level Loading
@@ -63,5 +64,10 @@ public class YouOnlyTapOnce extends Game {
 
 	public void dispose() {
 		super.dispose();
+	}
+
+	public void timePassed() {
+		System.out.println(System.currentTimeMillis() - lastTime);
+		lastTime = System.currentTimeMillis();
 	}
 }

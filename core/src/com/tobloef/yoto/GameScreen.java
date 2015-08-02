@@ -3,6 +3,7 @@ package com.tobloef.yoto;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,6 +17,7 @@ import java.util.Random;
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
+    private Sound popSound;
     private Texture dotTexture;
     private Texture shadowTexture;
     private int dotTextureSize;
@@ -26,6 +28,7 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean haveBegun = false;
     private boolean shouldEnd = false;
     private boolean completed = false;
+    private long timeSincePop;
 
     private int count;
     private float dotSize;
@@ -37,9 +40,9 @@ public class GameScreen implements Screen, InputProcessor {
     private float sizeModifier;
 
     /*  Colors  */
-    private Color background;
-    private Color blue = new Color(60/255f, 143/255f, 215/255f, 1);
-    private Color green = new Color(100/255f, 204/255f, 80/255f, 1);
+    private Color backgroundColor;
+    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
+    private Color green = new Color(95/255f, 195/255f, 95/255f, 1);
 
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
@@ -58,10 +61,13 @@ public class GameScreen implements Screen, InputProcessor {
         camera.setToOrtho(false, screenSize.x, screenSize.y);
         Gdx.input.setInputProcessor(this);
 
+        popSound = Gdx.audio.newSound(Gdx.files.internal("pop.mp3"));
+        timeSincePop = System.currentTimeMillis();
+
         dotTexture = new Texture(Gdx.files.internal("dot_white.png"));
         shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
         dotTextureSize = dotTexture.getWidth();
-        background = blue;
+        backgroundColor = blue;
         c = game.batch.getColor();
 
         /*  Spawn the dots  */
@@ -74,7 +80,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -118,6 +124,10 @@ public class GameScreen implements Screen, InputProcessor {
                 for (int i = 0; i < dots.size; i++) {
                     if (!dots.get(i).activated && dots.get(i) != dot) {
                         if (dot.position.dst(dots.get(i).position) < ((dotTextureSize * dot.size) / 2) + ((dotTextureSize *  dots.get(i).size) / 2)) {
+                            if (System.currentTimeMillis() - timeSincePop > 50) {
+                                timeSincePop = System.currentTimeMillis();
+                                popSound.play(0.5f, random.nextFloat()*(1.25f - 0.75f) + 0.5f, 0);
+                            }
                             dots.get(i).activated = true;
                             dots.get(i).state = 1;
                             score += 1;
@@ -151,8 +161,8 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Level Completion  */
         if (score >= count*completionPercentage && (!shouldEnd || completed)) {
             completed = true;
-            if (background != green) {
-                background.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
+            if (backgroundColor != green) {
+                backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
             }
         }
         if (haveBegun && !shouldEnd) {
@@ -213,10 +223,14 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 mousePos = new Vector3(screenX, screenY, 0);
-        camera.unproject(mousePos);
-        dots.add(new Dot(mousePos, maxSize));
-        haveBegun = true;
+        if (!haveBegun) {
+            Vector3 mousePos = new Vector3(screenX, screenY, 0);
+            camera.unproject(mousePos);
+            dots.add(new Dot(mousePos, maxSize));
+            haveBegun = true;
+        } else if(dots.size <= 0) {
+            game.setScreen(new GameScreen(game, game.levels.get(0)));
+        }
         return true;
     }
 
