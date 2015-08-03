@@ -54,7 +54,6 @@ public class YouOnlyTapOnce extends Game {
 		}
 
 		//Temporary Level Loading
-		//Test
 		this.setScreen(new GameScreen(this, levels.get(0)));
 	}
 
