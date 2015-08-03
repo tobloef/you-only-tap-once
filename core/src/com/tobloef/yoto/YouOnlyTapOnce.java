@@ -54,7 +54,7 @@ public class YouOnlyTapOnce extends Game {
 		}
 
 		//Temporary Level Loading
-		this.setScreen(new GameScreen(this, levels.get(0)));
+		this.setScreen(new GameScreen(this, levels.get(1)));
 	}
 
 	@Override
