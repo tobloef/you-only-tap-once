@@ -20,6 +20,7 @@ public class YouOnlyTapOnce extends Game {
 	List<Integer> fontSizes;
 	public Map<Integer, BitmapFont> fonts;
 	private static long minSplashTime = 2000L;
+	private Random rand = new Random();
 
 	private int levelID = 0;
 
@@ -90,6 +91,16 @@ public class YouOnlyTapOnce extends Game {
 	}
 
 	public void loadLevel(int id) {
-		this.setScreen(new GameScreen(this, levels.get(id)));
+		if (id == -1) {
+			int randCount = rand.nextInt(500 - 1) + 1;
+			float randSize = rand.nextFloat() * (2f - 0.1f) + 0.1f;
+			float randMaxSize = rand.nextFloat() * (5f - 1f) + 1f;
+			float randSpeed = rand.nextFloat() * (5f - 0.1f) + 0.1f;
+			float randCompletion = rand.nextFloat();
+			Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+			this.setScreen(new GameScreen(this, level));
+		} else {
+			this.setScreen(new GameScreen(this, levels.get(id)));
+		}
 	}
 }
