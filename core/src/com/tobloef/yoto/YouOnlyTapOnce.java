@@ -21,8 +21,9 @@ public class YouOnlyTapOnce extends Game {
 	public Map<Integer, BitmapFont> fonts;
 	private static long minSplashTime = 2000L;
 	private Random rand = new Random();
+	public boolean canTouch = false;
 
-	private int levelID = 0;
+	private int levelID = -1;
 
 	@Override
 	public void create () {
@@ -92,15 +93,20 @@ public class YouOnlyTapOnce extends Game {
 
 	public void loadLevel(int id) {
 		if (id == -1) {
-			int randCount = rand.nextInt(500 - 1) + 1;
-			float randSize = rand.nextFloat() * (2f - 0.1f) + 0.1f;
-			float randMaxSize = rand.nextFloat() * (5f - 1f) + 1f;
-			float randSpeed = rand.nextFloat() * (5f - 0.1f) + 0.1f;
-			float randCompletion = rand.nextFloat();
+			int randCount = rand.nextInt(300 - 1) + 1;
+			float randSize = 0f;
+			while (randSize < 0.1f) {
+				randSize = 0.4f - (((randCount-100f) * 2f) / 1000f) + (rand.nextFloat() * (0.2f - -0.2f) + -0.2f);
+			}
+			float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.25f) / randSize) + (rand.nextFloat() * (1f - -1f) + -1f));
+			float randSpeed = rand.nextFloat() * (3f - 0.25f) + 0.25f;
+			float randCompletion = rand.nextFloat() * (0.99f - 0.65f) + 0.65f;
 			Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+			Gdx.app.log("Level", "\nCount: " + randCount + "\nSize: " + randSize + "\nMaxSize: " + randMaxSize + "\nSpeed: " + randSpeed + "\nCompletion: " + randCompletion);
 			this.setScreen(new GameScreen(this, level));
 		} else {
 			this.setScreen(new GameScreen(this, levels.get(id)));
 		}
+		canTouch = true;
 	}
 }

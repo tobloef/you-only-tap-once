@@ -25,7 +25,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
     private Vector2 screenSize;
-    private boolean haveBegun = false;
+    private boolean haveTouched = false;
     private boolean shouldEnd = false;
     private boolean completed = false;
     private long timeSincePop;
@@ -170,7 +170,7 @@ public class GameScreen implements Screen, InputProcessor {
                 backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
             }
         }
-        if (haveBegun && !shouldEnd) {
+        if (haveTouched && !shouldEnd) {
             shouldEnd = true;
             for (int i = 0; i < dots.size; i++) {
                 if (dots.get(i).activated) {
@@ -228,11 +228,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!haveBegun) {
+        if (!haveTouched && game.canTouch) {
             Vector3 mousePos = new Vector3(screenX, screenY, 0);
             camera.unproject(mousePos);
             dots.add(new Dot(mousePos, maxSize));
-            haveBegun = true;
+            haveTouched = true;
         } else if(dots.size <= 0) {
             game.loadLevel(levelID);
         }
