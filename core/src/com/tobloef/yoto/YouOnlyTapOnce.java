@@ -8,53 +8,76 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.*;
 
 public class YouOnlyTapOnce extends Game {
-	private long lastTime;
 	public Preferences prefs;
 	public SpriteBatch batch;
 	public ArrayList<Level> levels;
 	private float sizeModifier;
 	List<Integer> fontSizes;
 	public Map<Integer, BitmapFont> fonts;
+	private static long minSplashTime = 2000L;
 
+	private int levelID = 0;
 
 	@Override
 	public void create () {
-		lastTime = System.currentTimeMillis();
 		Preferences prefs = Gdx.app.getPreferences("Settings");
 		batch = new SpriteBatch();
 		sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())/1080f;
 
-		/*  Generate Fonts  */
-		fonts = new HashMap<Integer, BitmapFont>();
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("arial.ttf"));
-		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		parameter.color = Color.WHITE;
-		parameter.shadowColor = new Color(0,0,0,0.5f);
-		parameter.kerning = false;
-		fontSizes = new ArrayList<Integer>(Arrays.asList(256));
-		for (int fontSize : fontSizes) {
-			parameter.shadowOffsetX = Math.round((sizeModifier*fontSize)/30);
-			parameter.shadowOffsetY = Math.round((sizeModifier*fontSize)/30);
-			parameter.size = Math.round(fontSize*sizeModifier);
-			fonts.put(fontSize, generator.generateFont(parameter));
-		}
-		generator.dispose();
+		this.setScreen(new SplashScreen(this));
 
-		/*  Load Levels  */
-		levels = new ArrayList<Level>();
-		FileHandle levelFile = Gdx.files.internal("Levels.txt");
-		for (String line : levelFile.readString().split("\\n")) {
-			String[] s = line.split(",");
-			Level level = new Level(Integer.parseInt(s[0]), Float.parseFloat(s[1])*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
-			levels.add(level);
-		}
+		final long startTime = System.currentTimeMillis();
+		new Thread(new Runnable() {
+			@Override public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					@Override public void run() {
 
-		//Temporary Level Loading
-		this.setScreen(new GameScreen(this, levels.get(0)));
+						/*  Generate Fonts  */
+						fonts = new HashMap<Integer, BitmapFont>();
+						FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("arial.ttf"));
+						FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+						parameter.color = Color.WHITE;
+						parameter.shadowColor = new Color(0,0,0,0.5f);
+						parameter.kerning = false;
+						fontSizes = new ArrayList<Integer>(Arrays.asList(64, 128, 256));
+						for (int fontSize : fontSizes) {
+							parameter.shadowOffsetX = Math.round((sizeModifier*fontSize)/30);
+							parameter.shadowOffsetY = Math.round((sizeModifier*fontSize)/30);
+							parameter.size = Math.round(fontSize*sizeModifier);
+							fonts.put(fontSize, generator.generateFont(parameter));
+						}
+						generator.dispose();
+
+						/*  Load Levels  */
+						levels = new ArrayList<Level>();
+						FileHandle levelFile = Gdx.files.internal("Levels.txt");
+						int id = 0;
+						for (String line : levelFile.readString().split("\\n")) {
+							String[] s = line.split(",");
+							Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1])*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
+							levels.add(level);
+						}
+						long splash_elapsed_time = System.currentTimeMillis() - startTime;
+						if (splash_elapsed_time < minSplashTime) {
+							Timer.schedule(
+									new Timer.Task() {
+										@Override
+										public void run() {
+											loadLevel(levelID);
+										}
+									}, (float) (YouOnlyTapOnce.minSplashTime - splash_elapsed_time) / 1000f);
+						} else {
+							loadLevel(levelID);
+						}
+					}
+				});
+			}
+		}).start();
 	}
 
 	@Override
@@ -66,8 +89,7 @@ public class YouOnlyTapOnce extends Game {
 		super.dispose();
 	}
 
-	public void timePassed() {
-		System.out.println(System.currentTimeMillis() - lastTime);
-		lastTime = System.currentTimeMillis();
+	public void loadLevel(int id) {
+		this.setScreen(new GameScreen(this, levels.get(id)));
 	}
 }

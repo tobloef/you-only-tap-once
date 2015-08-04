@@ -30,6 +30,9 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean completed = false;
     private long timeSincePop;
 
+    private Level level;
+
+    private int levelID;
     private int count;
     private float dotSize;
     private float maxSize;
@@ -46,6 +49,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
+        levelID = level.levelID;
         count = level.count;
         dotSize = level.size;
         maxSize = level.maxSize;
@@ -55,6 +59,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
+
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         sizeModifier = Math.min(screenSize.x, screenSize.y) / 1080f;
         camera = new OrthographicCamera();
@@ -64,8 +69,8 @@ public class GameScreen implements Screen, InputProcessor {
         popSound = Gdx.audio.newSound(Gdx.files.internal("pop.mp3"));
         timeSincePop = System.currentTimeMillis();
 
-        dotTexture = new Texture(Gdx.files.internal("dot_white.png"));
-        shadowTexture = new Texture(Gdx.files.internal("dot_black.png"));
+        dotTexture = new Texture(Gdx.files.internal("dot_white.png"), true);
+        shadowTexture = new Texture(Gdx.files.internal("dot_black.png"), true);
         dotTextureSize = dotTexture.getWidth();
         backgroundColor = blue;
         c = game.batch.getColor();
@@ -229,7 +234,7 @@ public class GameScreen implements Screen, InputProcessor {
             dots.add(new Dot(mousePos, maxSize));
             haveBegun = true;
         } else if(dots.size <= 0) {
-            game.setScreen(new GameScreen(game, game.levels.get(0)));
+            game.loadLevel(levelID);
         }
         return true;
     }
