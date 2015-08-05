@@ -8,29 +8,30 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.Random;
 
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
-    private Sound popSound;
+
+    private Color backgroundColor;
+    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
+    private Color green = new Color(95/255f, 195/255f, 95/255f, 1);
+
     private Texture dotTexture;
     private Texture shadowTexture;
     private int dotTextureSize;
-    private Color c;
+    private Sound popSound;
+    private BitmapFont scoreFont;
+
     private Array<Dot> dots = new Array<Dot>();
-    private Random random = new Random();
-    private Vector2 screenSize;
+    private long timeSincePop;
     private boolean haveTouched = false;
     private boolean shouldEnd = false;
     private boolean completed = false;
-    private long timeSincePop;
-
-    private Level level;
+    private int score = 0;
 
     private int levelID;
     private int count;
@@ -38,14 +39,6 @@ public class GameScreen implements Screen, InputProcessor {
     private float maxSize;
     private float speed;
     private float completionPercentage;
-
-    private int score = 0;
-    private float sizeModifier;
-
-    /*  Colors  */
-    private Color backgroundColor;
-    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
-    private Color green = new Color(95/255f, 195/255f, 95/255f, 1);
 
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
@@ -59,27 +52,24 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-
-        screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sizeModifier = Math.min(screenSize.x, screenSize.y) / 1080f;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, screenSize.x, screenSize.y);
+        camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
         Gdx.input.setInputProcessor(this);
 
-        popSound = Gdx.audio.newSound(Gdx.files.internal("pop.mp3"));
-        timeSincePop = System.currentTimeMillis();
-
-        dotTexture = new Texture(Gdx.files.internal("dot_white.png"), true);
-        shadowTexture = new Texture(Gdx.files.internal("dot_black.png"), true);
-        dotTextureSize = dotTexture.getWidth();
         backgroundColor = blue;
-        c = game.batch.getColor();
+        dotTexture = game.manager.get("dot_white.png", Texture.class);
+        shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
+        dotTextureSize = dotTexture.getWidth();
+        popSound = game.manager.get("pop.mp3", Sound.class);
+        timeSincePop = System.currentTimeMillis();
+        scoreFont = game.manager.get("arial256.ttf", BitmapFont.class);
+
 
         /*  Spawn the dots  */
         for (int i = 0; i < count; i++) {
-            dots.add(new Dot(new Vector3(random.nextFloat() * (screenSize.x - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2),
-                    random.nextFloat() * (screenSize.y - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2), 0),
-                    new Vector3(random.nextFloat() * 2f - 1f, random.nextFloat() * 2f - 1f, 0).nor(), speed, dotSize, maxSize));
+            dots.add(new Dot(new Vector3(game.random.nextFloat() * (game.screenSize.x - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2),
+                    game.random.nextFloat() * (game.screenSize.y - ((dotTextureSize * dotSize/2) * 2)) + (dotTextureSize * dotSize/2), 0),
+                    new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor(), speed, dotSize, maxSize));
         }
     }
 
@@ -93,15 +83,13 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.setColor(c.r, c.g, c.b, 0.5f);
         for (Dot dot: dots) {
             game.batch.draw(shadowTexture, (dot.position.x - dotTextureSize * dot.size / 2) + (dotTextureSize * dot.size * 0.2f * dotSize), (dot.position.y - dotTextureSize * dot.size / 2) - (dotTextureSize * 0.2f * dotSize), dotTextureSize * dot.size, dotTextureSize * dot.size);
         }
-        game.batch.setColor(c);
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTextureSize * dot.size / 2, dot.position.y - dotTextureSize * dot.size / 2, dotTextureSize * dot.size, dotTextureSize * dot.size);
         }
-        game.fonts.get(256).draw(game.batch, score + "/" + Math.round(count * completionPercentage), 30 * sizeModifier, screenSize.y - (30 * sizeModifier));
+        scoreFont.draw(game.batch, score + "/" + Math.round(count * completionPercentage), 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
         game.batch.end();
 
         /*  Calculate Movement  */
@@ -113,12 +101,12 @@ public class GameScreen implements Screen, InputProcessor {
                 dot.position = position;
 
                 /*  Physics  */
-                if (dot.position.x <= 0 + (dotTextureSize * dot.size / 2) || dot.position.x + (dotTextureSize * dot.size / 2) >= screenSize.x) {
+                if (dot.position.x <= 0 + (dotTextureSize * dot.size / 2) || dot.position.x + (dotTextureSize * dot.size / 2) >= game.screenSize.x) {
                     Vector3 direction = dot.direction;
                     direction.x = -direction.x;
                     dot.direction = direction;
                 }
-                if (dot.position.y <= 0 + (dotTextureSize * dot.size / 2) || dot.position.y + (dotTextureSize * dot.size / 2) >= screenSize.y) {
+                if (dot.position.y <= 0 + (dotTextureSize * dot.size / 2) || dot.position.y + (dotTextureSize * dot.size / 2) >= game.screenSize.y) {
                     Vector3 direction = dot.direction;
                     direction.y = -direction.y;
                     dot.direction = direction;
@@ -131,7 +119,7 @@ public class GameScreen implements Screen, InputProcessor {
                         if (dot.position.dst(dots.get(i).position) < ((dotTextureSize * dot.size) / 2) + ((dotTextureSize *  dots.get(i).size) / 2)) {
                             if (System.currentTimeMillis() - timeSincePop > 50) {
                                 timeSincePop = System.currentTimeMillis();
-                                popSound.play(0.5f, random.nextFloat()*(1.25f - 0.75f) + 0.5f, 0);
+                                popSound.play(0.5f, game.random.nextFloat()*(1.25f - 0.75f) + 0.5f, 0);
                             }
                             dots.get(i).activated = true;
                             dots.get(i).state = 1;
@@ -143,7 +131,7 @@ public class GameScreen implements Screen, InputProcessor {
 
             /*  Expand/Shrink  */
             if (dot.state != 0) {
-                dot.size += dot.state * Gdx.graphics.getDeltaTime() * 0.9f;
+                dot.size += dot.state * Gdx.graphics.getDeltaTime() * 0.5f;
                 if (dot.size < 0) {
                     dots.removeValue(dot, true);
                 }
@@ -228,7 +216,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!haveTouched && game.canTouch) {
+        if (!haveTouched) {
             Vector3 mousePos = new Vector3(screenX, screenY, 0);
             camera.unproject(mousePos);
             dots.add(new Dot(mousePos, maxSize));
