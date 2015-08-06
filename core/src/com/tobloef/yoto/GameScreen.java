@@ -223,7 +223,7 @@ public class GameScreen implements Screen, InputProcessor {
             dots.add(new Dot(mousePos, maxSize));
             haveTouched = true;
         } else if(dots.size <= 0) {
-            game.loadLevel(levelID);
+            game.setScreen(new LevelSelectScreen(game));
         }
         return true;
     }

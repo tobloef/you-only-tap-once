@@ -38,7 +38,6 @@ public class YouOnlyTapOnce extends Game {
 		super.dispose();
 	}
 
-	//TODO Move to some other class/screen
 	public void loadLevel(int id) {
 		if (id == -1) {
 			int randCount = random.nextInt(300 - 1) + 1;
