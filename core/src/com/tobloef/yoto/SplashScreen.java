@@ -23,6 +23,7 @@ public class SplashScreen implements Screen {
     private Vector2 screenSize;
     private OrthographicCamera camera;
 
+    private long minSplashTime = 0L;
     private long startTime;
 
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
@@ -46,19 +47,28 @@ public class SplashScreen implements Screen {
         FileHandleResolver resolver = new InternalFileHandleResolver();
         game.manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         game.manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
-        FreetypeFontLoader.FreeTypeFontLoaderParameter size256Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size256Params.fontFileName = "arial.ttf";
-        size256Params.fontParameters.color = Color.WHITE;
-        size256Params.fontParameters.shadowColor = new Color(0,0,0,0.5f);
-        size256Params.fontParameters.kerning = false;
-        size256Params.fontParameters.shadowOffsetX = Math.round((sizeModifier*256)/30);
-        size256Params.fontParameters.shadowOffsetY = Math.round((sizeModifier*256)/30);
-        size256Params.fontParameters.size = Math.round(256*sizeModifier);
-        game.manager.load("arial256.ttf", BitmapFont.class, size256Params);
+
+        FreetypeFontLoader.FreeTypeFontLoaderParameter scoreFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        scoreFontParams.fontFileName = "arial.ttf";
+        scoreFontParams.fontParameters.color = Color.WHITE;
+        scoreFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
+        scoreFontParams.fontParameters.kerning = false;
+        scoreFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*256)/30);
+        scoreFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*256)/30);
+        scoreFontParams.fontParameters.size = Math.round(256*sizeModifier);
+        game.manager.load("score_font.ttf", BitmapFont.class, scoreFontParams);
+
+        FreetypeFontLoader.FreeTypeFontLoaderParameter menuFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        menuFontParams.fontFileName = "arial.ttf";
+        menuFontParams.fontParameters.color = Color.WHITE;
+        menuFontParams.fontParameters.size = Math.round(128*sizeModifier);
+        game.manager.load("menu_font.ttf", BitmapFont.class, menuFontParams);
+
 
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
+        game.manager.load("splash_logo.png", Texture.class);
 
         //TODO Move to level selection menu
         /*  Load Levels  */
@@ -73,8 +83,9 @@ public class SplashScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (game.manager.update() && (System.currentTimeMillis() - startTime) > 2000L) {
-            game.loadLevel(game.levelID);
+        if (game.manager.update() && (System.currentTimeMillis() - startTime) > minSplashTime) {
+            //game.loadLevel(game.levelID);
+            game.setScreen(new MainMenuScreen(game));
         }
 
         Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);

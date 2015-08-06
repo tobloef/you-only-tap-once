@@ -32,6 +32,7 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean shouldEnd = false;
     private boolean completed = false;
     private int score = 0;
+    private int scoreGoal;
 
     private int levelID;
     private int count;
@@ -62,7 +63,9 @@ public class GameScreen implements Screen, InputProcessor {
         dotTextureSize = dotTexture.getWidth();
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
-        scoreFont = game.manager.get("arial256.ttf", BitmapFont.class);
+        scoreFont = game.manager.get("score_font.ttf", BitmapFont.class);
+
+        scoreGoal = Math.round(count * completionPercentage);
 
 
         /*  Spawn the dots  */
@@ -78,8 +81,6 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        camera.update();
-
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
@@ -89,7 +90,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTextureSize * dot.size / 2, dot.position.y - dotTextureSize * dot.size / 2, dotTextureSize * dot.size, dotTextureSize * dot.size);
         }
-        scoreFont.draw(game.batch, score + "/" + Math.round(count * completionPercentage), 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
+        scoreFont.draw(game.batch, score + "/" + scoreGoal, 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
         game.batch.end();
 
         /*  Calculate Movement  */
@@ -152,7 +153,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         /*  Level Completion  */
-        if (score >= count*completionPercentage && (!shouldEnd || completed)) {
+        if (score >= scoreGoal && (!shouldEnd || completed)) {
             completed = true;
             if (backgroundColor != green) {
                 backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
