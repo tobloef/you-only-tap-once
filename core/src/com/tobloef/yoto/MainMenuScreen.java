@@ -57,7 +57,18 @@ public class MainMenuScreen implements Screen {
 
         randomLevelButton.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
+                //TODO Preview of random level before play
+                int randCount = game.random.nextInt(300 - 1) + 1;
+                float randSize = 0f;
+                while (randSize < 0.1f) {
+                    randSize = (0.4f - (((randCount-100f) * 2f) / 1000f) + (game.random.nextFloat() * (0.2f - -0.2f) + -0.2f))/2;
+                }
+                float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (game.random.nextFloat() * (1f - -1f) + -1f));
+                float randSpeed = game.random.nextFloat() * (3f - 0.25f) + 0.25f;
+                float randCompletion = game.random.nextFloat() * (0.99f - 0.65f) + 0.65f;
+                Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+                Gdx.app.log("Level", "\nCount: " + randCount + "\nSize: " + randSize + "\nMaxSize: " + randMaxSize + "\nSpeed: " + randSpeed + "\nCompletion: " + randCompletion);
+                game.setScreen(new GameScreen(game, level));
             }
         });
 
