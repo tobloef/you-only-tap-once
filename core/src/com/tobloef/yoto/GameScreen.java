@@ -17,8 +17,9 @@ public class GameScreen implements Screen, InputProcessor {
     private OrthographicCamera camera;
 
     private Color backgroundColor;
-    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
-    private Color green = new Color(95/255f, 195/255f, 95/255f, 1);
+    private Color blue = new Color(60f/255f, 145f/255f, 215f/255f, 1);
+    private Color green = new Color(95f/255f, 195f/255f, 95f/255f, 1);
+    private Color red = new Color(216f/255f, 71f/255f, 71f/255f, 1);
 
     private Texture dotTexture;
     private Texture shadowTexture;
@@ -28,7 +29,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
-    private boolean haveTouched = false;
+    private boolean hasTouched = false;
+    private boolean hasEnded = false;
     private boolean shouldEnd = false;
     private boolean completed = false;
     private int score = 0;
@@ -153,24 +155,34 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         /*  Level Completion  */
-        if (score >= scoreGoal && (!shouldEnd || completed)) {
-            completed = true;
-            if (backgroundColor != green) {
+        if (hasTouched && !hasEnded) {
+            if (!shouldEnd) {
+                if (score >= scoreGoal) {
+                    completed = true;
+                }
+                shouldEnd = true;
+                for (Dot dot : dots) {
+                    if (dot.activated) {
+                        shouldEnd = false;
+                        break;
+                    }
+                }
+            } else {
+                if (shouldEnd) {
+                    for (Dot dot : dots) {
+                        dot.state = -1;
+                    }
+                }
+            }
+            if (completed && backgroundColor != green) {
                 backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
             }
-        }
-        if (haveTouched && !shouldEnd) {
-            shouldEnd = true;
-            for (int i = 0; i < dots.size; i++) {
-                if (dots.get(i).activated) {
-                    shouldEnd = false;
-                    break;
-                }
+            if (!completed && shouldEnd && backgroundColor != red) {
+                backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 3f);
             }
-            if (shouldEnd) {
-                for (int i = 0; i < dots.size; i++) {
-                    dots.get(i).state = -1;
-                }
+            if (dots.size == 0) {
+                hasEnded = true;
+                //TODO Set timer for end screen
             }
         }
     }
@@ -217,11 +229,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!haveTouched) {
+        if (!hasTouched) {
             Vector3 mousePos = new Vector3(screenX, screenY, 0);
             camera.unproject(mousePos);
             dots.add(new Dot(mousePos, maxSize));
-            haveTouched = true;
+            hasTouched = true;
         } else if(dots.size <= 0) {
             game.setScreen(new MainMenuScreen(game));
         }

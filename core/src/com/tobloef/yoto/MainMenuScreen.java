@@ -19,6 +19,7 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private Table table;
     private Texture logoTexture;
+    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
 
     public MainMenuScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -82,6 +83,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
