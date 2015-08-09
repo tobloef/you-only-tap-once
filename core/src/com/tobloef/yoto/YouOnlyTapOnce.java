@@ -2,6 +2,7 @@ package com.tobloef.yoto;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class YouOnlyTapOnce extends Game {
+	public Preferences prefs;
 	public AssetManager manager;
 	public SpriteBatch batch;
 	public ArrayList<Level> levels = new ArrayList<Level>();;
@@ -17,10 +19,9 @@ public class YouOnlyTapOnce extends Game {
 	public float sizeModifier;
 	public Random random = new Random();
 
-	public int levelID = -1;
-
 	@Override
 	public void create () {
+		prefs = Gdx.app.getPreferences("Game Storage");
 		manager = new AssetManager();
 		batch = new SpriteBatch();
 		screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

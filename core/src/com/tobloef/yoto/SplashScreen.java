@@ -36,6 +36,11 @@ public class SplashScreen implements Screen {
     public void show() {
         startTime = System.currentTimeMillis();
 
+        if (!game.prefs.contains("levelsAvailable")) {
+            game.prefs.putInteger("levelsAvailable", 0);
+            game.prefs.flush();
+        }
+
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         sizeModifier = Math.min(screenSize.x, screenSize.y)/1080f;
         camera = new OrthographicCamera();

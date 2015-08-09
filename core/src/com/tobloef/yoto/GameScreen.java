@@ -1,6 +1,7 @@
 package com.tobloef.yoto;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
@@ -58,6 +59,7 @@ public class GameScreen implements Screen, InputProcessor {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
         Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchBackKey(true);
 
         backgroundColor = blue;
         dotTexture = game.manager.get("dot_white.png", Texture.class);
@@ -159,6 +161,10 @@ public class GameScreen implements Screen, InputProcessor {
             if (!shouldEnd) {
                 if (score >= scoreGoal) {
                     completed = true;
+                    if (game.prefs.getInteger("levelsAvailable") == levelID) {
+                        game.prefs.putInteger("levelsAvailable", levelID+1);
+                        game.prefs.flush();
+                    }
                 }
                 shouldEnd = true;
                 for (Dot dot : dots) {
@@ -174,16 +180,15 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                 }
             }
-            if (completed && backgroundColor != green) {
-                backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 3f);
-            }
-            if (!completed && shouldEnd && backgroundColor != red) {
-                backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 3f);
-            }
             if (dots.size == 0) {
                 hasEnded = true;
-                //TODO Set timer for end screen
             }
+        }
+        if (completed && backgroundColor != green) {
+            backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 4f);
+        }
+        if (!completed && shouldEnd && backgroundColor != red) {
+            backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 4f);
         }
     }
 
@@ -214,7 +219,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == Input.Keys.BACK){
+            //TODO Show either pause menu or exit confirmation
+            game.setScreen(new MainMenuScreen(game));
+        }
+        return true;
     }
 
     @Override

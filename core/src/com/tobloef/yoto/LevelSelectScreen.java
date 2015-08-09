@@ -1,6 +1,8 @@
 package com.tobloef.yoto;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class LevelSelectScreen implements Screen {
+public class LevelSelectScreen implements Screen, InputProcessor {
     YouOnlyTapOnce game;
     private ShapeRenderer shapeRenderer;
     private BitmapFont menuFont;
@@ -38,26 +40,36 @@ public class LevelSelectScreen implements Screen {
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = menuFont;
-        textButtonStyle.fontColor = Color.WHITE;
-        textButtonStyle.downFontColor = Color.ORANGE;
+        TextButton.TextButtonStyle buttonStyleOn = new TextButton.TextButtonStyle();
+        buttonStyleOn.font = menuFont;
+        buttonStyleOn.fontColor = Color.WHITE;
+        buttonStyleOn.downFontColor = Color.ORANGE;
+
+        TextButton.TextButtonStyle buttonStyleOff = new TextButton.TextButtonStyle();
+        buttonStyleOff.font = menuFont;
+        buttonStyleOff.fontColor = Color.DARK_GRAY;
 
         table = new Table();
         table.setFillParent(true);
         innerTable = new Table();
-        for (int i = 1; i < game.levels.size() + 1; i++) {
-            TextButton textButton = new TextButton(Integer.toString(i), textButtonStyle);
-            final int finalI = i-1;
-            textButton.addListener(new ChangeListener() {
-                @Override
-                public void changed (ChangeEvent event, Actor actor) {
-                    game.setScreen(new GameScreen(game, game.levels.get(finalI)));
-                }
-            });
+        for (int i = 0; i < game.levels.size(); i++) {
+            TextButton textButton;
+            if (i <= game.prefs.getInteger("levelsAvailable")) {
+                textButton = new TextButton(Integer.toString(i+1), buttonStyleOn);
+                final int finalI = i;
+                textButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed (ChangeEvent event, Actor actor) {
+                        game.setScreen(new GameScreen(game, game.levels.get(finalI)));
+                    }
+                });
+            } else {
+                textButton = new TextButton(Integer.toString(i+1), buttonStyleOff);
+            }
             innerTable.add(textButton).width(game.sizeModifier*270f).height(game.sizeModifier*200f);
-            if (i%6 == 0) {
+            if (i%6 == 0 && i != 0) {
                 innerTable.row();
             }
         }
@@ -83,8 +95,8 @@ public class LevelSelectScreen implements Screen {
         shapeRenderer.setColor(blue);
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
         shapeRenderer.rect(0, 10 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, blue, blue, clear, clear);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 60*game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 10*game.sizeModifier, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 60 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 10 * game.sizeModifier, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
@@ -112,5 +124,49 @@ public class LevelSelectScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.BACK){
+            //TODO Show either pause menu or exit confirmation
+            game.setScreen(new MainMenuScreen(game));
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
