@@ -58,9 +58,9 @@ public class SplashScreen implements Screen {
         scoreFontParams.fontParameters.color = Color.WHITE;
         scoreFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
         scoreFontParams.fontParameters.kerning = false;
-        scoreFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*256)/30);
-        scoreFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*256)/30);
-        scoreFontParams.fontParameters.size = Math.round(256*sizeModifier);
+        scoreFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*192)/30);
+        scoreFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*192)/30);
+        scoreFontParams.fontParameters.size = Math.round(192*sizeModifier);
         game.manager.load("score_font.ttf", BitmapFont.class, scoreFontParams);
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter menuFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -74,6 +74,7 @@ public class SplashScreen implements Screen {
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
+        game.manager.load("restart_icon.png", Texture.class);
 
         //TODO Move to level selection menu
         /*  Load Levels  */

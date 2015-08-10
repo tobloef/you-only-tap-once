@@ -2,7 +2,6 @@ package com.tobloef.yoto;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class LevelSelectScreen implements Screen, InputProcessor {
+public class LevelSelectScreen implements Screen {
     YouOnlyTapOnce game;
     private ShapeRenderer shapeRenderer;
     private BitmapFont menuFont;
@@ -38,7 +37,17 @@ public class LevelSelectScreen implements Screen, InputProcessor {
         shapeRenderer = new ShapeRenderer();
         menuFont = game.manager.get("menu_font.ttf", BitmapFont.class);
 
-        stage = new Stage();
+        stage = new Stage() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
+                    //TODO Show either pause menu or exit confirmation
+                    game.setScreen(new MainMenuScreen(game));
+                }
+                return true;
+            }
+        };
+
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
 
@@ -124,49 +133,5 @@ public class LevelSelectScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
 
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.BACK){
-            //TODO Show either pause menu or exit confirmation
-            game.setScreen(new MainMenuScreen(game));
-        }
-        return true;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
     }
 }
