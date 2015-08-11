@@ -52,8 +52,9 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.input.setCatchBackKey(true);
 
         backgroundColor = blue;
-        dotTexture = game.manager.get("dot_white.png", Texture.class);
-        shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
+        //dotTexture = game.manager.get("dot_white.png", Texture.class);
+        //shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
+        dotTexture = game.manager.get("dot.png", Texture.class);
         restartTexture = game.manager.get("restart_icon.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
@@ -63,10 +64,14 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         /*  Spawn the dots  */
+        float maxX = game.screenSize.x - (dotTexture.getWidth() - 15) * game.sizeModifier;
+        float maxY = game.screenSize.y - dotTexture.getWidth() * game.sizeModifier;
+        float minY = -15 * game.sizeModifier;
+
         for (int i = 0; i < level.count; i++) {
-            dots.add(new Dot(new Vector3(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2),
-                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2), 0),
-                    new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor(), level.speed, level.dotSize, level.maxSize));
+            Vector3 position = new Vector3(game.random.nextFloat() * maxX + maxX, game.random.nextFloat() * (maxY - minY) + maxY, 0);
+            Vector3 direction = new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor();
+            dots.add(new Dot(position, direction, level.speed, level.dotSize, level.maxSize));
         }
     }
 
@@ -78,13 +83,16 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        for (Dot dot: dots) {
+        /*for (Dot dot: dots) {
             game.batch.draw(shadowTexture, (dot.position.x - dotTexture.getWidth() * dot.size / 2) + (dotTexture.getWidth() * dot.size * 0.2f * level.dotSize), (dot.position.y - dotTexture.getWidth() * dot.size / 2) - (dotTexture.getWidth() * 0.2f * level.dotSize), dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
+        }*/
+        for (Dot dot: dots) {
+            game.batch.draw(dotTexture, dot.position.x - (dotTexture.getWidth()-15)/2*dot.size);
         }
-        game.batch.draw(restartTexture, game.screenSize.x-150f*game.sizeModifier, game.screenSize.y-150f*game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier);
+        game.batch.draw(restartTexture, game.screenSize.x - 150f * game.sizeModifier, game.screenSize.y - 150f * game.sizeModifier, restartTexture.getWidth() /2 * game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier);
         scoreFont.draw(game.batch, score + "/" + scoreGoal, 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
         game.batch.end();
 
