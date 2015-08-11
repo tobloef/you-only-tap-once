@@ -36,6 +36,9 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean completed = false;
     private int score = 0;
     private int scoreGoal;
+    
+    private float textureOffset;
+    private float dotTextureSize;
 
     private Level level;
 
@@ -52,21 +55,22 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.input.setCatchBackKey(true);
 
         backgroundColor = blue;
-        dotTexture = game.manager.get("dot_white.png", Texture.class);
-        shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
+        dotTexture = game.manager.get("dot.png", Texture.class);
         restartTexture = game.manager.get("restart_icon.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
         scoreFont = game.manager.get("score_font.ttf", BitmapFont.class);
 
         scoreGoal = Math.round(level.count * level.completionPercentage);
-
+        textureOffset = (dotTexture.getWidth()-15)*game.sizeModifier;
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
-            dots.add(new Dot(new Vector3(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2),
-                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2), 0),
-                    new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor(), level.speed, level.dotSize, level.maxSize));
+            float posX = game.random.nextFloat() * (game.screenSize.x - textureOffset*2) + textureOffset*2;
+            float posY = game.random.nextFloat() * (game.screenSize.y - textureOffset*2) + textureOffset*2;
+            Vector3 position = new Vector3(posX, posY, 0);
+            Vector3 direction = new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor();
+            dots.add(new Dot(position, direction, level.speed, level.dotSize, level.maxSize));
         }
     }
 
@@ -79,12 +83,9 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         for (Dot dot: dots) {
-            game.batch.draw(shadowTexture, (dot.position.x - dotTexture.getWidth() * dot.size / 2) + (dotTexture.getWidth() * dot.size * 0.2f * level.dotSize), (dot.position.y - dotTexture.getWidth() * dot.size / 2) - (dotTexture.getWidth() * 0.2f * level.dotSize), dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
+            game.batch.draw(dotTexture, dot.position.x - textureOffset*dot.size, dot.position.y - textureOffset*dot.size, dotTexture.getWidth()*dot.size, dotTexture.getWidth()*dot.size);
         }
-        for (Dot dot: dots) {
-            game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
-        }
-        game.batch.draw(restartTexture, game.screenSize.x-150f*game.sizeModifier, game.screenSize.y-150f*game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier);
+        game.batch.draw(restartTexture, game.screenSize.x - 150f * game.sizeModifier, game.screenSize.y - 150f * game.sizeModifier, restartTexture.getWidth() /2 * game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier);
         scoreFont.draw(game.batch, score + "/" + scoreGoal, 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
         game.batch.end();
 
@@ -97,12 +98,12 @@ public class GameScreen implements Screen, InputProcessor {
                 dot.position = position;
 
                 /*  Physics  */
-                if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
+                if (dot.position.x <= textureOffset || dot.position.x >= game.screenSize.x - textureOffset) {
                     Vector3 direction = dot.direction;
                     direction.x = -direction.x;
                     dot.direction = direction;
                 }
-                if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
+                if (dot.position.y <= textureOffset || dot.position.y >= game.screenSize.y - textureOffset) {
                     Vector3 direction = dot.direction;
                     direction.y = -direction.y;
                     dot.direction = direction;
@@ -112,7 +113,7 @@ public class GameScreen implements Screen, InputProcessor {
                 /*  Dot Collision  */
                 for (int i = 0; i < dots.size; i++) {
                     if (!dots.get(i).activated && dots.get(i) != dot) {
-                        if (dot.position.dst(dots.get(i).position) < ((dotTexture.getWidth() * dot.size) / 2) + ((dotTexture.getWidth() *  dots.get(i).size) / 2)) {
+                        if (dot.position.dst(dots.get(i).position) < ((dotTexture.getWidth() * game.sizeModifier * dot.size) / 2) + ((dotTexture.getWidth() * game.sizeModifier *  dots.get(i).size) / 2)) {
                             if (System.currentTimeMillis() - timeSincePop > 50) {
                                 timeSincePop = System.currentTimeMillis();
                                 popSound.play(0.5f, game.random.nextFloat()*(1.25f - 0.75f) + 0.5f, 0);

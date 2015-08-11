@@ -71,8 +71,7 @@ public class SplashScreen implements Screen {
 
 
         game.manager.load("pop.mp3", Sound.class);
-        game.manager.load("dot_white.png", Texture.class);
-        game.manager.load("dot_shadow.png", Texture.class);
+        game.manager.load("dot.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
         game.manager.load("restart_icon.png", Texture.class);
 
