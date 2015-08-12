@@ -1,6 +1,7 @@
 package com.tobloef.yoto;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
@@ -20,7 +22,6 @@ public class MainMenuScreen implements Screen {
     private Table table;
     private Texture logoTexture;
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
-
     public MainMenuScreen(final YouOnlyTapOnce game) {
         this.game = game;
     }
@@ -30,7 +31,16 @@ public class MainMenuScreen implements Screen {
         menuFont = game.manager.get("menu_font.ttf", BitmapFont.class);
         logoTexture = game.manager.get("splash_logo.png", Texture.class);
 
-        stage = new Stage();
+        stage = new Stage(new ScreenViewport())  {
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
+                    //TODO Confirmation?
+                    Gdx.app.exit();
+                }
+                return true;
+            }
+        };
         Gdx.input.setInputProcessor(stage);
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
@@ -90,7 +100,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

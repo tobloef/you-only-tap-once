@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -46,6 +47,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
+        game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
         Gdx.input.setInputProcessor(this);
@@ -64,9 +66,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
-            dots.add(new Dot(new Vector3(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2),
-                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2), 0),
-                    new Vector3(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f, 0).nor(), level.speed, level.dotSize, level.maxSize));
+            dots.add(new Dot(new Vector2(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2),
+                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2)),
+                    new Vector2(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f).nor(), level.speed, level.dotSize, level.maxSize));
         }
     }
 
@@ -91,19 +93,19 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Calculate Movement  */
         for (Dot dot: dots) {
             if (!dot.activated) {
-                Vector3 position = dot.position;
+                Vector2 position = dot.position;
                 position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
                 position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
                 dot.position = position;
 
                 /*  Physics  */
                 if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
-                    Vector3 direction = dot.direction;
+                    Vector2 direction = dot.direction;
                     direction.x = -direction.x;
                     dot.direction = direction;
                 }
                 if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
-                    Vector3 direction = dot.direction;
+                    Vector2 direction = dot.direction;
                     direction.y = -direction.y;
                     dot.direction = direction;
                 }
@@ -185,7 +187,22 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-
+        if (game.screenSize.x != width && game.screenSize.y != height) {
+            game.screenSize = new Vector2(width, height);
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, width, height);
+            for (Dot dot : dots) {
+                if (width > height) {
+                    dot.position = dot.position.rotate(90);
+                    dot.direction = dot.direction.rotate(90);
+                    dot.position.x += width;
+                } else {
+                    dot.position = dot.position.rotate(-90);
+                    dot.direction = dot.direction.rotate(-90);
+                    dot.position.y += height;
+                }
+            }
+        }
     }
 
     @Override
@@ -237,7 +254,7 @@ public class GameScreen implements Screen, InputProcessor {
             return true;
         }
         if (!hasTouched) {
-            dots.add(new Dot(mousePos, level.maxSize));
+            dots.add(new Dot(new Vector2(mousePos.x, mousePos.y), level.maxSize));
             hasTouched = true;
         } else if(dots.size <= 0) {
             game.setScreen(new MainMenuScreen(game));

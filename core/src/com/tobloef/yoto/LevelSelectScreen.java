@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,11 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class LevelSelectScreen implements Screen {
     YouOnlyTapOnce game;
     private ShapeRenderer shapeRenderer;
     private BitmapFont menuFont;
+    private Texture backButtonTexture;
     private Stage stage;
     private Table table;
     private Table innerTable;
@@ -35,9 +38,10 @@ public class LevelSelectScreen implements Screen {
     @Override
     public void show() {
         shapeRenderer = new ShapeRenderer();
+        backButtonTexture = game.manager.get("back_icon.png", Texture.class);
         menuFont = game.manager.get("menu_font.ttf", BitmapFont.class);
 
-        stage = new Stage() {
+        stage = new Stage(new ScreenViewport()) {
             @Override
             public boolean keyDown(int keycode) {
                 if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
@@ -77,9 +81,16 @@ public class LevelSelectScreen implements Screen {
             } else {
                 textButton = new TextButton(Integer.toString(i+1), buttonStyleOff);
             }
-            innerTable.add(textButton).width(game.sizeModifier*270f).height(game.sizeModifier*200f);
-            if (i%6 == 0 && i != 0) {
-                innerTable.row();
+            if (Gdx.graphics.getWidth() > Gdx.graphics.getHeight()) {
+                innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
+                if ((i+1) % 7 == 0 && i != 0) {
+                    innerTable.row();
+                }
+            } else {
+                innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
+                if ((i+1) % 4 == 0 && i != 0) {
+                    innerTable.row();
+                }
             }
         }
         ScrollPaneStyle scrollPanelStyle = new ScrollPaneStyle();
@@ -87,8 +98,8 @@ public class LevelSelectScreen implements Screen {
         scrollPane = new ScrollPane(innerTable);
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setupOverscroll(30f, 30f, 150f);
-        table.add(scrollPane);
 
+        table.add(scrollPane);
         stage.addActor(table);
     }
 
@@ -104,15 +115,16 @@ public class LevelSelectScreen implements Screen {
         shapeRenderer.setColor(blue);
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
         shapeRenderer.rect(0, 10 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, blue, blue, clear, clear);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 60 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 10 * game.sizeModifier, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 250 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 200 * game.sizeModifier, Gdx.graphics.getWidth(), 200 * game.sizeModifier);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
+        show();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.tobloef.yoto;
 
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 
 public class Dot {
-    public Vector3 position;
-    public Vector3 direction;
+    public Vector2 position;
+    public Vector2 direction;
     public float size;
     public float maxSize;
     public boolean activated;
@@ -13,7 +13,7 @@ public class Dot {
     public boolean shouldCount = false;
 
     public Dot() {}
-    public Dot(Vector3 position, Vector3 direction, float speed, float size, float maxSize) {
+    public Dot(Vector2 position, Vector2 direction, float speed, float size, float maxSize) {
         this.position = position;
         this.direction = direction;
         this.size = size;
@@ -21,10 +21,11 @@ public class Dot {
         activated = false;
         state = 0;
     }
-    public Dot(Vector3 position, float maxSize) {
+    public Dot(Vector2 position, float maxSize) {
         this.position = position;
         this.maxSize = maxSize;
         activated = true;
         state = 1;
+        direction = new Vector2(0,0);
     }
 }

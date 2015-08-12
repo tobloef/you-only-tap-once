@@ -23,7 +23,7 @@ public class SplashScreen implements Screen {
     private Vector2 screenSize;
     private OrthographicCamera camera;
 
-    private long minSplashTime = 0L;
+    private long minSplashTime = 2000L;
     private long startTime;
 
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
@@ -75,6 +75,7 @@ public class SplashScreen implements Screen {
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
         game.manager.load("restart_icon.png", Texture.class);
+        game.manager.load("back_icon.png", Texture.class);
 
         //TODO Move to level selection menu
         /*  Load Levels  */
@@ -98,13 +99,14 @@ public class SplashScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(splashTexture, screenSize.x/2 - (splashTexture.getWidth()*sizeModifier / 2), screenSize.y/2 - (splashTexture.getHeight()*sizeModifier / 2), splashTexture.getWidth()*sizeModifier, splashTexture.getHeight()*sizeModifier);
+        game.batch.draw(splashTexture, Gdx.graphics.getWidth() / 2f - ((float) Gdx.graphics.getWidth() * 0.4f), Gdx.graphics.getHeight() / 2f - (Gdx.graphics.getWidth() / (float) splashTexture.getWidth() * splashTexture.getHeight() * 0.4f), Gdx.graphics.getWidth() * 0.8f, (Gdx.graphics.getWidth() / (float) splashTexture.getWidth()) * (float) splashTexture.getHeight() * 0.8f);
         game.batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, width, height);
     }
 
     @Override
