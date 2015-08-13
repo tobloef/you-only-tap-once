@@ -38,7 +38,7 @@ public class LevelSelectScreen implements Screen {
     @Override
     public void show() {
         shapeRenderer = new ShapeRenderer();
-        backButtonTexture = game.manager.get("back_icon.png", Texture.class);
+        //backButtonTexture = game.manager.get("back_icon.png", Texture.class);
         menuFont = game.manager.get("menu_font.ttf", BitmapFont.class);
 
         stage = new Stage(new ScreenViewport()) {

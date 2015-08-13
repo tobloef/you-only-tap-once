@@ -75,7 +75,7 @@ public class SplashScreen implements Screen {
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
         game.manager.load("restart_icon.png", Texture.class);
-        game.manager.load("back_icon.png", Texture.class);
+        //game.manager.load("back_icon.png", Texture.class);
 
         //TODO Move to level selection menu
         /*  Load Levels  */
