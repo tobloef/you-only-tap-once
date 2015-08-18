@@ -15,8 +15,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
@@ -36,7 +34,6 @@ public class GameScreen implements Screen, InputProcessor {
     private BitmapFont scoreFont;
 
     private Actor pauseButton;
-    private Window pauseMenu;
 
     private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
@@ -79,9 +76,6 @@ public class GameScreen implements Screen, InputProcessor {
                 game.setScreen(new MainMenuScreen(game));
             }
         });
-
-       WindowStyle windowStyle = new WindowStyle();
-        pauseMenu = new Window("Test", windowStyle);
 
         scoreGoal = Math.round(level.count * level.completionPercentage);
 
