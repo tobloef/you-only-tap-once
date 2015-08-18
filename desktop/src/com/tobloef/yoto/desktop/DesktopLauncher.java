@@ -12,8 +12,8 @@ public class DesktopLauncher {
 		config.title = "You Only Tap Once";
 		config.width = Toolkit.getDefaultToolkit().getScreenSize().width;
 		config.height = Toolkit.getDefaultToolkit().getScreenSize().height;
-		config.width = 1280;
-		config.height = 720;
+		config.width = 1366;
+		config.height = 768;
 		config.vSyncEnabled = false;
 		config.fullscreen = false;
 		new LwjglApplication(new YouOnlyTapOnce(), config);

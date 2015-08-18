@@ -36,6 +36,8 @@ public class YouOnlyTapOnce extends Game {
 	}
 
 	public void dispose() {
+	  manager.dispose();
+	  batch.dispose();
 		super.dispose();
 	}
 }

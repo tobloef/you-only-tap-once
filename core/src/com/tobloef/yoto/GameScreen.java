@@ -12,6 +12,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -19,15 +25,18 @@ public class GameScreen implements Screen, InputProcessor {
     private OrthographicCamera camera;
 
     private Color backgroundColor;
-    private Color blue = new Color(60f/255f, 145f/255f, 215f/255f, 1);
+    private Color blue = new Color(60f/255f, 145f/255f, 215f/255f, 1);  //3c91d6
     private Color green = new Color(95f/255f, 195f/255f, 95f/255f, 1);
     private Color red = new Color(216f/255f, 71f/255f, 71f/255f, 1);
 
     private Texture dotTexture;
     private Texture shadowTexture;
-    private Texture restartTexture;
+    private Texture pauseTexture;
     private Sound popSound;
     private BitmapFont scoreFont;
+
+    private Actor pauseButton;
+    private Window pauseMenu;
 
     private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
@@ -56,13 +65,25 @@ public class GameScreen implements Screen, InputProcessor {
         backgroundColor = blue;
         dotTexture = game.manager.get("dot_white.png", Texture.class);
         shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
-        restartTexture = game.manager.get("restart_icon.png", Texture.class);
+        pauseTexture = game.manager.get("pause_icon.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
         scoreFont = game.manager.get("score_font.ttf", BitmapFont.class);
 
-        scoreGoal = Math.round(level.count * level.completionPercentage);
+        pauseButton = new Image(pauseTexture);
+        pauseButton.setSize(140f * game.sizeModifier, 140f * game.sizeModifier);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() - 15f, Gdx.graphics.getHeight() - pauseButton.getHeight() - 15f);
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
 
+       WindowStyle windowStyle = new WindowStyle();
+        pauseMenu = new Window("Test", windowStyle);
+
+        scoreGoal = Math.round(level.count * level.completionPercentage);
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
@@ -86,8 +107,8 @@ public class GameScreen implements Screen, InputProcessor {
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
-        game.batch.draw(restartTexture, game.screenSize.x-150f*game.sizeModifier, game.screenSize.y-150f*game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier, restartTexture.getWidth()/2 * game.sizeModifier);
         scoreFont.draw(game.batch, score + "/" + scoreGoal, 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
+        pauseButton.draw(game.batch, 1);
         game.batch.end();
 
         /*  Calculate Movement  */
@@ -222,7 +243,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-
+        dotTexture.dispose();
+        shadowTexture.dispose();
+        pauseTexture.dispose();
+        popSound.dispose();
+        scoreFont.dispose();
     }
 
     @Override
@@ -246,20 +271,15 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 mousePos = new Vector3(screenX, screenY, 0);
-        camera.unproject(mousePos);
-        if (mousePos.x > game.screenSize.x-150f*game.sizeModifier && mousePos.x < (game.screenSize.x-150f*game.sizeModifier) + (restartTexture.getWidth()*game.sizeModifier)
-        && mousePos.y > game.screenSize.y-150f*game.sizeModifier && mousePos.y < (game.screenSize.y-150f*game.sizeModifier) + (restartTexture.getHeight()*game.sizeModifier)) {
-            game.setScreen(new GameScreen(game, level));
-            return true;
-        }
+        Vector3 touchPos = new Vector3(screenX, screenY, 0);
+        camera.unproject(touchPos);
         if (!hasTouched) {
-            dots.add(new Dot(new Vector2(mousePos.x, mousePos.y), level.maxSize));
+            dots.add(new Dot(new Vector2(touchPos.x, touchPos.y), level.maxSize));
             hasTouched = true;
         } else if(dots.size <= 0) {
             game.setScreen(new MainMenuScreen(game));
         }
-        return true;
+        return false;
     }
 
     @Override

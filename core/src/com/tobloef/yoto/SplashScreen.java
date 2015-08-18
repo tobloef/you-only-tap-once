@@ -75,9 +75,9 @@ public class SplashScreen implements Screen {
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
         game.manager.load("restart_icon.png", Texture.class);
-        //game.manager.load("back_icon.png", Texture.class);
+        game.manager.load("back_icon.png", Texture.class);
+        game.manager.load("pause_icon.png", Texture.class);
 
-        //TODO Move to level selection menu
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
         int id = 0;
@@ -91,7 +91,6 @@ public class SplashScreen implements Screen {
     @Override
     public void render(float delta) {
         if (game.manager.update() && (System.currentTimeMillis() - startTime) > minSplashTime) {
-            //game.loadLevel(game.levelID);
             game.setScreen(new MainMenuScreen(game));
         }
 
@@ -126,6 +125,6 @@ public class SplashScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        splashTexture.dispose();
     }
 }
