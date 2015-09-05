@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
-    private BitmapFont menuFont;
+    private BitmapFont bigFont;
     private Stage stage;
     private Table table;
     private Texture logoTexture;
@@ -28,7 +28,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        menuFont = game.manager.get("menu_font.ttf", BitmapFont.class);
+        bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         logoTexture = game.manager.get("splash_logo.png", Texture.class);
 
         stage = new Stage(new ScreenViewport())  {
@@ -44,7 +44,7 @@ public class MainMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
-        textButtonStyle.font = menuFont;
+        textButtonStyle.font = bigFont;
         textButtonStyle.fontColor = Color.WHITE;
         textButtonStyle.downFontColor = Color.ORANGE;
         final TextButton levelSelectButton = new TextButton("Level Select", textButtonStyle);
@@ -120,7 +120,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        menuFont.dispose();
+        bigFont.dispose();
         stage.dispose();
         logoTexture.dispose();
     }

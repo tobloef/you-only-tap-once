@@ -5,18 +5,21 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
@@ -30,10 +33,18 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture dotTexture;
     private Texture shadowTexture;
     private Texture pauseTexture;
+    private Texture pauseTexturePressed;
+    private Texture resumeTexture;
+    private Texture resumeTexturePressed;
+    private Texture restartTexture;
+    private Texture restartTexturePressed;
+    private Texture levelsTexture;
+    private Texture levelsTexturePressed;
+    private Texture settingsTexture;
+    private Texture settingsTexturePressed;
     private Sound popSound;
-    private BitmapFont scoreFont;
-
-    private Actor pauseButton;
+    private BitmapFont bigFont;
+    private BitmapFont mediumFont;
 
     private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
@@ -41,8 +52,24 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean hasEnded = false;
     private boolean shouldEnd = false;
     private boolean completed = false;
+    private boolean paused = false;
+    private boolean justResumed = false;
     private int score = 0;
     private int scoreGoal;
+
+    private Stage stage;
+    private Image tint;
+    private Label scoreLabel;
+    private ImageButton pauseButton;
+    private Table pauseTable = new Table();
+
+    ImageButton.ImageButtonStyle pauseButtonStyle;
+    ImageButton.ImageButtonStyle resumeButtonStyle;
+    ImageButton.ImageButtonStyle restartButtonStyle;
+    ImageButton.ImageButtonStyle levelsButtonStyle;
+    ImageButton.ImageButtonStyle settingsButtonStyle;
+    Label.LabelStyle labelStyleBig;
+    Label.LabelStyle labelStyleMedium;
 
     private Level level;
 
@@ -56,28 +83,112 @@ public class GameScreen implements Screen, InputProcessor {
         game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
-        Gdx.input.setInputProcessor(this);
-        Gdx.input.setCatchBackKey(true);
+        scoreGoal = Math.round(level.count * level.completionPercentage);
 
         backgroundColor = blue;
         dotTexture = game.manager.get("dot_white.png", Texture.class);
         shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
         pauseTexture = game.manager.get("pause_icon.png", Texture.class);
+        pauseTexturePressed = game.manager.get("pause_icon_pressed.png", Texture.class);
+        resumeTexture = game.manager.get("resume_icon.png", Texture.class);
+        resumeTexturePressed = game.manager.get("resume_icon_pressed.png", Texture.class);
+        restartTexture = game.manager.get("restart_icon.png", Texture.class);
+        restartTexturePressed = game.manager.get("restart_icon_pressed.png", Texture.class);
+        levelsTexture = game.manager.get("levels_icon.png", Texture.class);
+        levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
+        settingsTexture = game.manager.get("settings_icon.png", Texture.class);
+        settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
-        scoreFont = game.manager.get("score_font.ttf", BitmapFont.class);
+        bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
+        mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
 
-        pauseButton = new Image(pauseTexture);
+        pauseButtonStyle = new ImageButton.ImageButtonStyle();
+        pauseButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(pauseTexture));
+        pauseButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(pauseTexturePressed));
+
+        resumeButtonStyle = new ImageButton.ImageButtonStyle();
+        resumeButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(resumeTexture));
+        resumeButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(resumeTexturePressed));
+
+        restartButtonStyle = new ImageButton.ImageButtonStyle();
+        restartButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(restartTexture));
+        restartButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(restartTexturePressed));
+
+        levelsButtonStyle = new ImageButton.ImageButtonStyle();
+        levelsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(levelsTexture));
+        levelsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(levelsTexturePressed));
+
+        settingsButtonStyle = new ImageButton.ImageButtonStyle();
+        settingsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(settingsTexture));
+        settingsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(settingsTexturePressed));
+
+        labelStyleBig = new Label.LabelStyle();
+        labelStyleBig.font = bigFont;
+
+        labelStyleMedium = new Label.LabelStyle();
+        labelStyleMedium.font = mediumFont;
+
+        pauseButton = new ImageButton(pauseButtonStyle);
         pauseButton.setSize(140f * game.sizeModifier, 140f * game.sizeModifier);
-        pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() - 15f, Gdx.graphics.getHeight() - pauseButton.getHeight() - 15f);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() - (15 * game.sizeModifier), Gdx.graphics.getHeight() - pauseButton.getHeight() - (15 * game.sizeModifier));
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                pauseGame();
             }
         });
 
-        scoreGoal = Math.round(level.count * level.completionPercentage);
+        scoreLabel = new Label(score + "/" + scoreGoal, labelStyleBig);
+        scoreLabel.setHeight(128 * game.sizeModifier);
+        scoreLabel.setPosition(25 * game.sizeModifier, game.screenSize.y - scoreLabel.getHeight() - (30 * game.sizeModifier));
+
+        stage = new Stage(new ScreenViewport());
+        stage.setDebugAll(false);
+        stage.addActor(pauseButton);
+        stage.addActor(scoreLabel);
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (!hasTouched && !paused && !justResumed) {
+                    dots.add(new Dot(new Vector2(x, y), level.maxSize));
+                    hasTouched = true;
+                } else if (dots.size <= 0) {
+                    game.setScreen(new MainMenuScreen(game));
+                }
+                justResumed = false;
+            }
+        });
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
+                    //TODO Show either pause menu or exit confirmation
+                    if (!paused) {
+                        game.setScreen(new MainMenuScreen(game));
+                    } else {
+                        resumeGame();
+                    }
+                }
+                return true;
+            }
+        });
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888 );
+        pixmap.setColor(0, 0, 0, 0.7f);
+        pixmap.fill();
+        tint = new Image(new Texture(pixmap));
+        tint.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        tint.setVisible(false);
+        stage.addActor(tint);
+
+        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
@@ -91,6 +202,7 @@ public class GameScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(delta);
 
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
@@ -101,111 +213,194 @@ public class GameScreen implements Screen, InputProcessor {
         for (Dot dot: dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
-        scoreFont.draw(game.batch, score + "/" + scoreGoal, 30 * game.sizeModifier, game.screenSize.y - (30 * game.sizeModifier));
-        pauseButton.draw(game.batch, 1);
         game.batch.end();
 
-        /*  Calculate Movement  */
-        for (Dot dot: dots) {
-            if (!dot.activated) {
-                Vector2 position = dot.position;
-                position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
-                position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
-                dot.position = position;
+        if (!paused) {
+            /*  Calculate Movement  */
+            for (Dot dot : dots) {
+                if (!dot.activated) {
+                    Vector2 position = dot.position;
+                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
+                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
+                    dot.position = position;
 
-                /*  Physics  */
-                if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
-                    Vector2 direction = dot.direction;
-                    direction.x = -direction.x;
-                    dot.direction = direction;
-                }
-                if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
-                    Vector2 direction = dot.direction;
-                    direction.y = -direction.y;
-                    dot.direction = direction;
-                }
-            } else {
+                    /*  Physics  */
+                    if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
+                        Vector2 direction = dot.direction;
+                        direction.x = -direction.x;
+                        dot.direction = direction;
+                    }
+                    if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
+                        Vector2 direction = dot.direction;
+                        direction.y = -direction.y;
+                        dot.direction = direction;
+                    }
+                } else {
 
-                /*  Dot Collision  */
-                for (int i = 0; i < dots.size; i++) {
-                    if (!dots.get(i).activated && dots.get(i) != dot) {
-                        if (dot.position.dst(dots.get(i).position) < ((dotTexture.getWidth() * dot.size) / 2) + ((dotTexture.getWidth() *  dots.get(i).size) / 2)) {
-                            if (System.currentTimeMillis() - timeSincePop > 50) {
-                                timeSincePop = System.currentTimeMillis();
-                                popSound.play(0.5f, game.random.nextFloat()*(1.25f - 0.75f) + 0.5f, 0);
+                    /*  Dot Collision  */
+                    for (int i = 0; i < dots.size; i++) {
+                        if (!dots.get(i).activated && dots.get(i) != dot) {
+                            if (dot.position.dst(dots.get(i).position) < ((dotTexture.getWidth() * dot.size) / 2) + ((dotTexture.getWidth() * dots.get(i).size) / 2)) {
+                                if (System.currentTimeMillis() - timeSincePop > 50) {
+                                    timeSincePop = System.currentTimeMillis();
+                                    popSound.play(0.5f, game.random.nextFloat() * (1.25f - 0.75f) + 0.5f, 0);
+                                }
+                                dots.get(i).activated = true;
+                                dots.get(i).state = 1;
+                                score += 1;
+                                scoreLabel.setText(score + "/" + scoreGoal);
                             }
-                            dots.get(i).activated = true;
-                            dots.get(i).state = 1;
-                            score += 1;
                         }
                     }
                 }
-            }
 
-            /*  Expand/Shrink  */
-            if (dot.state != 0) {
-                dot.size += dot.state * Gdx.graphics.getDeltaTime() * 0.5f;
-                if (dot.size < 0) {
-                    dots.removeValue(dot, true);
-                }
-                if (dot.size > dot.maxSize) {
-                    dot.state = 0;
-                    if (!dot.shouldCount) {
-                        dot.shouldCount = true;
+                /*  Expand/Shrink  */
+                if (dot.state != 0) {
+                    dot.size += dot.state * Gdx.graphics.getDeltaTime() * 0.5f;
+                    if (dot.size < 0) {
+                        dots.removeValue(dot, true);
+                    }
+                    if (dot.size > dot.maxSize) {
+                        dot.state = 0;
+                        if (!dot.shouldCount) {
+                            dot.shouldCount = true;
+                        }
                     }
                 }
-            }
-            if (dot.shouldCount) {
-                dot.lifetime += Gdx.graphics.getDeltaTime();
-                if (dot.lifetime > 1.5f) {
-                    dot.shouldCount = false;
-                    dot.state = -1;
-                }
-            }
-        }
-
-        /*  Level Completion  */
-        if (hasTouched && !hasEnded) {
-            if (!shouldEnd) {
-                if (score >= scoreGoal) {
-                    completed = true;
-                    if (game.prefs.getInteger("levelsAvailable") == level.levelID) {
-                        game.prefs.putInteger("levelsAvailable", level.levelID+1);
-                        game.prefs.flush();
-                    }
-                }
-                shouldEnd = true;
-                for (Dot dot : dots) {
-                    if (dot.activated) {
-                        shouldEnd = false;
-                        break;
-                    }
-                }
-            } else {
-                if (shouldEnd) {
-                    for (Dot dot : dots) {
+                if (dot.shouldCount) {
+                    dot.lifetime += Gdx.graphics.getDeltaTime();
+                    if (dot.lifetime > 1.5f) {
+                        dot.shouldCount = false;
                         dot.state = -1;
                     }
                 }
             }
-            if (dots.size == 0) {
-                hasEnded = true;
+
+            /*  Level Completion  */
+            if (hasTouched && !hasEnded) {
+                if (!shouldEnd) {
+                    if (score >= scoreGoal) {
+                        completed = true;
+                        if (game.prefs.getInteger("levelsAvailable") == level.levelID) {
+                            game.prefs.putInteger("levelsAvailable", level.levelID + 1);
+                            game.prefs.flush();
+                        }
+                    }
+                    shouldEnd = true;
+                    for (Dot dot : dots) {
+                        if (dot.activated) {
+                            shouldEnd = false;
+                            break;
+                        }
+                    }
+                } else {
+                    if (shouldEnd) {
+                        for (Dot dot : dots) {
+                            dot.state = -1;
+                        }
+                    }
+                }
+                if (dots.size == 0) {
+                    hasEnded = true;
+                }
+            }
+            if (completed && backgroundColor != green) {
+                backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 4f);
+            }
+            if (!completed && shouldEnd && backgroundColor != red) {
+                backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 4f);
             }
         }
-        if (completed && backgroundColor != green) {
-            backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 4f);
+
+        stage.draw();
+    }
+
+    public void pauseGame() {
+        paused = true;
+        tint.setVisible(true);
+        pauseTable.setFillParent(true);
+        popSound.pause();
+
+        Label pauseLabel = new Label("Paused", labelStyleBig);
+        final ImageButton resumeButton = new ImageButton(resumeButtonStyle);
+        resumeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                resumeGame();
+
+            }
+        });
+        Label resumeLabel = new Label("Resume", labelStyleMedium);
+        ImageButton restartButton = new ImageButton(restartButtonStyle);
+        restartButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game, level));
+            }
+        });
+        Label restartLabel = new Label("Restart", labelStyleMedium);
+        ImageButton levelsButton = new ImageButton(levelsButtonStyle);
+        levelsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LevelSelectScreen(game));
+            }
+        });
+        Label levelsLabel = new Label("Levels", labelStyleMedium);
+        ImageButton settingsButton = new ImageButton(settingsButtonStyle);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+        Label settingsLabel = new Label("Settings", labelStyleMedium);
+
+        if (game.screenSize.x > game.screenSize.y) {
+            pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
+            pauseTable.row();
+            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 200).uniformX();
+            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 200).uniformX();
+            pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 200).uniformX();
+            pauseTable.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
+            pauseTable.row();
+            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+        } else {
+            pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 280).padBottom(game.sizeModifier * 210);
+            pauseTable.row();
+            pauseTable.add(resumeButton).size(game.sizeModifier * 200);
+            pauseTable.add(restartButton).size(game.sizeModifier * 200);
+            pauseTable.row();
+            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+            pauseTable.row();
+            pauseTable.add(levelsButton).size(game.sizeModifier * 200);
+            pauseTable.add(settingsButton).size(game.sizeModifier * 200);
+            pauseTable.row();
+            pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+            pauseTable.add(settingsLabel).expand().padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
         }
-        if (!completed && shouldEnd && backgroundColor != red) {
-            backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 4f);
-        }
+        stage.addActor(pauseTable);
+    }
+
+    public void resumeGame() {
+        paused = false;
+        popSound.resume();
+        tint.setVisible(false);
+        pauseTable.remove();
+        pauseTable = new Table();
+        justResumed = true;
     }
 
     @Override
     public void resize(int width, int height) {
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, width, height);
         if (game.screenSize.x != width && game.screenSize.y != height) {
             game.screenSize = new Vector2(width, height);
-            camera = new OrthographicCamera();
-            camera.setToOrtho(false, width, height);
             for (Dot dot : dots) {
                 if (width > height) {
                     dot.position = dot.position.rotate(90);
@@ -217,6 +412,14 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.position.y += height;
                 }
             }
+        }
+        stage.getViewport().update(width, height, true);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() - (15 * game.sizeModifier), Gdx.graphics.getHeight() - pauseButton.getHeight() - (15 * game.sizeModifier));
+        scoreLabel.setPosition(25 * game.sizeModifier, game.screenSize.y - scoreLabel.getHeight() - (30 * game.sizeModifier));
+        tint.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (paused) {
+            resumeGame();
+            pauseGame();
         }
     }
 
@@ -239,18 +442,14 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
         dotTexture.dispose();
         shadowTexture.dispose();
-        pauseTexture.dispose();
         popSound.dispose();
-        scoreFont.dispose();
+        bigFont.dispose();
+        mediumFont.dispose();
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
-            //TODO Show either pause menu or exit confirmation
-            game.setScreen(new MainMenuScreen(game));
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -265,14 +464,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 touchPos = new Vector3(screenX, screenY, 0);
-        camera.unproject(touchPos);
-        if (!hasTouched) {
-            dots.add(new Dot(new Vector2(touchPos.x, touchPos.y), level.maxSize));
-            hasTouched = true;
-        } else if(dots.size <= 0) {
-            game.setScreen(new MainMenuScreen(game));
-        }
         return false;
     }
 

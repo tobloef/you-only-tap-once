@@ -23,7 +23,7 @@ public class SplashScreen implements Screen {
     private Vector2 screenSize;
     private OrthographicCamera camera;
 
-    private long minSplashTime = 2000L;
+    private long minSplashTime = 000L;
     private long startTime;
 
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
@@ -53,30 +53,52 @@ public class SplashScreen implements Screen {
         game.manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         game.manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
-        FreetypeFontLoader.FreeTypeFontLoaderParameter scoreFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        scoreFontParams.fontFileName = "arial.ttf";
-        scoreFontParams.fontParameters.color = Color.WHITE;
-        scoreFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
-        scoreFontParams.fontParameters.kerning = false;
-        scoreFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*192)/30);
-        scoreFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*192)/30);
-        scoreFontParams.fontParameters.size = Math.round(192*sizeModifier);
-        game.manager.load("score_font.ttf", BitmapFont.class, scoreFontParams);
+        FreetypeFontLoader.FreeTypeFontLoaderParameter bigFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        bigFontParams.fontFileName = "arial.ttf";
+        bigFontParams.fontParameters.color = Color.WHITE;
+        bigFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
+        bigFontParams.fontParameters.kerning = false;
+        bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*192)*0.04f);
+        bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*192)*0.04f);
+        bigFontParams.fontParameters.size = Math.round(192*sizeModifier);
+        game.manager.load("big_font.ttf", BitmapFont.class, bigFontParams);
 
-        FreetypeFontLoader.FreeTypeFontLoaderParameter menuFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        menuFontParams.fontFileName = "arial.ttf";
-        menuFontParams.fontParameters.color = Color.WHITE;
-        menuFontParams.fontParameters.size = Math.round(128*sizeModifier);
-        game.manager.load("menu_font.ttf", BitmapFont.class, menuFontParams);
+        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        mediumFontParams.fontFileName = "arial.ttf";
+        mediumFontParams.fontParameters.color = Color.WHITE;
+        mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
+        mediumFontParams.fontParameters.kerning = false;
+        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*96)*0.05f);
+        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*96)*0.05f);
+        mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
+        game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
 
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("splash_logo.png", Texture.class);
-        game.manager.load("restart_icon.png", Texture.class);
+
         game.manager.load("back_icon.png", Texture.class);
+        game.manager.load("back_icon_pressed.png", Texture.class);
+        game.manager.load("customize_icon.png", Texture.class);
+        game.manager.load("customize_icon_pressed.png", Texture.class);
+        game.manager.load("home_icon.png", Texture.class);
+        game.manager.load("home_icon_pressed.png", Texture.class);
+        game.manager.load("levels_icon.png", Texture.class);
+        game.manager.load("levels_icon_pressed.png", Texture.class);
         game.manager.load("pause_icon.png", Texture.class);
+        game.manager.load("pause_icon_pressed.png", Texture.class);
+        game.manager.load("random_icon.png", Texture.class);
+        game.manager.load("random_icon_pressed.png", Texture.class);
+        game.manager.load("remove_ads_icon.png", Texture.class);
+        game.manager.load("remove_ads_icon_pressed.png", Texture.class);
+        game.manager.load("restart_icon.png", Texture.class);
+        game.manager.load("restart_icon_pressed.png", Texture.class);
+        game.manager.load("resume_icon.png", Texture.class);
+        game.manager.load("resume_icon_pressed.png", Texture.class);
+        game.manager.load("settings_icon.png", Texture.class);
+        game.manager.load("settings_icon_pressed.png", Texture.class);
 
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
