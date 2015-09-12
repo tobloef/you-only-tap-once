@@ -7,21 +7,44 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
     private BitmapFont bigFont;
+    private BitmapFont mediumFont;
+    private Texture levelsTexture;
+    private Texture levelsTexturePressed;
+    private Texture randomTexture;
+    private Texture randomTexturePressed;
+    private Texture customTexture;
+    private Texture customTexturePressed;
+    private Texture settingsTexture;
+    private Texture settingsTexturePressed;
+
     private Stage stage;
     private Table table;
     private Texture logoTexture;
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
+
+    ImageButton.ImageButtonStyle levelsButtonStyle;
+    ImageButton.ImageButtonStyle randomButtonStyle;
+    ImageButton.ImageButtonStyle customButtonStyle;
+    ImageButton.ImageButtonStyle settingsButtonStyle;
+    Label.LabelStyle labelStyleBig;
+    Label.LabelStyle labelStyleMedium;
+
     public MainMenuScreen(final YouOnlyTapOnce game) {
         this.game = game;
     }
@@ -29,65 +52,134 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
-        logoTexture = game.manager.get("splash_logo.png", Texture.class);
+        mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
+        logoTexture = game.manager.get("logo.png", Texture.class);
+        levelsTexture = game.manager.get("levels_icon.png", Texture.class);
+        levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
+        randomTexture = game.manager.get("random_icon.png", Texture.class);
+        randomTexturePressed = game.manager.get("random_icon_pressed.png", Texture.class);
+        customTexture = game.manager.get("custom_icon.png", Texture.class);
+        customTexturePressed = game.manager.get("custom_icon_pressed.png", Texture.class);
+        settingsTexture = game.manager.get("settings_icon.png", Texture.class);
+        settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
 
-        stage = new Stage(new ScreenViewport())  {
+        logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        levelsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        levelsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        randomTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        randomTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        customTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        customTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        settingsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        settingsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        levelsButtonStyle = new ImageButton.ImageButtonStyle();
+        levelsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(levelsTexture));
+        levelsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(levelsTexturePressed));
+
+        randomButtonStyle = new ImageButton.ImageButtonStyle();
+        randomButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(randomTexture));
+        randomButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(randomTexturePressed));
+
+        customButtonStyle = new ImageButton.ImageButtonStyle();
+        customButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(customTexture));
+        customButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(customTexturePressed));
+
+        settingsButtonStyle = new ImageButton.ImageButtonStyle();
+        settingsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(settingsTexture));
+        settingsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(settingsTexturePressed));
+
+        labelStyleBig = new Label.LabelStyle();
+        labelStyleBig.font = bigFont;
+
+        labelStyleMedium = new Label.LabelStyle();
+        labelStyleMedium.font = mediumFont;
+
+        stage = new Stage(new ScreenViewport());
+        stage.addListener(new InputListener() {
             @Override
-            public boolean keyDown(int keycode) {
-                if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
-                    //TODO Confirmation?
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
                     Gdx.app.exit();
                 }
                 return true;
             }
-        };
+        });
+        stage.setDebugAll(false);
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
-        TextButtonStyle textButtonStyle = new TextButtonStyle();
-        textButtonStyle.font = bigFont;
-        textButtonStyle.fontColor = Color.WHITE;
-        textButtonStyle.downFontColor = Color.ORANGE;
-        final TextButton levelSelectButton = new TextButton("Level Select", textButtonStyle);
-        final TextButton randomLevelButton = new TextButton("Random Level", textButtonStyle);
-        final TextButton customLevelButton = new TextButton("Custom Level", textButtonStyle);
+        Image logoImage = new Image(logoTexture);
+        logoImage.setScaling(Scaling.fit);
 
-        table = new Table();
-        table.setFillParent(true);
-        table.add(levelSelectButton);
-        table.row();
-        table.add(randomLevelButton);
-        table.row();
-        table.add(customLevelButton);
-        stage.addActor(table);
-
-        levelSelectButton.addListener(new ChangeListener() {
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+        ImageButton levelsButton = new ImageButton(levelsButtonStyle);
+        levelsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new LevelSelectScreen(game));
             }
         });
+        Label levelsLabel = new Label("Levels", labelStyleMedium);
 
-        randomLevelButton.addListener(new ChangeListener() {
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                //TODO Preview of random level before play
-                int randCount = game.random.nextInt(300 - 1) + 1;
-                float randSize = 0f;
-                while (randSize < 0.1f) {
-                    randSize = (0.4f - (((randCount-100f) * 2f) / 1000f) + (game.random.nextFloat() * (0.2f - -0.2f) + -0.2f))/2;
-                }
-                float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (game.random.nextFloat() * (1f - -1f) + -1f));
-                float randSpeed = game.random.nextFloat() * (3f - 0.25f) + 0.25f;
-                float randCompletion = game.random.nextFloat() * (0.99f - 0.65f) + 0.65f;
-                Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
-                Gdx.app.log("Level", "\nCount: " + randCount + "\nSize: " + randSize + "\nMaxSize: " + randMaxSize + "\nSpeed: " + randSpeed + "\nCompletion: " + randCompletion);
-                game.setScreen(new GameScreen(game, level));
+        ImageButton randomButton = new ImageButton(randomButtonStyle);
+        randomButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game, randomLevel()));
             }
         });
+        Label randomLabel = new Label("Random", labelStyleMedium);
 
-        customLevelButton.addListener(new ChangeListener() {
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
+        ImageButton customButton = new ImageButton(customButtonStyle);
+        customButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //Go to custom level
             }
         });
+        Label customLabel = new Label("Custom", labelStyleMedium);
+
+        ImageButton settingsButton = new ImageButton(settingsButtonStyle);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //Go to settings screen
+            }
+        });
+        Label settingsLabel = new Label("Settings", labelStyleMedium);
+
+        table = new Table();
+        table.setFillParent(true);
+
+        if (game.screenSize.x > game.screenSize.y) {
+            table.add(logoImage).colspan(4).padBottom(game.sizeModifier * 130);
+            table.row();
+            table.add(levelsButton).expandX().size(game.sizeModifier * 200).uniformX();
+            table.add(randomButton).expandX().size(game.sizeModifier * 200).uniformX();
+            table.add(customButton).expandX().size(game.sizeModifier * 200).uniformX();
+            table.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
+            table.row();
+            table.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            table.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            table.add(customLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            table.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+        } else {
+            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -120f);
+            table.row();
+            table.add(levelsButton).size(game.sizeModifier * 220).padRight(game.sizeModifier * -30);
+            table.add(randomButton).size(game.sizeModifier * 220).padLeft(game.sizeModifier * -30);
+            table.row();
+            table.add(levelsLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
+            table.add(randomLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+            table.row();
+            table.add(customButton).size(game.sizeModifier * 220).padRight(game.sizeModifier * -30);
+            table.add(settingsButton).size(game.sizeModifier * 220).padLeft(game.sizeModifier * -30);
+            table.row();
+            table.add(customLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
+            table.add(settingsLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+        }
+
+        stage.addActor(table);
     }
 
     @Override
@@ -98,10 +190,24 @@ public class MainMenuScreen implements Screen {
         stage.draw();
     }
 
+    public Level randomLevel() {
+        int randCount = game.random.nextInt(300 - 1) + 1;
+        float randSize = 0f;
+        while (randSize < 0.1f) {
+            randSize = (0.4f - (((randCount-100f) * 2f) / 1000f) + (game.random.nextFloat() * (0.2f - -0.2f) + -0.2f))/2;
+        }
+        float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (game.random.nextFloat() * (1f - -1f) + -1f));
+        float randSpeed = game.random.nextFloat() * (3f - 0.25f) + 0.25f;
+        float randCompletion = game.random.nextFloat() * (0.99f - 0.65f) + 0.65f;
+        Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+        return level;
+    }
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         game.sizeModifier = Math.min(width, height)/1080f;
+        show();
     }
 
     @Override

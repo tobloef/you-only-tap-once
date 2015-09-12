@@ -46,7 +46,7 @@ public class SplashScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenSize.x, screenSize.y);
 
-        splashTexture = new Texture(Gdx.files.internal("splash_logo.png"));
+        splashTexture = new Texture(Gdx.files.internal("logo.png"));
         splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         FileHandleResolver resolver = new InternalFileHandleResolver();
@@ -73,16 +73,15 @@ public class SplashScreen implements Screen {
         mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
-
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
-        game.manager.load("splash_logo.png", Texture.class);
+        game.manager.load("logo.png", Texture.class);
 
         game.manager.load("back_icon.png", Texture.class);
         game.manager.load("back_icon_pressed.png", Texture.class);
-        game.manager.load("customize_icon.png", Texture.class);
-        game.manager.load("customize_icon_pressed.png", Texture.class);
+        game.manager.load("custom_icon.png", Texture.class);
+        game.manager.load("custom_icon_pressed.png", Texture.class);
         game.manager.load("home_icon.png", Texture.class);
         game.manager.load("home_icon_pressed.png", Texture.class);
         game.manager.load("levels_icon.png", Texture.class);

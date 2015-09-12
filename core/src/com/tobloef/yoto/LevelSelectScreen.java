@@ -126,7 +126,7 @@ public class LevelSelectScreen implements Screen {
                 game.setScreen(new MainMenuScreen(game));
             }
         });
-        table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 20).padTop(20 * game.sizeModifier).left();
+        table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 20).padTop(20 * game.sizeModifier).left().uniformX();
         Label titleLabel = new Label("Levels", labelStyle);
         table.add(titleLabel).uniformX();
         table.add().uniformX();

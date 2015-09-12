@@ -28,9 +28,9 @@ public class GameScreen implements Screen, InputProcessor {
     private OrthographicCamera camera;
 
     private Color backgroundColor;
-    private Color blue = new Color(60f/255f, 145f/255f, 215f/255f, 1);  //3c91d6
-    private Color green = new Color(95f/255f, 195f/255f, 95f/255f, 1);
-    private Color red = new Color(216f/255f, 71f/255f, 71f/255f, 1);
+    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
+    private Color green = new Color(75f/255f, 175f/255f, 75f/255f, 1);
+    private Color red = new Color(190f/255f, 60f/255f, 60f/255f, 1);
 
     private Texture dotTexture;
     private Texture shadowTexture;
@@ -163,6 +163,7 @@ public class GameScreen implements Screen, InputProcessor {
         stage.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log("log", "" + Gdx.graphics.getFramesPerSecond());
                 return true;
             }
 
@@ -171,8 +172,6 @@ public class GameScreen implements Screen, InputProcessor {
                 if (!hasTouched && !paused && !justResumed) {
                     dots.add(new Dot(new Vector2(x, y), level.maxSize));
                     hasTouched = true;
-                } else if (dots.size <= 0) {
-                    game.setScreen(new MainMenuScreen(game));
                 }
                 justResumed = false;
             }
@@ -335,7 +334,7 @@ public class GameScreen implements Screen, InputProcessor {
         popSound.pause();
 
         Label pauseLabel = new Label("Paused", labelStyleBig);
-        final ImageButton resumeButton = new ImageButton(resumeButtonStyle);
+        ImageButton resumeButton = new ImageButton(resumeButtonStyle);
         resumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
