@@ -36,14 +36,20 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture shadowTexture;
     private Texture pauseTexture;
     private Texture pauseTexturePressed;
+    private Texture nextTexture;
+    private Texture nextTexturePressed;
     private Texture resumeTexture;
     private Texture resumeTexturePressed;
     private Texture restartTexture;
     private Texture restartTexturePressed;
     private Texture levelsTexture;
     private Texture levelsTexturePressed;
+    private Texture customizeTexture;
+    private Texture customizeTexturePressed;
     private Texture settingsTexture;
     private Texture settingsTexturePressed;
+    private Texture homeTexture;
+    private Texture homeTexturePressed;
     private Sound popSound;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
@@ -64,12 +70,16 @@ public class GameScreen implements Screen, InputProcessor {
     private Label scoreLabel;
     private ImageButton pauseButton;
     private Table pauseTable = new Table();
+    private Table endTable = new Table();
 
     ImageButtonStyle pauseButtonStyle;
     ImageButtonStyle resumeButtonStyle;
+    ImageButtonStyle nextButtonStyle;
     ImageButtonStyle restartButtonStyle;
     ImageButtonStyle levelsButtonStyle;
+    ImageButtonStyle customizeButtonStyle;
     ImageButtonStyle settingsButtonStyle;
+    ImageButtonStyle homeButtonStyle;
     LabelStyle labelStyleBig;
     LabelStyle labelStyleMedium;
 
@@ -94,12 +104,18 @@ public class GameScreen implements Screen, InputProcessor {
         pauseTexturePressed = game.manager.get("pause_icon_pressed.png", Texture.class);
         resumeTexture = game.manager.get("resume_icon.png", Texture.class);
         resumeTexturePressed = game.manager.get("resume_icon_pressed.png", Texture.class);
+        nextTexture = game.manager.get("next_icon.png", Texture.class);
+        nextTexturePressed = game.manager.get("next_icon_pressed.png", Texture.class);
         restartTexture = game.manager.get("restart_icon.png", Texture.class);
         restartTexturePressed = game.manager.get("restart_icon_pressed.png", Texture.class);
         levelsTexture = game.manager.get("levels_icon.png", Texture.class);
         levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
+        customizeTexture = game.manager.get("customize_icon.png", Texture.class);
+        customizeTexturePressed = game.manager.get("customize_icon_pressed.png", Texture.class);
         settingsTexture = game.manager.get("settings_icon.png", Texture.class);
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
+        homeTexture = game.manager.get("home_icon.png", Texture.class);
+        homeTexturePressed = game.manager.get("home_icon_pressed.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
@@ -109,12 +125,18 @@ public class GameScreen implements Screen, InputProcessor {
         pauseTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         resumeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         resumeTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        nextTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        nextTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         restartTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         restartTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         levelsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         levelsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        customizeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        customizeTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         settingsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         settingsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        homeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        homeTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         pauseButtonStyle = new ImageButtonStyle();
         pauseButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(pauseTexture));
@@ -124,6 +146,10 @@ public class GameScreen implements Screen, InputProcessor {
         resumeButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(resumeTexture));
         resumeButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(resumeTexturePressed));
 
+        nextButtonStyle = new ImageButton.ImageButtonStyle();
+        nextButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(nextTexture));
+        nextButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(nextTexturePressed));
+
         restartButtonStyle = new ImageButton.ImageButtonStyle();
         restartButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(restartTexture));
         restartButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(restartTexturePressed));
@@ -132,9 +158,17 @@ public class GameScreen implements Screen, InputProcessor {
         levelsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(levelsTexture));
         levelsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(levelsTexturePressed));
 
+        customizeButtonStyle = new ImageButton.ImageButtonStyle();
+        customizeButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(customizeTexture));
+        customizeButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(customizeTexturePressed));
+
         settingsButtonStyle = new ImageButton.ImageButtonStyle();
         settingsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(settingsTexture));
         settingsButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(settingsTexturePressed));
+
+        homeButtonStyle = new ImageButton.ImageButtonStyle();
+        homeButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(homeTexture));
+        homeButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(homeTexturePressed));
 
         labelStyleBig = new Label.LabelStyle();
         labelStyleBig.font = bigFont;
@@ -163,7 +197,6 @@ public class GameScreen implements Screen, InputProcessor {
         stage.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("log", "" + Gdx.graphics.getFramesPerSecond());
                 return true;
             }
 
@@ -397,6 +430,123 @@ public class GameScreen implements Screen, InputProcessor {
         }
         stage.addActor(pauseTable);
     }
+
+    public void endGame() {
+        endTable.setFillParent(true);
+        Label scoreTitleLabel = new Label("Score", labelStyleMedium);
+        Label scoreLabel = new Label(score + "/" + scoreGoal, labelStyleBig);
+
+        ImageButton restartButton = new ImageButton(restartButtonStyle);
+        restartButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game, level));
+            }
+        });
+        Label restartLabel = new Label("Restart", labelStyleMedium);
+
+        ImageButton nextButton = new ImageButton(nextButtonStyle);
+        nextButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                resumeGame();
+            }
+        });
+        Label nextLabel = new Label("Next", labelStyleMedium);
+
+        ImageButton levelsButton = new ImageButton(levelsButtonStyle);
+        levelsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LevelSelectScreen(game));
+            }
+        });
+        Label levelsLabel = new Label("Levels", labelStyleMedium);
+
+        ImageButton customizeButton = new ImageButton(customizeButtonStyle);
+        customizeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                resumeGame();
+            }
+        });
+        Label customizeLabel = new Label("Customize", labelStyleMedium);
+
+        ImageButton settingsButton = new ImageButton(settingsButtonStyle);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+        Label settingsLabel = new Label("Settings", labelStyleMedium);
+
+        ImageButton homeButton = new ImageButton(homeButtonStyle);
+        homeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                resumeGame();
+            }
+        });
+        Label homeLabel = new Label("Next", labelStyleMedium);
+
+        if (game.screenSize.x > game.screenSize.y) {
+            endTable.add(scoreTitleLabel).colspan(6).padBottom(game.sizeModifier * 0);
+            endTable.row();
+            endTable.add(scoreLabel).colspan(6).padBottom(game.sizeModifier * 0);
+            endTable.row();
+            if (score <= scoreGoal) {
+                endTable.add(nextButton).expandX().size(game.sizeModifier * 200).uniformX();
+
+            } else {
+                endTable.add(restartButton).expandX().size(game.sizeModifier * 200).uniformX();
+
+            }
+            endTable.add(levelsButton).expandX().size(game.sizeModifier * 200).uniformX();
+            endTable.add(customizeButton).expandX().size(game.sizeModifier * 200).uniformX();
+            endTable.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
+            endTable.add(homeButton).expandX().size(game.sizeModifier * 220).uniformX();
+            endTable.row();
+            if (score <= scoreGoal) {
+                endTable.add(nextLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            } else {
+                endTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+
+            }
+            endTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            endTable.add(customizeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            endTable.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            endTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+        } else {
+            endTable.add(scoreTitleLabel).colspan(6).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0);
+            endTable.row();
+            endTable.add(scoreLabel).colspan(6).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0);
+            endTable.row();
+            if (score <= scoreGoal) {
+                endTable.add(nextButton).size(game.sizeModifier * 200);
+            } else {
+                endTable.add(restartButton).size(game.sizeModifier * 200);
+            }
+            endTable.add(levelsButton).size(game.sizeModifier * 200);
+            endTable.row();
+            if (score <= scoreGoal) {
+                endTable.add(nextLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+            } else {
+                endTable.add(restartLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+            }
+            endTable.add(levelsLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+            endTable.row();
+            endTable.add(customizeButton).size(game.sizeModifier * 200);
+            endTable.add(settingsButton).size(game.sizeModifier * 200);
+            endTable.add(homeButton).size(game.sizeModifier * 200);
+            endTable.row();
+            endTable.add(customizeLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+            endTable.add(settingsLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+            endTable.add(homeLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 0).top();
+        }
+        stage.addActor(endTable);
+    }
+
 
     public void resumeGame() {
         paused = false;

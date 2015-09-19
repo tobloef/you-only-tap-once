@@ -24,6 +24,7 @@ public class LevelSelectScreen implements Screen {
     YouOnlyTapOnce game;
     private ShapeRenderer shapeRenderer;
     private BitmapFont menuFont;
+    private BitmapFont menuFontNoShadow;
     private Texture backButtonTexture;
     private Texture backButtonTexturePressed;
     private Stage stage;
@@ -52,6 +53,7 @@ public class LevelSelectScreen implements Screen {
         backButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         backButtonTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         menuFont = game.manager.get("medium_font.ttf", BitmapFont.class);
+        menuFontNoShadow = game.manager.get("medium_font_no_shadow.ttf", BitmapFont.class);
 
         stage = new Stage(new ScreenViewport()) {
             @Override
@@ -70,17 +72,16 @@ public class LevelSelectScreen implements Screen {
         buttonStyleOn = new TextButtonStyle();
         buttonStyleOn.font = menuFont;
         buttonStyleOn.fontColor = Color.WHITE;
-        buttonStyleOn.downFontColor = Color.ORANGE;
+        //buttonStyleOn.downFontColor = Color.ORANGE;
 
         buttonStyleOff = new TextButtonStyle();
-        buttonStyleOff.font = menuFont;
+        buttonStyleOff.font = menuFontNoShadow;
         buttonStyleOff.fontColor = Color.DARK_GRAY;
         
         labelStyle = new LabelStyle();
         labelStyle.font = menuFont;
         labelStyle.fontColor = Color.WHITE;
 
-        backButtonStyle = new ImageButtonStyle();
         backButtonStyle = new ImageButtonStyle();
         backButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(backButtonTexture));
         backButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(backButtonTexturePressed));

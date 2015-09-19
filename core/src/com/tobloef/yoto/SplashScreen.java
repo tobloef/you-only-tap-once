@@ -66,22 +66,32 @@ public class SplashScreen implements Screen {
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         mediumFontParams.fontFileName = "arial.ttf";
         mediumFontParams.fontParameters.color = Color.WHITE;
-        mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
         mediumFontParams.fontParameters.kerning = false;
+        mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
+        mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
         mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*96)*0.05f);
         mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*96)*0.05f);
-        mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
+
+        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        mediumFontParamsNoShadow.fontFileName = "arial.ttf";
+        mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
+        mediumFontParamsNoShadow.fontParameters.kerning = false;
+        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier*96);
+        game.manager.load("medium_font_no_shadow.ttf", BitmapFont.class, mediumFontParamsNoShadow);
 
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("logo.png", Texture.class);
+        game.manager.load("logo_horizontal.png", Texture.class);
 
         game.manager.load("back_icon.png", Texture.class);
         game.manager.load("back_icon_pressed.png", Texture.class);
-        game.manager.load("custom_icon.png", Texture.class);
-        game.manager.load("custom_icon_pressed.png", Texture.class);
+        game.manager.load("next_icon.png", Texture.class);
+        game.manager.load("next_icon_pressed.png", Texture.class);
+        game.manager.load("customize_icon.png", Texture.class);
+        game.manager.load("customize_icon_pressed.png", Texture.class);
         game.manager.load("home_icon.png", Texture.class);
         game.manager.load("home_icon_pressed.png", Texture.class);
         game.manager.load("levels_icon.png", Texture.class);

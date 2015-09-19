@@ -36,6 +36,7 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private Table table;
     private Texture logoTexture;
+    private Texture logoTextureHorizontal;
     private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
 
     ImageButton.ImageButtonStyle levelsButtonStyle;
@@ -54,16 +55,18 @@ public class MainMenuScreen implements Screen {
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         logoTexture = game.manager.get("logo.png", Texture.class);
+        logoTextureHorizontal = game.manager.get("logo_horizontal.png", Texture.class);
         levelsTexture = game.manager.get("levels_icon.png", Texture.class);
         levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
         randomTexture = game.manager.get("random_icon.png", Texture.class);
         randomTexturePressed = game.manager.get("random_icon_pressed.png", Texture.class);
-        customTexture = game.manager.get("custom_icon.png", Texture.class);
-        customTexturePressed = game.manager.get("custom_icon_pressed.png", Texture.class);
+        customTexture = game.manager.get("customize_icon.png", Texture.class);
+        customTexturePressed = game.manager.get("customize_icon_pressed.png", Texture.class);
         settingsTexture = game.manager.get("settings_icon.png", Texture.class);
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
 
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        logoTextureHorizontal.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         levelsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         levelsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         randomTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -110,7 +113,9 @@ public class MainMenuScreen implements Screen {
         Gdx.input.setCatchBackKey(true);
 
         Image logoImage = new Image(logoTexture);
+        Image logoImageHorizontal = new Image(logoTextureHorizontal);
         logoImage.setScaling(Scaling.fit);
+        logoImageHorizontal.setScaling(Scaling.fit);
 
         ImageButton levelsButton = new ImageButton(levelsButtonStyle);
         levelsButton.addListener(new ClickListener() {
@@ -152,17 +157,17 @@ public class MainMenuScreen implements Screen {
         table.setFillParent(true);
 
         if (game.screenSize.x > game.screenSize.y) {
-            table.add(logoImage).colspan(4).padBottom(game.sizeModifier * 130);
+            table.add(logoImageHorizontal).colspan(4).padBottom(game.sizeModifier * 80).size(game.sizeModifier * 1704, game.sizeModifier * 213);
             table.row();
-            table.add(levelsButton).expandX().size(game.sizeModifier * 200).uniformX();
-            table.add(randomButton).expandX().size(game.sizeModifier * 200).uniformX();
-            table.add(customButton).expandX().size(game.sizeModifier * 200).uniformX();
-            table.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
+            table.add(levelsButton).expandX().size(game.sizeModifier * 220).padBottom(game.sizeModifier * -20).padLeft(game.sizeModifier * 40).uniformX();
+            table.add(randomButton).expandX().size(game.sizeModifier * 220).uniformX();
+            table.add(customButton).expandX().size(game.sizeModifier * 220).uniformX();
+            table.add(settingsButton).expandX().size(game.sizeModifier * 230).padRight(game.sizeModifier * 40).uniformX();
             table.row();
-            table.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-            table.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-            table.add(customLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-            table.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            table.add(levelsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
+            table.add(randomLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).uniformX();
+            table.add(customLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).uniformX();
+            table.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
             table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -120f);
             table.row();
@@ -178,7 +183,6 @@ public class MainMenuScreen implements Screen {
             table.add(customLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
             table.add(settingsLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
         }
-
         stage.addActor(table);
     }
 
@@ -207,6 +211,8 @@ public class MainMenuScreen implements Screen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         game.sizeModifier = Math.min(width, height)/1080f;
+        game.screenSize.x = width;
+        game.screenSize.y = height;
         show();
     }
 
