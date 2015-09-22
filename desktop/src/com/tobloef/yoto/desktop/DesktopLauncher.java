@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		config.title = "You Only Tap Once";
 		config.width = Toolkit.getDefaultToolkit().getScreenSize().width;
 		config.height = Toolkit.getDefaultToolkit().getScreenSize().height;
+<<<<<<< HEAD
 		if (true) {
 			config.width = 700;
 			config.height = 1240;
@@ -22,6 +23,10 @@ public class DesktopLauncher {
 		config.width = 1920;
 		config.height = 1080;
 		config.vSyncEnabled = false;
+=======
+		config.width = 700;
+		config.height = 1240;
+>>>>>>> parent of 925ea41... Added game over screen.
 		config.fullscreen = false;
 		new LwjglApplication(new YouOnlyTapOnce(), config);
 	}
