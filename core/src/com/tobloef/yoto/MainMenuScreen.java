@@ -37,7 +37,7 @@ public class MainMenuScreen implements Screen {
     private Table table;
     private Texture logoTexture;
     private Texture logoTextureHorizontal;
-    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
+    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
 
     ImageButton.ImageButtonStyle levelsButtonStyle;
     ImageButton.ImageButtonStyle randomButtonStyle;
@@ -60,8 +60,8 @@ public class MainMenuScreen implements Screen {
         levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
         randomTexture = game.manager.get("random_icon.png", Texture.class);
         randomTexturePressed = game.manager.get("random_icon_pressed.png", Texture.class);
-        customTexture = game.manager.get("customize_icon.png", Texture.class);
-        customTexturePressed = game.manager.get("customize_icon_pressed.png", Texture.class);
+        customTexture = game.manager.get("customise_icon.png", Texture.class);
+        customTexturePressed = game.manager.get("customise_icon_pressed.png", Texture.class);
         settingsTexture = game.manager.get("settings_icon.png", Texture.class);
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
 
@@ -130,7 +130,7 @@ public class MainMenuScreen implements Screen {
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game, randomLevel()));
+                game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
@@ -148,7 +148,7 @@ public class MainMenuScreen implements Screen {
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //Go to settings screen
+                game.setScreen(new SettingsScreen(game));
             }
         });
         Label settingsLabel = new Label("Settings", labelStyleMedium);
@@ -192,19 +192,6 @@ public class MainMenuScreen implements Screen {
         Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-    }
-
-    public Level randomLevel() {
-        int randCount = game.random.nextInt(300 - 1) + 1;
-        float randSize = 0f;
-        while (randSize < 0.1f) {
-            randSize = (0.4f - (((randCount-100f) * 2f) / 1000f) + (game.random.nextFloat() * (0.2f - -0.2f) + -0.2f))/2;
-        }
-        float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (game.random.nextFloat() * (1f - -1f) + -1f));
-        float randSpeed = game.random.nextFloat() * (3f - 0.25f) + 0.25f;
-        float randCompletion = game.random.nextFloat() * (0.99f - 0.65f) + 0.65f;
-        Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
-        return level;
     }
 
     @Override
