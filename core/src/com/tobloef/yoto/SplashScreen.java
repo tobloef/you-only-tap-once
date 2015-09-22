@@ -26,7 +26,7 @@ public class SplashScreen implements Screen {
     private long minSplashTime = 000L;
     private long startTime;
 
-    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1);
+    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
 
     public SplashScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -54,67 +54,37 @@ public class SplashScreen implements Screen {
         game.manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter bigFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-<<<<<<< HEAD
-<<<<<<< HEAD
         int bigFontSize = 208;
-=======
->>>>>>> origin/master
-=======
->>>>>>> parent of 925ea41... Added game over screen.
         bigFontParams.fontFileName = "arial.ttf";
         bigFontParams.fontParameters.color = Color.WHITE;
         bigFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
         bigFontParams.fontParameters.kerning = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
         bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*bigFontSize)*0.04f);
         bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*bigFontSize)*0.04f);
         bigFontParams.fontParameters.size = Math.round(bigFontSize*sizeModifier);
-=======
-        bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*192)*0.04f);
-        bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*192)*0.04f);
-        bigFontParams.fontParameters.size = Math.round(192*sizeModifier);
->>>>>>> parent of 925ea41... Added game over screen.
         game.manager.load("big_font.ttf", BitmapFont.class, bigFontParams);
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        int mediumFontSize = 116;
         mediumFontParams.fontFileName = "arial.ttf";
         mediumFontParams.fontParameters.color = Color.WHITE;
         mediumFontParams.fontParameters.kerning = false;
-        mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
+        mediumFontParams.fontParameters.size = Math.round(sizeModifier*mediumFontSize);
         mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
-        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*96)*0.05f);
-        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*96)*0.05f);
+        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*mediumFontSize)*0.05f);
+        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*mediumFontSize)*0.05f);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         mediumFontParamsNoShadow.fontFileName = "arial.ttf";
         mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
         mediumFontParamsNoShadow.fontParameters.kerning = false;
-        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier*96);
+        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier*mediumFontSize);
         game.manager.load("medium_font_no_shadow.ttf", BitmapFont.class, mediumFontParamsNoShadow);
-=======
-        bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*192)*0.04f);
-        bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*192)*0.04f);
-        bigFontParams.fontParameters.size = Math.round(192*sizeModifier);
-        game.manager.load("big_font.ttf", BitmapFont.class, bigFontParams);
-
-        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        mediumFontParams.fontFileName = "arial.ttf";
-        mediumFontParams.fontParameters.color = Color.WHITE;
-        mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
-        mediumFontParams.fontParameters.kerning = false;
-        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*96)*0.05f);
-        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*96)*0.05f);
-        mediumFontParams.fontParameters.size = Math.round(sizeModifier*96);
-        game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
-
->>>>>>> origin/master
 
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
-<<<<<<< HEAD
         game.manager.load("logo.png", Texture.class);
         game.manager.load("logo_horizontal.png", Texture.class);
 
@@ -122,21 +92,8 @@ public class SplashScreen implements Screen {
         game.manager.load("back_icon_pressed.png", Texture.class);
         game.manager.load("next_icon.png", Texture.class);
         game.manager.load("next_icon_pressed.png", Texture.class);
-<<<<<<< HEAD
         game.manager.load("customise_icon.png", Texture.class);
         game.manager.load("customise_icon_pressed.png", Texture.class);
-=======
-        game.manager.load("splash_logo.png", Texture.class);
-
-        game.manager.load("back_icon.png", Texture.class);
-        game.manager.load("back_icon_pressed.png", Texture.class);
-        game.manager.load("customize_icon.png", Texture.class);
-        game.manager.load("customize_icon_pressed.png", Texture.class);
->>>>>>> origin/master
-=======
-        game.manager.load("customize_icon.png", Texture.class);
-        game.manager.load("customize_icon_pressed.png", Texture.class);
->>>>>>> parent of 925ea41... Added game over screen.
         game.manager.load("home_icon.png", Texture.class);
         game.manager.load("home_icon_pressed.png", Texture.class);
         game.manager.load("levels_icon.png", Texture.class);
