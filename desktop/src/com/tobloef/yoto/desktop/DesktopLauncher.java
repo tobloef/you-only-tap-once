@@ -19,9 +19,6 @@ public class DesktopLauncher {
 			config.width = 1240;
 			config.height = 700;
 		}
-		config.width = 1920;
-		config.height = 1080;
-		config.vSyncEnabled = false;
 		config.fullscreen = false;
 		new LwjglApplication(new YouOnlyTapOnce(), config);
 	}
