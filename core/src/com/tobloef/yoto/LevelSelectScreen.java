@@ -38,7 +38,7 @@ public class LevelSelectScreen implements Screen {
     private ScrollPaneStyle scrollPanelStyle;
 
     private Color red = new Color(200/255f, 45/255f, 25/255f, 1f);
-    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
+    private Color blue = new Color(60/255f, 145/255f, 215/255f, 1f);
     private Color clear = new Color(60/255f, 145/255f, 215/255f, 0f);
 
     public LevelSelectScreen(final YouOnlyTapOnce game) {
@@ -54,6 +54,7 @@ public class LevelSelectScreen implements Screen {
         backButtonTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         menuFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         menuFontNoShadow = game.manager.get("medium_font_no_shadow.ttf", BitmapFont.class);
+        menuFont = game.manager.get("medium_font.ttf", BitmapFont.class);
 
         stage = new Stage(new ScreenViewport()) {
             @Override
@@ -149,6 +150,9 @@ public class LevelSelectScreen implements Screen {
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
         shapeRenderer.rect(0, 10 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, blue, blue, clear, clear);
         shapeRenderer.rect(0, Gdx.graphics.getHeight() - 275 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
+        shapeRenderer.rect(0, 0, game.screenSize.x, 10 * game.sizeModifier);
+        shapeRenderer.rect(0, 10 * game.sizeModifier, game.screenSize.x, 50 * game.sizeModifier, red, red, clear, clear);
+        shapeRenderer.rect(0, game.screenSize.y - 225 * game.sizeModifier, game.screenSize.x, 50 * game.sizeModifier, clear, clear, red, red);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
