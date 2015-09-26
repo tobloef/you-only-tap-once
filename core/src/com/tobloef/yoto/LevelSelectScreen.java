@@ -39,7 +39,7 @@ public class LevelSelectScreen implements Screen {
 
     private Color red = new Color(200/255f, 45/255f, 25/255f, 1f);
     private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
-    private Color clear = new Color(60/255f, 145/255f, 215/255f, 0f);
+    private Color clear = new Color(50f/255f, 130f/255f, 200f/255f, 0f);
 
     public LevelSelectScreen(final YouOnlyTapOnce game) {
         this.game = game;
