@@ -459,45 +459,45 @@ public class GameScreen implements Screen, InputProcessor {
         if (game.screenSize.x > game.screenSize.y) {
             pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
             pauseTable.row();
-            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 200).uniformX();
-            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 200).uniformX();
+            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
+            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 220).uniformX();
             if (level.levelID != -1) {
-                pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 200).uniformX();
+                pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 220).uniformX();
             } else {
-                pauseTable.add(homeButton).expandX().size(game.sizeModifier * 200).uniformX();
+                pauseTable.add(homeButton).expandX().size(game.sizeModifier * 230).uniformX();
             }
-            pauseTable.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
+            pauseTable.add(settingsButton).expandX().size(game.sizeModifier * 240).uniformX().padRight(game.sizeModifier * 50);
             pauseTable.row();
-            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
             pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
             if (level.levelID != -1) {
                 pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
             } else {
                 pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
             }
-            pauseTable.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
         } else {
-            pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 280).padBottom(game.sizeModifier * 210);
+            pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
             pauseTable.row();
-            pauseTable.add(resumeButton).size(game.sizeModifier * 200);
-            pauseTable.add(restartButton).size(game.sizeModifier * 200);
+            pauseTable.add(resumeButton).size(game.sizeModifier * 220);
+            pauseTable.add(restartButton).size(game.sizeModifier * 220);
             pauseTable.row();
-            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
-            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
-            pauseTable.row();
-            if (level.levelID != -1) {
-                pauseTable.add(levelsButton).size(game.sizeModifier * 200);
-            } else {
-                pauseTable.add(homeButton).size(game.sizeModifier * 200);
-            }
-            pauseTable.add(settingsButton).size(game.sizeModifier * 200);
+            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
+            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
             pauseTable.row();
             if (level.levelID != -1) {
-                pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+                pauseTable.add(levelsButton).size(game.sizeModifier * 220);
             } else {
-                pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+                pauseTable.add(homeButton).size(game.sizeModifier * 230);
             }
-            pauseTable.add(settingsLabel).expand().padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 140).top();
+            pauseTable.add(settingsButton).size(game.sizeModifier * 240);
+            pauseTable.row();
+            if (level.levelID != -1) {
+                pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
+            } else {
+                pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
+            }
+            pauseTable.add(settingsLabel).expand().padTop(game.sizeModifier * 20).top();
         }
         stage.addActor(pauseTable);
     }
@@ -586,50 +586,63 @@ public class GameScreen implements Screen, InputProcessor {
             endTable.row();
             endTable.add(scoreLabel).colspan(6).padBottom(game.sizeModifier * 50);
             endTable.row();
-            if (score >= scoreGoal) {
-                endTable.add(nextButton).expandX().size(game.sizeModifier * 250).uniformX().padLeft(game.sizeModifier * 70).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
-
+            if (score < scoreGoal || level.levelID == -1) {
+                endTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 40).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
             } else {
-                endTable.add(restartButton).expandX().size(game.sizeModifier * 190).uniformX().padLeft(game.sizeModifier * 70).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
-
+                endTable.add(nextButton).expandX().size(game.sizeModifier * 250).uniformX().padLeft(game.sizeModifier * 40).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
             }
-            endTable.add(levelsButton).expandX().size(game.sizeModifier * 220).uniformX().padBottom(game.sizeModifier * -30);
-            endTable.add(settingsButton).expandX().size(game.sizeModifier * 220).uniformX();
-            endTable.add(homeButton).expandX().size(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
+            if (level.levelID == -1) {
+                endTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
+            } else {
+                endTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
+            }
+            endTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 30);
+            endTable.add(settingsButton).expandX().size(game.sizeModifier * 250).uniformX();
             endTable.row();
-            if (score >= scoreGoal) {
-                endTable.add(nextLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 70);
+            if (score < scoreGoal || level.levelID == -1) {
+                endTable.add(restartLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 40);
             } else {
-                endTable.add(restartLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 70);
-
+                endTable.add(nextLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 40);
             }
-            endTable.add(levelsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
-            endTable.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
-            endTable.add(homeLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * 50);
+            if (level.levelID == -1) {
+                endTable.add(randomLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
+            } else {
+                endTable.add(levelsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
+            }
+            endTable.add(homeLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
+            endTable.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * 30);
         } else {
-            endTable.add(scoreTitleLabel).colspan(2).padTop(game.sizeModifier * 160);
+            endTable.add(scoreTitleLabel).colspan(2).padTop(game.sizeModifier * 190);
             endTable.row();
-            endTable.add(scoreLabel).colspan(2).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 130);
+            endTable.add(scoreLabel).colspan(2).padBottom(game.sizeModifier * 70);
             endTable.row();
-            endTable.add(restartButton).size(game.sizeModifier * 220).uniformX().expandX().padLeft(game.sizeModifier * 50);
-            if (level.levelID != -1) {
-                endTable.add(nextButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
+            if (score < scoreGoal || level.levelID == -1) {
+                endTable.add(restartButton).size(game.sizeModifier * 230).uniformX().expandX().padLeft(game.sizeModifier * 50);
             } else {
-                endTable.add(randomButton).size(game.sizeModifier * 220).uniformX().expandX().padRight(game.sizeModifier * 50);
+                endTable.add(nextButton).size(game.sizeModifier * 300).uniformX().expandX().padLeft(game.sizeModifier * 50);
+            }
+            if (level.levelID == -1) {
+                endTable.add(randomButton).size(game.sizeModifier * 250).uniformX().expandX().padRight(game.sizeModifier * 50);
+            } else {
+                endTable.add(levelsButton).size(game.sizeModifier * 250).uniformX().expandX().padRight(game.sizeModifier * 50);
             }
             endTable.row();
-            endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
-            if (level.levelID != -1) {
+            if (score < scoreGoal || level.levelID == -1) {
+                endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
+            } else {
+                endTable.add(levelsLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
+            }
+            if (level.levelID == -1) {
                 endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
             } else {
-                endTable.add(randomLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                endTable.add(levelsLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
             }
             endTable.row();
-            endTable.add(levelsButton).size(game.sizeModifier * 220).expandX().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(homeButton).size(game.sizeModifier * 220).expandX().uniformX().padRight(game.sizeModifier * 50);
+            endTable.add(homeButton).size(game.sizeModifier * 250).expandX().uniformX().padLeft(game.sizeModifier * 50);
+            endTable.add(settingsButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
             endTable.row();
-            endTable.add(levelsLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(homeLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padRight(game.sizeModifier * 50);
+            endTable.add(homeLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padLeft(game.sizeModifier * 50);
+            endTable.add(settingsLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padRight(game.sizeModifier * 50);
         }
         stage.addActor(endTable);
     }

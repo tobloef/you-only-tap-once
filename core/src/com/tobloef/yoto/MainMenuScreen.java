@@ -159,29 +159,29 @@ public class MainMenuScreen implements Screen {
         if (game.screenSize.x > game.screenSize.y) {
             table.add(logoImageHorizontal).colspan(4).padBottom(game.sizeModifier * 80).size(game.sizeModifier * 1704, game.sizeModifier * 213);
             table.row();
-            table.add(levelsButton).expandX().size(game.sizeModifier * 220).padBottom(game.sizeModifier * -20).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(randomButton).expandX().size(game.sizeModifier * 220).uniformX();
-            table.add(customButton).expandX().size(game.sizeModifier * 220).uniformX();
-            table.add(settingsButton).expandX().size(game.sizeModifier * 230).padRight(game.sizeModifier * 40).uniformX();
+            table.add(levelsButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * -20).padLeft(game.sizeModifier * 40).uniformX();
+            table.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
+            table.add(customButton).expandX().size(game.sizeModifier * 250).uniformX();
+            table.add(settingsButton).expandX().size(game.sizeModifier * 260).padRight(game.sizeModifier * 40).uniformX();
             table.row();
-            table.add(levelsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(randomLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(customLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
+            table.add(levelsLabel).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
+            table.add(randomLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
+            table.add(customLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
+            table.add(settingsLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
-            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -120f);
+            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -150f);
             table.row();
-            table.add(levelsButton).size(game.sizeModifier * 220).padRight(game.sizeModifier * -30);
-            table.add(randomButton).size(game.sizeModifier * 220).padLeft(game.sizeModifier * -30);
+            table.add(levelsButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
+            table.add(randomButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
             table.row();
-            table.add(levelsLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
-            table.add(randomLabel).padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+            table.add(levelsLabel).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
+            table.add(randomLabel).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
             table.row();
-            table.add(customButton).size(game.sizeModifier * 220).padRight(game.sizeModifier * -30);
-            table.add(settingsButton).size(game.sizeModifier * 220).padLeft(game.sizeModifier * -30);
+            table.add(customButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
+            table.add(settingsButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
             table.row();
-            table.add(customLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
-            table.add(settingsLabel).expand().padTop(game.sizeModifier * 0).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+            table.add(customLabel).expand().padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
+            table.add(settingsLabel).expand().padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
         }
         stage.addActor(table);
     }
