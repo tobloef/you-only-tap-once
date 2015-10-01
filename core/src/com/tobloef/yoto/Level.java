@@ -12,7 +12,7 @@ public class Level {
         this.levelID = levelID;
         this.count = count;
         this.dotSize = dotSize;
-        this.maxSize = maxSize*dotSize;
+        this.maxSize = maxSize * dotSize;
         this.speed = speed;
         this.completionPercentage = completionPercentage;
     }

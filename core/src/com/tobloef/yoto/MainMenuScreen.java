@@ -3,6 +3,7 @@ package com.tobloef.yoto;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
+import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
@@ -32,12 +35,16 @@ public class MainMenuScreen implements Screen {
     private Texture customTexturePressed;
     private Texture settingsTexture;
     private Texture settingsTexturePressed;
+    private Sound clickSound;
+
+    private boolean doVibrate;
+    private boolean isMuted;
 
     private Stage stage;
     private Table table;
     private Texture logoTexture;
     private Texture logoTextureHorizontal;
-    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
+    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
 
     ImageButton.ImageButtonStyle levelsButtonStyle;
     ImageButton.ImageButtonStyle randomButtonStyle;
@@ -52,6 +59,9 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        isMuted = game.prefs.getBoolean("settingsMute");
+        doVibrate = game.prefs.getBoolean("settingsVibrate");
+
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         logoTexture = game.manager.get("logo.png", Texture.class);
@@ -64,6 +74,7 @@ public class MainMenuScreen implements Screen {
         customTexturePressed = game.manager.get("customise_icon_pressed.png", Texture.class);
         settingsTexture = game.manager.get("settings_icon.png", Texture.class);
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
+        clickSound = game.manager.get("click.mp3", Sound.class);
 
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logoTextureHorizontal.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -103,6 +114,12 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
                     Gdx.app.exit();
                 }
                 return true;
@@ -121,6 +138,12 @@ public class MainMenuScreen implements Screen {
         levelsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new LevelSelectScreen(game));
             }
         });
@@ -130,6 +153,12 @@ public class MainMenuScreen implements Screen {
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
@@ -139,7 +168,26 @@ public class MainMenuScreen implements Screen {
         customButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //Go to custom level
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                dialog.setTitle("Coming Soon!");
+                dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
+
+                dialog.setClickListener(new ButtonClickListener() {
+                    @Override
+                    public void click(int button) {
+
+                    }
+                });
+
+                dialog.addButton("Will do!");
+
+                dialog.build().show();
             }
         });
         Label customLabel = new Label("Custom", labelStyleMedium);
@@ -148,6 +196,12 @@ public class MainMenuScreen implements Screen {
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new SettingsScreen(game));
             }
         });
@@ -169,21 +223,38 @@ public class MainMenuScreen implements Screen {
             table.add(customLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
             table.add(settingsLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
-            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -150f);
+            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -160f);
             table.row();
             table.add(levelsButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
             table.add(randomButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
             table.row();
-            table.add(levelsLabel).padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
-            table.add(randomLabel).padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+            table.add(levelsLabel).padBottom(game.sizeModifier * 120).padRight(game.sizeModifier * -30).top();
+            table.add(randomLabel).padBottom(game.sizeModifier * 120).padLeft(game.sizeModifier * -30).top();
             table.row();
             table.add(customButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
-            table.add(settingsButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
+            table.add(settingsButton).size(game.sizeModifier * 260).padLeft(game.sizeModifier * -30);
             table.row();
-            table.add(customLabel).expand().padBottom(game.sizeModifier * 140).padRight(game.sizeModifier * -30).top();
-            table.add(settingsLabel).expand().padBottom(game.sizeModifier * 140).padLeft(game.sizeModifier * -30).top();
+            table.add(customLabel).expand().padRight(game.sizeModifier * -30).top();
+            table.add(settingsLabel).expand().padLeft(game.sizeModifier * -30).top();
         }
         stage.addActor(table);
+
+        if (!game.prefs.contains("firstLaunch")) {
+            GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+            dialog.setTitle("Thank you!");
+            dialog.setMessage("Thank you for being one of the first few people to download my game. If you have suggestiona or find any bugs, please feel free to contact me using the mail button wherever it is.");
+            dialog.setClickListener(new ButtonClickListener() {
+                @Override
+                public void click(int button) {
+
+                }
+            });
+            dialog.addButton("Alright");
+            dialog.build().show();
+
+            game.prefs.putBoolean("firstLaunch", true);
+            game.prefs.flush();
+        }
     }
 
     @Override
@@ -197,7 +268,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        game.sizeModifier = Math.min(width, height)/1080f;
+        game.sizeModifier = Math.min(width, height) / 1080f;
         game.screenSize.x = width;
         game.screenSize.y = height;
         show();

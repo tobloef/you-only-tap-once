@@ -30,9 +30,9 @@ public class GameScreen implements Screen, InputProcessor {
     private OrthographicCamera camera;
 
     private Color backgroundColor;
-    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
-    private Color green = new Color(75f/255f, 175f/255f, 75f/255f, 1);
-    private Color red = new Color(190f/255f, 60f/255f, 60f/255f, 1);
+    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
+    private Color green = new Color(75f / 255f, 175f / 255f, 75f / 255f, 1);
+    private Color red = new Color(190f / 255f, 60f / 255f, 60f / 255f, 1);
 
     private Texture dotTexture;
     private Texture shadowTexture;
@@ -56,6 +56,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture homeTexture;
     private Texture homeTexturePressed;
     private Sound popSound;
+    private Sound clickSound;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
 
@@ -69,6 +70,8 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean justResumed = false;
     private int score = 0;
     private int scoreGoal;
+    private boolean isMuted;
+    private boolean doVibrate;
 
     private Stage stage;
     private Image tint;
@@ -102,6 +105,8 @@ public class GameScreen implements Screen, InputProcessor {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
         scoreGoal = Math.round(level.count * level.completionPercentage);
+        isMuted = game.prefs.getBoolean("settingsMute");
+        doVibrate = game.prefs.getBoolean("settingsVibrate");
 
         backgroundColor = blue;
         dotTexture = game.manager.get("dot_white.png", Texture.class);
@@ -126,6 +131,7 @@ public class GameScreen implements Screen, InputProcessor {
         homeTexture = game.manager.get("home_icon.png", Texture.class);
         homeTexturePressed = game.manager.get("home_icon_pressed.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
+        clickSound = game.manager.get("click.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
@@ -199,6 +205,12 @@ public class GameScreen implements Screen, InputProcessor {
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 pauseGame();
             }
         });
@@ -230,7 +242,12 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
-                    //TODO Show either pause menu or exit confirmation
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
                     if (!paused) {
                         game.setScreen(new MainMenuScreen(game));
                     } else {
@@ -241,7 +258,7 @@ public class GameScreen implements Screen, InputProcessor {
             }
         });
 
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888 );
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 0.7f);
         pixmap.fill();
         tint = new Image(new Texture(pixmap));
@@ -254,34 +271,10 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
-            dots.add(new Dot(new Vector2(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2),
-                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize/2) * 2)) + (dotTexture.getWidth() * level.dotSize/2)),
+            dots.add(new Dot(new Vector2(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2),
+                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2)),
                     new Vector2(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f).nor(), level.speed, level.dotSize, level.maxSize));
         }
-    }
-
-    private void showLastLevelToast() {
-        GDXButtonDialog bDialog = game.dialogs.newDialog(GDXButtonDialog.class);
-        bDialog.setTitle("No more levels");
-        bDialog.setMessage("You've cleared the last level. Until new levels are released, how about playing some random levels?");
-
-        bDialog.setClickListener(new ButtonClickListener() {
-
-            @Override
-            public void click(int button) {
-                if (button == 0) {
-                    game.setScreen(new GameScreen(game, game.randomLevel()));
-                } else {
-                    game.setScreen(new MainMenuScreen(game));
-                }
-            }
-        });
-
-        bDialog.addButton("Sure!");
-        bDialog.addButton("No");
-
-        bDialog.build().show();
-
     }
 
     @Override
@@ -293,10 +286,10 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        for (Dot dot: dots) {
+        for (Dot dot : dots) {
             game.batch.draw(shadowTexture, (dot.position.x - dotTexture.getWidth() * dot.size / 2) + (dotTexture.getWidth() * dot.size * 0.2f * level.dotSize), (dot.position.y - dotTexture.getWidth() * dot.size / 2) - (dotTexture.getWidth() * 0.2f * level.dotSize), dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
-        for (Dot dot: dots) {
+        for (Dot dot : dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
         game.batch.end();
@@ -327,7 +320,7 @@ public class GameScreen implements Screen, InputProcessor {
                     for (int i = 0; i < dots.size; i++) {
                         if (!dots.get(i).activated && dots.get(i) != dot) {
                             if (dot.position.dst(dots.get(i).position) < ((dotTexture.getWidth() * dot.size) / 2) + ((dotTexture.getWidth() * dots.get(i).size) / 2)) {
-                                if (System.currentTimeMillis() - timeSincePop > 50) {
+                                if (!isMuted && System.currentTimeMillis() - timeSincePop > 50) {
                                     timeSincePop = System.currentTimeMillis();
                                     popSound.play(0.5f, game.random.nextFloat() * (1.25f - 0.75f) + 0.5f, 0);
                                 }
@@ -414,8 +407,13 @@ public class GameScreen implements Screen, InputProcessor {
         resumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 resumeGame();
-
             }
         });
         Label resumeLabel = new Label("Resume", labelStyleMedium);
@@ -424,6 +422,12 @@ public class GameScreen implements Screen, InputProcessor {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new GameScreen(game, level));
             }
         });
@@ -433,6 +437,12 @@ public class GameScreen implements Screen, InputProcessor {
         levelsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new LevelSelectScreen(game));
             }
         });
@@ -442,62 +452,103 @@ public class GameScreen implements Screen, InputProcessor {
         homeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new MainMenuScreen(game));
             }
         });
         Label homeLabel = new Label("Home", labelStyleMedium);
 
-        ImageButton settingsButton = new ImageButton(settingsButtonStyle);
-        settingsButton.addListener(new ClickListener() {
+        ImageButton randomButton = new ImageButton(randomButtonStyle);
+        randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
-        Label settingsLabel = new Label("Settings", labelStyleMedium);
+        Label randomLabel = new Label("New", labelStyleMedium);
+
+        ImageButton customiseButton = new ImageButton(customiseButtonStyle);
+        customiseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                dialog.setTitle("Coming Soon!");
+                dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
+
+                dialog.setClickListener(new ButtonClickListener() {
+                    @Override
+                    public void click(int button) {
+
+                    }
+                });
+
+                dialog.addButton("Will do!");
+
+                dialog.build().show();
+            }
+        });
+        Label customiseLabel = new Label("Edit", labelStyleMedium);
+        customiseLabel.setAlignment(1);
 
         if (game.screenSize.x > game.screenSize.y) {
             pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
             pauseTable.row();
-            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
-            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 220).uniformX();
+            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 50);
+            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 10);
             if (level.levelID != -1) {
-                pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 220).uniformX();
+                pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX();
             } else {
-                pauseTable.add(homeButton).expandX().size(game.sizeModifier * 230).uniformX();
+                pauseTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
             }
-            pauseTable.add(settingsButton).expandX().size(game.sizeModifier * 240).uniformX().padRight(game.sizeModifier * 50);
+            pauseTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
             pauseTable.row();
             pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
-            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 10);
             if (level.levelID != -1) {
                 pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
             } else {
-                pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+                pauseTable.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
             }
-            pauseTable.add(settingsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
+            pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
         } else {
             pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
             pauseTable.row();
-            pauseTable.add(resumeButton).size(game.sizeModifier * 220);
-            pauseTable.add(restartButton).size(game.sizeModifier * 220);
+            pauseTable.add(resumeButton).size(game.sizeModifier * 230);
+            pauseTable.add(restartButton).size(game.sizeModifier * 230);
             pauseTable.row();
             pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
             pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
             pauseTable.row();
             if (level.levelID != -1) {
-                pauseTable.add(levelsButton).size(game.sizeModifier * 220);
+                pauseTable.add(levelsButton).size(game.sizeModifier * 250);
             } else {
-                pauseTable.add(homeButton).size(game.sizeModifier * 230);
+                pauseTable.add(randomButton).size(game.sizeModifier * 250);
             }
-            pauseTable.add(settingsButton).size(game.sizeModifier * 240);
+            pauseTable.add(homeButton).size(game.sizeModifier * 250);
             pauseTable.row();
             if (level.levelID != -1) {
                 pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
             } else {
-                pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
+                pauseTable.add(randomLabel).expand().padTop(game.sizeModifier * 20).top();
             }
-            pauseTable.add(settingsLabel).expand().padTop(game.sizeModifier * 20).top();
+            pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
         }
         stage.addActor(pauseTable);
     }
@@ -516,6 +567,12 @@ public class GameScreen implements Screen, InputProcessor {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new GameScreen(game, level));
             }
         });
@@ -525,12 +582,61 @@ public class GameScreen implements Screen, InputProcessor {
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 if (level.levelID <= game.levels.size()) {
+                    if (game.prefs.getBoolean("remindRate") && level.levelID <= game.levels.size() && (level.levelID+1)%20 == 0) {
+                        GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                        dialog.setTitle("Like this game?");
+                        dialog.setMessage("Congratulations on clearing level " + (level.levelID + 1) + "! Would you like to rate the game on Google Play?");
+
+                        dialog.setClickListener(new ButtonClickListener() {
+
+                            @Override
+                            public void click(int button) {
+                                if (button == 1) {
+                                    Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
+                                } else if (button == 0) {
+                                    game.prefs.putBoolean("remindRate", false);
+                                    game.prefs.flush();
+                                }
+                            }
+                        });
+
+                        dialog.addButton("Never");
+                        dialog.addButton("Sure!");
+                        dialog.addButton("Later");
+
+                        dialog.build().show();
+                    }
                     if (game.prefs.getInteger("levelsAvailable") > level.levelID) {
                         game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
                     }
                 } else {
-                    showLastLevelToast();
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("No more levels");
+                    dialog.setMessage("You've cleared the last level. Until new levels are released, how about rating this game on Google Play?");
+
+                    dialog.setClickListener(new ButtonClickListener() {
+
+                        @Override
+                        public void click(int button) {
+                            if (button == 0) {
+                                Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
+                            } else {
+                                game.setScreen(new MainMenuScreen(game));
+                            }
+                        }
+                    });
+
+                    dialog.addButton("Sure!");
+                    dialog.addButton("No");
+
+                    dialog.build().show();
                 }
             }
         });
@@ -540,33 +646,42 @@ public class GameScreen implements Screen, InputProcessor {
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
-        Label randomLabel = new Label("Random", labelStyleMedium);
+        Label randomLabel = new Label("New", labelStyleMedium);
 
         ImageButton levelsButton = new ImageButton(levelsButtonStyle);
         levelsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new LevelSelectScreen(game));
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
 
-        /*ImageButton customiseButton = new ImageButton(customiseButtonStyle);
-        customiseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                resumeGame();
-            }
-        });
-        Label customiseLabel = new Label("Customise", labelStyleMedium);*/
-
         ImageButton settingsButton = new ImageButton(settingsButtonStyle);
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new SettingsScreen(game));
             }
         });
@@ -576,6 +691,12 @@ public class GameScreen implements Screen, InputProcessor {
         homeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
                 game.setScreen(new MainMenuScreen(game));
             }
         });
@@ -617,32 +738,32 @@ public class GameScreen implements Screen, InputProcessor {
             endTable.add(scoreLabel).colspan(2).padBottom(game.sizeModifier * 70);
             endTable.row();
             if (score < scoreGoal || level.levelID == -1) {
-                endTable.add(restartButton).size(game.sizeModifier * 230).uniformX().expandX().padLeft(game.sizeModifier * 50);
+                endTable.add(restartButton).size(game.sizeModifier * 250).uniformX().expandX().padLeft(game.sizeModifier * 50);
             } else {
-                endTable.add(nextButton).size(game.sizeModifier * 300).uniformX().expandX().padLeft(game.sizeModifier * 50);
+                endTable.add(nextButton).size(game.sizeModifier * 310).uniformX().expandX().padLeft(game.sizeModifier * 50);
             }
             if (level.levelID == -1) {
-                endTable.add(randomButton).size(game.sizeModifier * 250).uniformX().expandX().padRight(game.sizeModifier * 50);
+                endTable.add(randomButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
             } else {
-                endTable.add(levelsButton).size(game.sizeModifier * 250).uniformX().expandX().padRight(game.sizeModifier * 50);
+                endTable.add(levelsButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
             }
             endTable.row();
             if (score < scoreGoal || level.levelID == -1) {
                 endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
             } else {
-                endTable.add(levelsLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
+                endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
             }
             if (level.levelID == -1) {
-                endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                endTable.add(randomLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
             } else {
                 endTable.add(levelsLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
             }
             endTable.row();
-            endTable.add(homeButton).size(game.sizeModifier * 250).expandX().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(settingsButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
+            endTable.add(homeButton).size(game.sizeModifier * 270).expandX().uniformX().padLeft(game.sizeModifier * 50);
+            endTable.add(settingsButton).expandX().size(game.sizeModifier * 270).uniformX().padRight(game.sizeModifier * 50);
             endTable.row();
-            endTable.add(homeLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(settingsLabel).padBottom(game.sizeModifier * 0).top().expand().uniformX().padRight(game.sizeModifier * 50);
+            endTable.add(homeLabel).top().expand().uniformX().padLeft(game.sizeModifier * 50);
+            endTable.add(settingsLabel).top().expand().uniformX().padRight(game.sizeModifier * 50);
         }
         stage.addActor(endTable);
     }
@@ -686,7 +807,7 @@ public class GameScreen implements Screen, InputProcessor {
             endTable = new Table();
             endGame();
         }
-        game.sizeModifier = Math.min(width, height)/1080f;
+        game.sizeModifier = Math.min(width, height) / 1080f;
     }
 
     @Override

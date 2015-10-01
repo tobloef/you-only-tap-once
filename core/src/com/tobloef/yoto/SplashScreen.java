@@ -26,7 +26,7 @@ public class SplashScreen implements Screen {
     private long minSplashTime = 000L;
     private long startTime;
 
-    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
+    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
 
     public SplashScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -42,11 +42,11 @@ public class SplashScreen implements Screen {
         }
 
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sizeModifier = Math.min(screenSize.x, screenSize.y)/1080f;
+        sizeModifier = Math.min(screenSize.x, screenSize.y) / 1080f;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenSize.x, screenSize.y);
 
-        splashTexture = new Texture(Gdx.files.internal("logo.png"));
+        splashTexture = new Texture(Gdx.files.internal("splash_logo.png"));
         splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         FileHandleResolver resolver = new InternalFileHandleResolver();
@@ -57,11 +57,11 @@ public class SplashScreen implements Screen {
         int bigFontSize = 208;
         bigFontParams.fontFileName = "arial.ttf";
         bigFontParams.fontParameters.color = Color.WHITE;
-        bigFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
+        bigFontParams.fontParameters.shadowColor = new Color(0, 0, 0, 0.5f);
         bigFontParams.fontParameters.kerning = false;
-        bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*bigFontSize)*0.04f);
-        bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*bigFontSize)*0.04f);
-        bigFontParams.fontParameters.size = Math.round(bigFontSize*sizeModifier);
+        bigFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier * bigFontSize) * 0.04f);
+        bigFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * bigFontSize) * 0.04f);
+        bigFontParams.fontParameters.size = Math.round(bigFontSize * sizeModifier);
         game.manager.load("big_font.ttf", BitmapFont.class, bigFontParams);
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -69,20 +69,21 @@ public class SplashScreen implements Screen {
         mediumFontParams.fontFileName = "arial.ttf";
         mediumFontParams.fontParameters.color = Color.WHITE;
         mediumFontParams.fontParameters.kerning = false;
-        mediumFontParams.fontParameters.size = Math.round(sizeModifier*mediumFontSize);
-        mediumFontParams.fontParameters.shadowColor = new Color(0,0,0,0.5f);
-        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier*mediumFontSize)*0.05f);
-        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier*mediumFontSize)*0.05f);
+        mediumFontParams.fontParameters.size = Math.round(sizeModifier * mediumFontSize);
+        mediumFontParams.fontParameters.shadowColor = new Color(0, 0, 0, 0.5f);
+        mediumFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier * mediumFontSize) * 0.05f);
+        mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * mediumFontSize) * 0.05f);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         mediumFontParamsNoShadow.fontFileName = "arial.ttf";
         mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
         mediumFontParamsNoShadow.fontParameters.kerning = false;
-        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier*mediumFontSize);
+        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier * mediumFontSize);
         game.manager.load("medium_font_no_shadow.ttf", BitmapFont.class, mediumFontParamsNoShadow);
 
         game.manager.load("pop.mp3", Sound.class);
+        game.manager.load("click.mp3", Sound.class);
         game.manager.load("dot_white.png", Texture.class);
         game.manager.load("dot_shadow.png", Texture.class);
         game.manager.load("logo.png", Texture.class);
@@ -110,13 +111,23 @@ public class SplashScreen implements Screen {
         game.manager.load("resume_icon_pressed.png", Texture.class);
         game.manager.load("settings_icon.png", Texture.class);
         game.manager.load("settings_icon_pressed.png", Texture.class);
+        game.manager.load("disable_vibration_icon.png", Texture.class);
+        game.manager.load("disable_vibration_icon_pressed.png", Texture.class);
+        game.manager.load("enable_vibration_icon.png", Texture.class);
+        game.manager.load("enable_vibration_icon_pressed.png", Texture.class);
+        game.manager.load("mute_icon.png", Texture.class);
+        game.manager.load("mute_icon_pressed.png", Texture.class);
+        game.manager.load("unmute_icon.png", Texture.class);
+        game.manager.load("unmute_icon_pressed.png", Texture.class);
+        game.manager.load("rate_icon.png", Texture.class);
+        game.manager.load("rate_icon_pressed.png", Texture.class);
 
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
         int id = 0;
         for (String line : levelFile.readString().split("\\n")) {
             String[] s = line.split(",");
-            Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1])/10f*sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
+            Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1]) / 10f * sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
             game.levels.add(level);
         }
     }

@@ -3,6 +3,7 @@ package com.tobloef.yoto;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,6 +28,7 @@ public class LevelSelectScreen implements Screen {
     private BitmapFont menuFontNoShadow;
     private Texture backButtonTexture;
     private Texture backButtonTexturePressed;
+    private Sound clickSound;
     private Stage stage;
     private Table table;
     private Table innerTable;
@@ -37,9 +39,12 @@ public class LevelSelectScreen implements Screen {
     private ImageButtonStyle backButtonStyle;
     private ScrollPaneStyle scrollPanelStyle;
 
-    private Color red = new Color(200/255f, 45/255f, 25/255f, 1f);
-    private Color blue = new Color(50f/255f, 130f/255f, 200f/255f, 1);
-    private Color clear = new Color(50f/255f, 130f/255f, 200f/255f, 0f);
+    private Color red = new Color(200 / 255f, 45 / 255f, 25 / 255f, 1f);
+    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
+    private Color clear = new Color(50f / 255f, 130f / 255f, 200f / 255f, 0f);
+
+    private boolean doVibrate;
+    private boolean isMuted;
 
     public LevelSelectScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -47,6 +52,9 @@ public class LevelSelectScreen implements Screen {
 
     @Override
     public void show() {
+        isMuted = game.prefs.getBoolean("settingsMute");
+        doVibrate = game.prefs.getBoolean("settingsVibrate");
+
         shapeRenderer = new ShapeRenderer();
         backButtonTexture = game.manager.get("back_icon.png", Texture.class);
         backButtonTexturePressed = game.manager.get("back_icon_pressed.png", Texture.class);
@@ -54,12 +62,18 @@ public class LevelSelectScreen implements Screen {
         backButtonTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         menuFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         menuFontNoShadow = game.manager.get("medium_font_no_shadow.ttf", BitmapFont.class);
+        clickSound = game.manager.get("click.mp3", Sound.class);
 
         stage = new Stage(new ScreenViewport()) {
             @Override
             public boolean keyDown(int keycode) {
-                if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE){
-                    //TODO Show either pause menu or exit confirmation
+                if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
                     game.setScreen(new MainMenuScreen(game));
                 }
                 return true;
@@ -72,12 +86,11 @@ public class LevelSelectScreen implements Screen {
         buttonStyleOn = new TextButtonStyle();
         buttonStyleOn.font = menuFont;
         buttonStyleOn.fontColor = Color.WHITE;
-        //buttonStyleOn.downFontColor = Color.ORANGE;
 
         buttonStyleOff = new TextButtonStyle();
         buttonStyleOff.font = menuFontNoShadow;
         buttonStyleOff.fontColor = Color.DARK_GRAY;
-        
+
         labelStyle = new LabelStyle();
         labelStyle.font = menuFont;
         labelStyle.fontColor = Color.WHITE;
@@ -92,25 +105,31 @@ public class LevelSelectScreen implements Screen {
         for (int i = 0; i < game.levels.size(); i++) {
             TextButton textButton;
             if (i <= game.prefs.getInteger("levelsAvailable")) {
-                textButton = new TextButton(Integer.toString(i+1), buttonStyleOn);
+                textButton = new TextButton(Integer.toString(i + 1), buttonStyleOn);
                 final int finalI = i;
                 textButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
+                        if (!isMuted) {
+                            clickSound.play();
+                        }
+                        if (doVibrate) {
+                            Gdx.input.vibrate(25);
+                        }
                         game.setScreen(new GameScreen(game, game.levels.get(finalI)));
                     }
                 });
             } else {
-                textButton = new TextButton(Integer.toString(i+1), buttonStyleOff);
+                textButton = new TextButton(Integer.toString(i + 1), buttonStyleOff);
             }
             if (Gdx.graphics.getWidth() > Gdx.graphics.getHeight()) {
                 innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
-                if ((i+1) % 7 == 0 && i != 0) {
+                if ((i + 1) % 7 == 0 && i != 0) {
                     innerTable.row();
                 }
             } else {
                 innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
-                if ((i+1) % 4 == 0 && i != 0) {
+                if ((i + 1) % 4 == 0 && i != 0) {
                     innerTable.row();
                 }
             }
@@ -124,6 +143,12 @@ public class LevelSelectScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                if (!isMuted) {
+                    clickSound.play();
+                }
                 game.setScreen(new MainMenuScreen(game));
             }
         });
@@ -155,7 +180,7 @@ public class LevelSelectScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.sizeModifier = Math.min(width, height)/1080f;
+        game.sizeModifier = Math.min(width, height) / 1080f;
         show();
     }
 

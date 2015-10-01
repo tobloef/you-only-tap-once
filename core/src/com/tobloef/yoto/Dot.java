@@ -12,7 +12,9 @@ public class Dot {
     public float lifetime = 0;
     public boolean shouldCount = false;
 
-    public Dot() {}
+    public Dot() {
+    }
+
     public Dot(Vector2 position, Vector2 direction, float speed, float size, float maxSize) {
         this.position = position;
         this.direction = direction;
@@ -21,11 +23,12 @@ public class Dot {
         activated = false;
         state = 0;
     }
+
     public Dot(Vector2 position, float maxSize) {
         this.position = position;
         this.maxSize = maxSize;
         activated = true;
         state = 1;
-        direction = new Vector2(0,0);
+        direction = new Vector2(0, 0);
     }
 }
