@@ -205,12 +205,6 @@ public class GameScreen implements Screen, InputProcessor {
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
                 pauseGame();
             }
         });
@@ -250,6 +244,7 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                     if (!paused) {
                         game.setScreen(new MainMenuScreen(game));
+                        dispose();
                     } else {
                         resumeGame();
                     }
@@ -429,6 +424,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, level));
+                dispose();
             }
         });
         Label restartLabel = new Label("Restart", labelStyleMedium);
@@ -444,6 +440,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
+                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -459,6 +456,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
+                dispose();
             }
         });
         Label homeLabel = new Label("Home", labelStyleMedium);
@@ -474,6 +472,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
+                dispose();
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
@@ -539,7 +538,7 @@ public class GameScreen implements Screen, InputProcessor {
             if (level.levelID != -1) {
                 pauseTable.add(levelsButton).size(game.sizeModifier * 250);
             } else {
-                pauseTable.add(randomButton).size(game.sizeModifier * 250);
+                pauseTable.add(randomButton).size(game.sizeModifier * 270);
             }
             pauseTable.add(homeButton).size(game.sizeModifier * 250);
             pauseTable.row();
@@ -551,6 +550,12 @@ public class GameScreen implements Screen, InputProcessor {
             pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
         }
         stage.addActor(pauseTable);
+        if (!isMuted) {
+            clickSound.play();
+        }
+        if (doVibrate) {
+            Gdx.input.vibrate(25);
+        }
     }
 
     public void endGame() {
@@ -559,7 +564,12 @@ public class GameScreen implements Screen, InputProcessor {
 
         endTable.setFillParent(true);
         endTable.setDebug(false);
-        Label scoreTitleLabel = new Label("Score", labelStyleMedium);
+        Label scoreTitleLabel;
+        if (level.levelID == -1) {
+            scoreTitleLabel = new Label("Score", labelStyleMedium);
+        } else {
+            scoreTitleLabel = new Label("Level " + (level.levelID + 1), labelStyleMedium);
+        }
         scoreTitleLabel.sizeBy(3);
         Label scoreLabel = new Label(score + "/" + scoreGoal, labelStyleBig);
 
@@ -574,6 +584,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, level));
+                dispose();
             }
         });
         Label restartLabel = new Label("Restart", labelStyleMedium);
@@ -615,6 +626,7 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                     if (game.prefs.getInteger("levelsAvailable") > level.levelID) {
                         game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
+                        dispose();
                     }
                 } else {
                     GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
@@ -629,6 +641,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
                             } else {
                                 game.setScreen(new MainMenuScreen(game));
+                                dispose();
                             }
                         }
                     });
@@ -653,6 +666,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
+                dispose();
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
@@ -668,6 +682,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
+                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -683,6 +698,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new SettingsScreen(game));
+                dispose();
             }
         });
         Label settingsLabel = new Label("Settings", labelStyleMedium);
@@ -698,6 +714,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
+                dispose();
             }
         });
         Label homeLabel = new Label("Home", labelStyleMedium);
@@ -822,16 +839,37 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void hide() {
-        //Dispose of screen here?
+
     }
 
     @Override
     public void dispose() {
         dotTexture.dispose();
         shadowTexture.dispose();
+        pauseTexture.dispose();
+        pauseTexturePressed.dispose();
+        nextTextureDisabled.dispose();
+        nextTexture.dispose();
+        nextTexturePressed.dispose();
+        randomTexture.dispose();
+        randomTexturePressed.dispose();
+        resumeTexture.dispose();
+        resumeTexturePressed.dispose();
+        restartTexture.dispose();
+        restartTexturePressed.dispose();
+        levelsTexture.dispose();
+        levelsTexturePressed.dispose();
+        customiseTexture.dispose();
+        customiseTexturePressed.dispose();
+        settingsTexture.dispose();
+        settingsTexturePressed.dispose();
+        homeTexture.dispose();
+        homeTexturePressed.dispose();
         popSound.dispose();
+        clickSound.dispose();
         bigFont.dispose();
         mediumFont.dispose();
+        stage.dispose();
     }
 
     @Override

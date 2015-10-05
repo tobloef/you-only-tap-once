@@ -41,7 +41,6 @@ public class SettingsScreen implements Screen {
     private Texture disableVibrationTexturePressed;
     private Sound clickSound;
 
-
     private Stage stage;
     private Table table;
     private Label vibrationLabel;
@@ -142,7 +141,14 @@ public class SettingsScreen implements Screen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
                     game.setScreen(new MainMenuScreen(game));
+                    dispose();
                 }
                 return true;
             }
@@ -164,6 +170,7 @@ public class SettingsScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
+                dispose();
             }
         });
 
@@ -323,6 +330,22 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void dispose() {
-
+         bigFont.dispose();
+         mediumFont.dispose();
+         backTexture.dispose();
+         backTexturePressed.dispose();
+         muteTexture.dispose();
+         muteTexturePressed.dispose();
+         unmuteTexture.dispose();
+         unmuteTexturePressed.dispose();
+         removeAdsTexture.dispose();
+         removeAdsTexturePressed.dispose();
+         rateTexture.dispose();
+         rateTexturePressed.dispose();
+         enableVibrationTexture.dispose();
+         enableVibrationTexturePressed.dispose();
+         disableVibrationTexture.dispose();
+         disableVibrationTexturePressed.dispose();
+         clickSound.dispose();
     }
 }

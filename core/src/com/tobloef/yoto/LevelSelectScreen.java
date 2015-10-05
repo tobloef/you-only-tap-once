@@ -39,7 +39,6 @@ public class LevelSelectScreen implements Screen {
     private ImageButtonStyle backButtonStyle;
     private ScrollPaneStyle scrollPanelStyle;
 
-    private Color red = new Color(200 / 255f, 45 / 255f, 25 / 255f, 1f);
     private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
     private Color clear = new Color(50f / 255f, 130f / 255f, 200f / 255f, 0f);
 
@@ -75,6 +74,7 @@ public class LevelSelectScreen implements Screen {
                         Gdx.input.vibrate(25);
                     }
                     game.setScreen(new MainMenuScreen(game));
+                    dispose();
                 }
                 return true;
             }
@@ -117,6 +117,7 @@ public class LevelSelectScreen implements Screen {
                             Gdx.input.vibrate(25);
                         }
                         game.setScreen(new GameScreen(game, game.levels.get(finalI)));
+                        dispose();
                     }
                 });
             } else {
@@ -150,6 +151,7 @@ public class LevelSelectScreen implements Screen {
                     clickSound.play();
                 }
                 game.setScreen(new MainMenuScreen(game));
+                dispose();
             }
         });
         table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 20).padTop(20 * game.sizeModifier).left().uniformX();
@@ -202,8 +204,11 @@ public class LevelSelectScreen implements Screen {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
-        menuFont.dispose();
-        backButtonTexture.dispose();
         stage.dispose();
+        menuFont.dispose();
+        menuFontNoShadow.dispose();
+        backButtonTexture.dispose();
+        backButtonTexturePressed.dispose();
+        clickSound.dispose();
     }
 }

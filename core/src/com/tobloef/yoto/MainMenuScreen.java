@@ -114,12 +114,6 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
-                    if (!isMuted) {
-                        clickSound.play();
-                    }
-                    if (doVibrate) {
-                        Gdx.input.vibrate(25);
-                    }
                     Gdx.app.exit();
                 }
                 return true;
@@ -145,6 +139,7 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
+                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -160,6 +155,7 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
+                dispose();
             }
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
@@ -203,6 +199,7 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new SettingsScreen(game));
+                dispose();
             }
         });
         Label settingsLabel = new Label("Settings", labelStyleMedium);
@@ -238,23 +235,6 @@ public class MainMenuScreen implements Screen {
             table.add(settingsLabel).expand().padLeft(game.sizeModifier * -30).top();
         }
         stage.addActor(table);
-
-        if (!game.prefs.contains("firstLaunch")) {
-            GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-            dialog.setTitle("Thank you!");
-            dialog.setMessage("Thank you for being one of the first few people to download my game. If you have suggestiona or find any bugs, please feel free to contact me using the mail button wherever it is.");
-            dialog.setClickListener(new ButtonClickListener() {
-                @Override
-                public void click(int button) {
-
-                }
-            });
-            dialog.addButton("Alright");
-            dialog.build().show();
-
-            game.prefs.putBoolean("firstLaunch", true);
-            game.prefs.flush();
-        }
     }
 
     @Override
@@ -292,6 +272,16 @@ public class MainMenuScreen implements Screen {
     @Override
     public void dispose() {
         bigFont.dispose();
+        mediumFont.dispose();
+        levelsTexture.dispose();
+        levelsTexturePressed.dispose();
+        randomTexture.dispose();
+        randomTexturePressed.dispose();
+        customTexture.dispose();
+        customTexturePressed.dispose();
+        settingsTexture.dispose();
+        settingsTexturePressed.dispose();
+        clickSound.dispose();
         stage.dispose();
         logoTexture.dispose();
     }
