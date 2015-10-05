@@ -136,7 +136,6 @@ public class SplashScreen implements Screen {
     public void render(float delta) {
         if (game.manager.update() && (System.currentTimeMillis() - startTime) > minSplashTime) {
             game.setScreen(new MainMenuScreen(game));
-            dispose();
         }
 
         Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);

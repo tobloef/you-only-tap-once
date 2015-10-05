@@ -148,7 +148,6 @@ public class SettingsScreen implements Screen {
                         Gdx.input.vibrate(25);
                     }
                     game.setScreen(new MainMenuScreen(game));
-                    dispose();
                 }
                 return true;
             }
@@ -170,7 +169,6 @@ public class SettingsScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
-                dispose();
             }
         });
 

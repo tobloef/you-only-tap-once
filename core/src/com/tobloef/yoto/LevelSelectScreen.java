@@ -74,7 +74,6 @@ public class LevelSelectScreen implements Screen {
                         Gdx.input.vibrate(25);
                     }
                     game.setScreen(new MainMenuScreen(game));
-                    dispose();
                 }
                 return true;
             }
@@ -117,7 +116,6 @@ public class LevelSelectScreen implements Screen {
                             Gdx.input.vibrate(25);
                         }
                         game.setScreen(new GameScreen(game, game.levels.get(finalI)));
-                        dispose();
                     }
                 });
             } else {
@@ -151,7 +149,6 @@ public class LevelSelectScreen implements Screen {
                     clickSound.play();
                 }
                 game.setScreen(new MainMenuScreen(game));
-                dispose();
             }
         });
         table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 20).padTop(20 * game.sizeModifier).left().uniformX();

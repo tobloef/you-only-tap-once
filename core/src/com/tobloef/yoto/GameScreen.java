@@ -244,7 +244,6 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                     if (!paused) {
                         game.setScreen(new MainMenuScreen(game));
-                        dispose();
                     } else {
                         resumeGame();
                     }
@@ -376,13 +375,15 @@ public class GameScreen implements Screen, InputProcessor {
                 }
                 if (dots.size == 0) {
                     hasEnded = true;
-                    endGame();
+                    if (!paused) {
+                        endGame();
+                    }
                 }
             }
-            if (completed && backgroundColor != green) {
+            if (completed) {
                 backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 5f);
             }
-            if (!completed && shouldEnd && backgroundColor != red) {
+            if (!completed && shouldEnd) {
                 backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 5f);
             }
         }
@@ -424,7 +425,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, level));
-                dispose();
             }
         });
         Label restartLabel = new Label("Restart", labelStyleMedium);
@@ -440,7 +440,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
-                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -456,7 +455,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
-                dispose();
             }
         });
         Label homeLabel = new Label("Home", labelStyleMedium);
@@ -472,7 +470,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
-                dispose();
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
@@ -584,7 +581,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, level));
-                dispose();
             }
         });
         Label restartLabel = new Label("Restart", labelStyleMedium);
@@ -599,7 +595,7 @@ public class GameScreen implements Screen, InputProcessor {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                if (level.levelID <= game.levels.size()) {
+                if (level.levelID+1 < game.levels.size()) {
                     if (game.prefs.getBoolean("remindRate") && level.levelID <= game.levels.size() && (level.levelID+1)%20 == 0) {
                         GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
                         dialog.setTitle("Like this game?");
@@ -626,7 +622,6 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                     if (game.prefs.getInteger("levelsAvailable") > level.levelID) {
                         game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
-                        dispose();
                     }
                 } else {
                     GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
@@ -641,7 +636,6 @@ public class GameScreen implements Screen, InputProcessor {
                                 Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
                             } else {
                                 game.setScreen(new MainMenuScreen(game));
-                                dispose();
                             }
                         }
                     });
@@ -666,7 +660,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
-                dispose();
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
@@ -682,7 +675,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
-                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -698,7 +690,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new SettingsScreen(game));
-                dispose();
             }
         });
         Label settingsLabel = new Label("Settings", labelStyleMedium);
@@ -714,7 +705,6 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new MainMenuScreen(game));
-                dispose();
             }
         });
         Label homeLabel = new Label("Home", labelStyleMedium);

@@ -139,7 +139,6 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new LevelSelectScreen(game));
-                dispose();
             }
         });
         Label levelsLabel = new Label("Levels", labelStyleMedium);
@@ -155,7 +154,6 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new GameScreen(game, game.randomLevel()));
-                dispose();
             }
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
@@ -199,7 +197,6 @@ public class MainMenuScreen implements Screen {
                     Gdx.input.vibrate(25);
                 }
                 game.setScreen(new SettingsScreen(game));
-                dispose();
             }
         });
         Label settingsLabel = new Label("Settings", labelStyleMedium);
