@@ -20,8 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
-import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
@@ -153,7 +151,7 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new GameScreen(game, game.randomLevel()));
+                game.setScreen(new GameScreen(game, game.randomLevel(true)));
             }
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
@@ -168,6 +166,8 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
+                game.setScreen(new TestGameScreen(game));
+                /*
                 GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
                 dialog.setTitle("Coming Soon!");
                 dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
@@ -181,7 +181,7 @@ public class MainMenuScreen implements Screen {
 
                 dialog.addButton("Will do!");
 
-                dialog.build().show();
+                dialog.build().show();*/
             }
         });
         Label customLabel = new Label("Custom", labelStyleMedium);

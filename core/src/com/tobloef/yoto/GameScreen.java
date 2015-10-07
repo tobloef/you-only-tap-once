@@ -367,10 +367,8 @@ public class GameScreen implements Screen, InputProcessor {
                         }
                     }
                 } else {
-                    if (shouldEnd) {
-                        for (Dot dot : dots) {
-                            dot.state = -1;
-                        }
+                    for (Dot dot : dots) {
+                        dot.state = -1;
                     }
                 }
                 if (dots.size == 0) {
@@ -469,7 +467,7 @@ public class GameScreen implements Screen, InputProcessor {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new GameScreen(game, game.randomLevel()));
+                game.setScreen(new GameScreen(game, game.randomLevel(true)));
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
@@ -634,8 +632,6 @@ public class GameScreen implements Screen, InputProcessor {
                         public void click(int button) {
                             if (button == 0) {
                                 Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
-                            } else {
-                                game.setScreen(new MainMenuScreen(game));
                             }
                         }
                     });
@@ -659,7 +655,7 @@ public class GameScreen implements Screen, InputProcessor {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new GameScreen(game, game.randomLevel()));
+                game.setScreen(new GameScreen(game, game.randomLevel(true)));
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);

@@ -47,16 +47,29 @@ public class YouOnlyTapOnce extends Game {
         super.dispose();
     }
 
-    public Level randomLevel() {
-        int randCount = random.nextInt(300 - 1) + 1;
-        float randSize = 0f;
-        while (randSize < 0.1f) {
-            randSize = (0.4f - (((randCount - 100f) * 2f) / 1000f) + (random.nextFloat() * (0.2f - -0.2f) + -0.2f)) / 2;
+    public float biasedRandom(float low, float high, float bias) {
+        float biasedFloat = (float) Math.pow(random.nextFloat(), bias);
+        return low + (high - low) * biasedFloat;
+    }
+
+    public Level randomLevel(boolean trueRandom) {
+        float randMaxSize;
+        float randSize;
+        int randCount = Math.round(biasedRandom(1, 300, 2));
+        float randSpeed = random.nextFloat() * (5 - 0.5f) + 0.5f;
+        float randCompletion = random.nextFloat() * (1f - 0.7f) + 0.7f;
+        if (trueRandom) {
+            randSize = biasedRandom(0.3f, 4, 2)/10f;
+            randMaxSize = random.nextFloat() * (5 - 1) + 1;
+        } else {
+            randSize = 0f;
+            while (randSize < 0.1f) {
+                randSize = (0.4f - (((randCount - 100f) * 2f) / 1000f) + (random.nextFloat() * (0.2f - -0.2f) + -0.2f)) / 2;
+            }
+            randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (random.nextFloat() * (1f - -1f) + -1f));
         }
-        float randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (random.nextFloat() * (1f - -1f) + -1f));
-        float randSpeed = random.nextFloat() * (3f - 0.25f) + 0.25f;
-        float randCompletion = random.nextFloat() * (0.99f - 0.65f) + 0.65f;
         Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+        //System.out.println("Count: " + randCount + " Size: " + randSize + " Max Size: " + randMaxSize + " Speed: " + randSpeed + " Completion: " + randCompletion);
         return level;
     }
 }
