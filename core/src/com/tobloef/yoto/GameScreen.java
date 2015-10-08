@@ -293,8 +293,8 @@ public class GameScreen implements Screen, InputProcessor {
             for (Dot dot : dots) {
                 if (!dot.activated) {
                     Vector2 position = dot.position;
-                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
-                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
+                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
+                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
                     dot.position = position;
 
                     /*  Physics  */
@@ -373,9 +373,7 @@ public class GameScreen implements Screen, InputProcessor {
                 }
                 if (dots.size == 0) {
                     hasEnded = true;
-                    if (!paused) {
-                        endGame();
-                    }
+                    endGame();
                 }
             }
             if (completed) {
@@ -390,166 +388,168 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public void pauseGame() {
-        paused = true;
-        tint.setVisible(true);
-        pauseTable.setFillParent(true);
-        popSound.pause();
+        if (!hasEnded) {
+            paused = true;
+            tint.setVisible(true);
+            pauseTable.setFillParent(true);
+            popSound.pause();
 
-        Label pauseLabel = new Label("Paused", labelStyleBig);
+            Label pauseLabel = new Label("Paused", labelStyleBig);
 
-        ImageButton resumeButton = new ImageButton(resumeButtonStyle);
-        resumeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                resumeGame();
-            }
-        });
-        Label resumeLabel = new Label("Resume", labelStyleMedium);
-
-        ImageButton restartButton = new ImageButton(restartButtonStyle);
-        restartButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                game.setScreen(new GameScreen(game, level));
-            }
-        });
-        Label restartLabel = new Label("Restart", labelStyleMedium);
-
-        ImageButton levelsButton = new ImageButton(levelsButtonStyle);
-        levelsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                game.setScreen(new LevelSelectScreen(game));
-            }
-        });
-        Label levelsLabel = new Label("Levels", labelStyleMedium);
-
-        ImageButton homeButton = new ImageButton(homeButtonStyle);
-        homeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                game.setScreen(new MainMenuScreen(game));
-            }
-        });
-        Label homeLabel = new Label("Home", labelStyleMedium);
-
-        ImageButton randomButton = new ImageButton(randomButtonStyle);
-        randomButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                game.setScreen(new GameScreen(game, game.randomLevel(true)));
-            }
-        });
-        Label randomLabel = new Label("New", labelStyleMedium);
-
-        ImageButton customiseButton = new ImageButton(customiseButtonStyle);
-        customiseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-                dialog.setTitle("Coming Soon!");
-                dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
-
-                dialog.setClickListener(new ButtonClickListener() {
-                    @Override
-                    public void click(int button) {
-
+            ImageButton resumeButton = new ImageButton(resumeButtonStyle);
+            resumeButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
                     }
-                });
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    resumeGame();
+                }
+            });
+            Label resumeLabel = new Label("Resume", labelStyleMedium);
 
-                dialog.addButton("Will do!");
+            ImageButton restartButton = new ImageButton(restartButtonStyle);
+            restartButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    game.setScreen(new GameScreen(game, level));
+                }
+            });
+            Label restartLabel = new Label("Restart", labelStyleMedium);
 
-                dialog.build().show();
-            }
-        });
-        Label customiseLabel = new Label("Edit", labelStyleMedium);
-        customiseLabel.setAlignment(1);
+            ImageButton levelsButton = new ImageButton(levelsButtonStyle);
+            levelsButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    game.setScreen(new LevelSelectScreen(game));
+                }
+            });
+            Label levelsLabel = new Label("Levels", labelStyleMedium);
 
-        if (game.screenSize.x > game.screenSize.y) {
-            pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
-            pauseTable.row();
-            pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 50);
-            pauseTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 10);
-            if (level.levelID != -1) {
-                pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX();
+            ImageButton homeButton = new ImageButton(homeButtonStyle);
+            homeButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    game.setScreen(new MainMenuScreen(game));
+                }
+            });
+            Label homeLabel = new Label("Home", labelStyleMedium);
+
+            ImageButton randomButton = new ImageButton(randomButtonStyle);
+            randomButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    game.setScreen(new GameScreen(game, game.randomLevel(true)));
+                }
+            });
+            Label randomLabel = new Label("New", labelStyleMedium);
+
+            ImageButton customiseButton = new ImageButton(customiseButtonStyle);
+            customiseButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (!isMuted) {
+                        clickSound.play();
+                    }
+                    if (doVibrate) {
+                        Gdx.input.vibrate(25);
+                    }
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("Coming Soon!");
+                    dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
+
+                    dialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+
+                        }
+                    });
+
+                    dialog.addButton("Will do!");
+
+                    dialog.build().show();
+                }
+            });
+            Label customiseLabel = new Label("Edit", labelStyleMedium);
+            customiseLabel.setAlignment(1);
+
+            if (game.screenSize.x > game.screenSize.y) {
+                pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
+                pauseTable.row();
+                pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 50);
+                pauseTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 10);
+                if (level.levelID != -1) {
+                    pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX();
+                } else {
+                    pauseTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
+                }
+                pauseTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
+                pauseTable.row();
+                pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
+                pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 10);
+                if (level.levelID != -1) {
+                    pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+                } else {
+                    pauseTable.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+                }
+                pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
             } else {
-                pauseTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
+                pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
+                pauseTable.row();
+                pauseTable.add(resumeButton).size(game.sizeModifier * 230);
+                pauseTable.add(restartButton).size(game.sizeModifier * 230);
+                pauseTable.row();
+                pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
+                pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
+                pauseTable.row();
+                if (level.levelID != -1) {
+                    pauseTable.add(levelsButton).size(game.sizeModifier * 250);
+                } else {
+                    pauseTable.add(randomButton).size(game.sizeModifier * 270);
+                }
+                pauseTable.add(homeButton).size(game.sizeModifier * 250);
+                pauseTable.row();
+                if (level.levelID != -1) {
+                    pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
+                } else {
+                    pauseTable.add(randomLabel).expand().padTop(game.sizeModifier * 20).top();
+                }
+                pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
             }
-            pauseTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
-            pauseTable.row();
-            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
-            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 10);
-            if (level.levelID != -1) {
-                pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-            } else {
-                pauseTable.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
+            stage.addActor(pauseTable);
+            if (!isMuted) {
+                clickSound.play();
             }
-            pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
-        } else {
-            pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
-            pauseTable.row();
-            pauseTable.add(resumeButton).size(game.sizeModifier * 230);
-            pauseTable.add(restartButton).size(game.sizeModifier * 230);
-            pauseTable.row();
-            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
-            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
-            pauseTable.row();
-            if (level.levelID != -1) {
-                pauseTable.add(levelsButton).size(game.sizeModifier * 250);
-            } else {
-                pauseTable.add(randomButton).size(game.sizeModifier * 270);
+            if (doVibrate) {
+                Gdx.input.vibrate(25);
             }
-            pauseTable.add(homeButton).size(game.sizeModifier * 250);
-            pauseTable.row();
-            if (level.levelID != -1) {
-                pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
-            } else {
-                pauseTable.add(randomLabel).expand().padTop(game.sizeModifier * 20).top();
-            }
-            pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
-        }
-        stage.addActor(pauseTable);
-        if (!isMuted) {
-            clickSound.play();
-        }
-        if (doVibrate) {
-            Gdx.input.vibrate(25);
         }
     }
 

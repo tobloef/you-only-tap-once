@@ -126,9 +126,11 @@ public class SplashScreen implements Screen {
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
         int id = 0;
         for (String line : levelFile.readString().split("\\n")) {
-            String[] s = line.split(",");
-            Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1]) / 10f * sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
-            game.levels.add(level);
+            if (!line.startsWith("#")) {
+                String[] s = line.split(",");
+                Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1]) * sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
+                game.levels.add(level);
+            }
         }
     }
 

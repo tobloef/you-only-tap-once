@@ -80,8 +80,8 @@ public class RandomGameScreen implements Screen, InputProcessor {
             for (Dot dot : dots) {
                 if (!dot.activated) {
                     Vector2 position = dot.position;
-                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
-                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
+                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
+                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
                     dot.position = position;
 
                     /*  Physics  */

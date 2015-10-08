@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class TestGameScreen implements Screen, InputProcessor {
     final YouOnlyTapOnce game;
     private OrthographicCamera camera;
@@ -23,6 +27,7 @@ public class TestGameScreen implements Screen, InputProcessor {
     private int score;
     private int scoreGoal;
     private Level level;
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     private float games;
     private float wins;
@@ -80,8 +85,8 @@ public class TestGameScreen implements Screen, InputProcessor {
             for (Dot dot : dots) {
                 if (!dot.activated) {
                     Vector2 position = dot.position;
-                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
-                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed;
+                    position.x += Math.min(Math.max(dot.direction.x * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
+                    position.y += Math.min(Math.max(dot.direction.y * Gdx.graphics.getDeltaTime() * 100, -1), 1) * level.speed * game.sizeModifier;
                     dot.position = position;
 
                     /*  Physics  */
@@ -159,7 +164,8 @@ public class TestGameScreen implements Screen, InputProcessor {
         if ((games == 5 && wins == 5) || games == 25) {
             String s = level.count + "," + (double) Math.round(level.dotSize * 100) / 100 + "," + (double) Math.round((level.maxSize / level.dotSize) * 100) / 100 + "," + (double) Math.round(level.speed * 100) / 100 + ",0.85," + wins / games;
             if (games == 25 && wins != 0) {
-                System.out.println("Added: " + s);
+                Date date = new Date();
+                System.out.println(dateFormat.format(date) + " Added: " + s);
                 levelFile.writeString(s + "\n", true);
             }
             level = game.randomLevel(true);

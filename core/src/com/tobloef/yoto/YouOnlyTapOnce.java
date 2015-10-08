@@ -56,7 +56,7 @@ public class YouOnlyTapOnce extends Game {
         float randMaxSize;
         float randSize;
         int randCount = Math.round(biasedRandom(1, 300, 2));
-        float randSpeed = random.nextFloat() * (5 - 0.5f) + 0.5f;
+        float randSpeed = random.nextFloat() * (8f - 5f) + 5f;
         float randCompletion = random.nextFloat() * (1f - 0.7f) + 0.7f;
         if (trueRandom) {
             randSize = biasedRandom(0.3f, 4, 2)/10f;
@@ -69,7 +69,6 @@ public class YouOnlyTapOnce extends Game {
             randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (random.nextFloat() * (1f - -1f) + -1f));
         }
         Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
-        //System.out.println("Count: " + randCount + " Size: " + randSize + " Max Size: " + randMaxSize + " Speed: " + randSpeed + " Completion: " + randCompletion);
         return level;
     }
 }
