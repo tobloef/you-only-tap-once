@@ -55,7 +55,7 @@ public class YouOnlyTapOnce extends Game {
     public Level randomLevel(boolean trueRandom) {
         float randMaxSize;
         float randSize;
-        int randCount = Math.round(biasedRandom(1, 300, 2));
+        int randCount = Math.round(biasedRandom(5, 300, 2));
         float randSpeed = random.nextFloat() * (8f - 5f) + 5f;
         float randCompletion = random.nextFloat() * (1f - 0.7f) + 0.7f;
         if (trueRandom) {

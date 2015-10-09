@@ -243,7 +243,7 @@ public class GameScreen implements Screen, InputProcessor {
                         Gdx.input.vibrate(25);
                     }
                     if (!paused) {
-                        game.setScreen(new MainMenuScreen(game));
+                       pauseGame();
                     } else {
                         resumeGame();
                     }
@@ -530,7 +530,7 @@ public class GameScreen implements Screen, InputProcessor {
                 pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
                 pauseTable.row();
                 if (level.levelID != -1) {
-                    pauseTable.add(levelsButton).size(game.sizeModifier * 250);
+                    pauseTable.add(levelsButton).size(game.sizeModifier * 270);
                 } else {
                     pauseTable.add(randomButton).size(game.sizeModifier * 270);
                 }
@@ -544,12 +544,6 @@ public class GameScreen implements Screen, InputProcessor {
                 pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
             }
             stage.addActor(pauseTable);
-            if (!isMuted) {
-                clickSound.play();
-            }
-            if (doVibrate) {
-                Gdx.input.vibrate(25);
-            }
         }
     }
 

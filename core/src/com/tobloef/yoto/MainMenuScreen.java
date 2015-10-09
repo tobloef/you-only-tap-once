@@ -20,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
+import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class MainMenuScreen implements Screen {
     YouOnlyTapOnce game;
@@ -112,7 +114,23 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
-                    Gdx.app.exit();
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("Are you sure?");
+                    dialog.setMessage("Are you sure you want to exit?");
+
+                    dialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            if (button == 1) {
+                                Gdx.app.exit();
+                            }
+                        }
+                    });
+
+                    dialog.addButton("No");
+                    dialog.addButton("Yes");
+
+                    dialog.build().show();
                 }
                 return true;
             }
@@ -166,22 +184,24 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new TestGameScreen(game));
-                /*
-                GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-                dialog.setTitle("Coming Soon!");
-                dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
+                if (false) {
+                    game.setScreen(new TestGameScreen(game));
+                } else {
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("Coming Soon!");
+                    dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
 
-                dialog.setClickListener(new ButtonClickListener() {
-                    @Override
-                    public void click(int button) {
+                    dialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
 
-                    }
-                });
+                        }
+                    });
 
-                dialog.addButton("Will do!");
+                    dialog.addButton("Will do!");
 
-                dialog.build().show();*/
+                    dialog.build().show();
+                }
             }
         });
         Label customLabel = new Label("Custom", labelStyleMedium);
