@@ -25,6 +25,7 @@ public class SettingsScreen implements Screen {
     YouOnlyTapOnce game;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
+    private BitmapFont smallFont;
     private Texture backTexture;
     private Texture backTexturePressed;
     private Texture muteTexture;
@@ -35,10 +36,16 @@ public class SettingsScreen implements Screen {
     private Texture removeAdsTexturePressed;
     private Texture rateTexture;
     private Texture rateTexturePressed;
+    private Texture twitterTexture;
+    private Texture twitterTexturePressed;
+    private Texture contactTexture;
+    private Texture contactTexturePressed;
     private Texture enableVibrationTexture;
     private Texture enableVibrationTexturePressed;
     private Texture disableVibrationTexture;
     private Texture disableVibrationTexturePressed;
+    private Texture backButtonTexture;
+    private Texture backButtonTexturePressed;
     private Sound clickSound;
 
     private Stage stage;
@@ -55,10 +62,13 @@ public class SettingsScreen implements Screen {
     ImageButtonStyle unmuteButtonStyle;
     ImageButtonStyle removeAdsButtonStyle;
     ImageButtonStyle rateButtonStyle;
+    ImageButtonStyle twitterButtonStyle;
+    ImageButtonStyle contactButtonStyle;
     ImageButtonStyle enableVibrationButtonStyle;
     ImageButtonStyle disableVibrationButtonStyle;
     LabelStyle labelStyleBig;
     LabelStyle labelStyleMedium;
+    LabelStyle labelStyleSmall;
 
     public SettingsScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -71,6 +81,7 @@ public class SettingsScreen implements Screen {
 
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
+        smallFont = game.manager.get("small_font.ttf", BitmapFont.class);
         backTexture = game.manager.get("back_icon.png", Texture.class);
         backTexturePressed = game.manager.get("back_icon_pressed.png", Texture.class);
         muteTexture = game.manager.get("mute_icon.png", Texture.class);
@@ -81,10 +92,16 @@ public class SettingsScreen implements Screen {
         removeAdsTexturePressed = game.manager.get("remove_ads_icon_pressed.png", Texture.class);
         rateTexture = game.manager.get("rate_icon.png", Texture.class);
         rateTexturePressed = game.manager.get("rate_icon_pressed.png", Texture.class);
+        twitterTexture = game.manager.get("twitter_icon.png", Texture.class);
+        twitterTexturePressed = game.manager.get("twitter_icon_pressed.png", Texture.class);
+        contactTexture = game.manager.get("contact_icon.png", Texture.class);
+        contactTexturePressed = game.manager.get("contact_icon_pressed.png", Texture.class);
         enableVibrationTexture = game.manager.get("enable_vibration_icon.png", Texture.class);
         enableVibrationTexturePressed = game.manager.get("enable_vibration_icon_pressed.png", Texture.class);
         disableVibrationTexture = game.manager.get("disable_vibration_icon.png", Texture.class);
         disableVibrationTexturePressed = game.manager.get("disable_vibration_icon_pressed.png", Texture.class);
+        backButtonTexture = game.manager.get("back_icon.png", Texture.class);
+        backButtonTexturePressed = game.manager.get("back_icon_pressed.png", Texture.class);
         clickSound = game.manager.get("click.mp3", Sound.class);
 
         backTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -101,6 +118,8 @@ public class SettingsScreen implements Screen {
         enableVibrationTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         disableVibrationTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         disableVibrationTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        backButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        backButtonTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         backButtonStyle = new ImageButtonStyle();
         backButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(backTexture));
@@ -122,6 +141,14 @@ public class SettingsScreen implements Screen {
         rateButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(rateTexture));
         rateButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(rateTexturePressed));
 
+        twitterButtonStyle = new ImageButtonStyle();
+        twitterButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(twitterTexture));
+        twitterButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(twitterTexturePressed));
+
+        contactButtonStyle = new ImageButtonStyle();
+        contactButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(contactTexture));
+        contactButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(contactTexturePressed));
+
         enableVibrationButtonStyle = new ImageButtonStyle();
         enableVibrationButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(enableVibrationTexture));
         enableVibrationButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(enableVibrationTexturePressed));
@@ -130,11 +157,18 @@ public class SettingsScreen implements Screen {
         disableVibrationButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(disableVibrationTexture));
         disableVibrationButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(disableVibrationTexturePressed));
 
+        backButtonStyle = new ImageButtonStyle();
+        backButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(backButtonTexture));
+        backButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(backButtonTexturePressed));
+
         labelStyleBig = new LabelStyle();
         labelStyleBig.font = bigFont;
 
         labelStyleMedium = new LabelStyle();
         labelStyleMedium.font = mediumFont;
+
+        labelStyleSmall = new LabelStyle();
+        labelStyleSmall.font = smallFont;
 
         stage = new Stage(new ScreenViewport());
         stage.addListener(new InputListener() {
@@ -179,7 +213,7 @@ public class SettingsScreen implements Screen {
                 //Do something
             }
         });
-        Label removeAdsLabel = new Label("Remove\nAds", labelStyleMedium);
+        Label removeAdsLabel = new Label("Remove\nAds", labelStyleSmall);
         removeAdsLabel.setAlignment(2);
 
         ImageButton rateButton = new ImageButton(rateButtonStyle);
@@ -195,16 +229,48 @@ public class SettingsScreen implements Screen {
                 Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
             }
         });
-        Label rateLabel = new Label("Rate\n", labelStyleMedium);
+        Label rateLabel = new Label("Rate\n", labelStyleSmall);
         rateLabel.setAlignment(2);
+
+        ImageButton twitterButton = new ImageButton(twitterButtonStyle);
+        twitterButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                Gdx.net.openURI("https://twitter.com/tobloef");
+            }
+        });
+        Label twitterLabel = new Label("Follow\n", labelStyleSmall);
+        twitterLabel.setAlignment(2);
+
+        ImageButton contactButton = new ImageButton(contactButtonStyle);
+        contactButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                Gdx.net.openURI("mailto:tobloef@gmail.com?subject=You Only Tap Once");
+            }
+        });
+        Label contactLabel = new Label("Contact", labelStyleSmall);
+        contactLabel.setAlignment(2);
 
         final ImageButton vibrationButton;
         if (game.prefs.getBoolean("settingsVibrate")) {
             vibrationButton = new ImageButton(disableVibrationButtonStyle);
-            vibrationLabel = new Label("Disable\nVibration", labelStyleMedium);
+            vibrationLabel = new Label("Disable\nVibration", labelStyleSmall);
         } else {
             vibrationButton = new ImageButton(enableVibrationButtonStyle);
-            vibrationLabel = new Label("Enable\nVibration", labelStyleMedium);
+            vibrationLabel = new Label("Enable\nVibration", labelStyleSmall);
         }
         vibrationButton.addListener(new ClickListener() {
             @Override
@@ -232,10 +298,10 @@ public class SettingsScreen implements Screen {
         final ImageButton muteButton;
         if (game.prefs.getBoolean("settingsMute")) {
             muteButton = new ImageButton(unmuteButtonStyle);
-            muteLabel = new Label("Unmute\n", labelStyleMedium);
+            muteLabel = new Label("Unmute\n", labelStyleSmall);
         } else {
             muteButton = new ImageButton(muteButtonStyle);
-            muteLabel = new Label("Mute\n", labelStyleMedium);
+            muteLabel = new Label("Mute\n", labelStyleSmall);
         }
         muteLabel.setAlignment(2);
         muteButton.addListener(new ClickListener() {
@@ -260,6 +326,7 @@ public class SettingsScreen implements Screen {
             }
         });
 
+        Label titleLabel = new Label("Settings", labelStyleMedium);
 
         table = new Table();
         table.setFillParent(true);
@@ -277,19 +344,27 @@ public class SettingsScreen implements Screen {
             table.add(rateLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
             table.add(vibrationLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
-            table.add(settingsLabel).colspan(2).expand().padBottom(game.sizeModifier * 80).padTop(game.sizeModifier * 50);
+            table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 50).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
+            table.add(titleLabel).uniformX().colspan(2);
+            table.add().uniformX().colspan(2);
             table.row();
-            table.add(muteButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
-            table.add(rateButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
+            table.add(muteButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(50 * game.sizeModifier).colspan(3);
+            table.add(vibrationButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).padTop(50 * game.sizeModifier).colspan(3);
             table.row();
-            table.add(muteLabel).padRight(game.sizeModifier * -30).top();
-            table.add(rateLabel).padLeft(game.sizeModifier * -30).top();
+            table.add(muteLabel).expand().padLeft(100 * game.sizeModifier).top().colspan(3);
+            table.add(vibrationLabel).expand().padRight(100 * game.sizeModifier).top().colspan(3);
             table.row();
-            table.add(removeAdsButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
-            table.add(vibrationButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
+            table.add(rateButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
+            table.add(removeAdsButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
             table.row();
-            table.add(removeAdsLabel).expand().padRight(game.sizeModifier * -30).top().padBottom(game.sizeModifier * 100);
-            table.add(vibrationLabel).expand().padLeft(game.sizeModifier * -30).top().padBottom(game.sizeModifier * 100);
+            table.add(rateLabel).expand().top().padLeft(100 * game.sizeModifier).colspan(3);
+            table.add(removeAdsLabel).expand().top().padRight(100 * game.sizeModifier).colspan(3);
+            table.row();
+            table.add(twitterButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(game.sizeModifier * 140).colspan(3);
+            table.add(contactButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).padTop(game.sizeModifier * 140).colspan(3);
+            table.row();
+            table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 100).padLeft(100 * game.sizeModifier).colspan(3);
+            table.add(contactLabel).expand().top().padBottom(game.sizeModifier * 100).padRight(100 * game.sizeModifier).colspan(3);
         }
         stage.addActor(table);
     }

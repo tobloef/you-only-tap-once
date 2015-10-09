@@ -75,6 +75,17 @@ public class SplashScreen implements Screen {
         mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * mediumFontSize) * 0.05f);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
+        FreetypeFontLoader.FreeTypeFontLoaderParameter smallFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        int smallFontSize = 96;
+        smallFontParams.fontFileName = "arial.ttf";
+        smallFontParams.fontParameters.color = Color.WHITE;
+        smallFontParams.fontParameters.kerning = false;
+        smallFontParams.fontParameters.size = Math.round(sizeModifier * smallFontSize);
+        smallFontParams.fontParameters.shadowColor = new Color(0, 0, 0, 0.5f);
+        smallFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier * smallFontSize) * 0.05f);
+        smallFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * smallFontSize) * 0.05f);
+        game.manager.load("small_font.ttf", BitmapFont.class, smallFontParams);
+
         FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         mediumFontParamsNoShadow.fontFileName = "arial.ttf";
         mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
@@ -121,6 +132,10 @@ public class SplashScreen implements Screen {
         game.manager.load("unmute_icon_pressed.png", Texture.class);
         game.manager.load("rate_icon.png", Texture.class);
         game.manager.load("rate_icon_pressed.png", Texture.class);
+        game.manager.load("twitter_icon.png", Texture.class);
+        game.manager.load("twitter_icon_pressed.png", Texture.class);
+        game.manager.load("contact_icon.png", Texture.class);
+        game.manager.load("contact_icon_pressed.png", Texture.class);
 
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
