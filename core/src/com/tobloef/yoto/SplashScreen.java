@@ -136,6 +136,10 @@ public class SplashScreen implements Screen {
         game.manager.load("twitter_icon_pressed.png", Texture.class);
         game.manager.load("contact_icon.png", Texture.class);
         game.manager.load("contact_icon_pressed.png", Texture.class);
+        game.manager.load("restore_icon.png", Texture.class);
+        game.manager.load("restore_icon_pressed.png", Texture.class);
+        game.manager.load("shop_icon.png", Texture.class);
+        game.manager.load("shop_icon_pressed.png", Texture.class);
 
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");

@@ -104,7 +104,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
-        scoreGoal = Math.round(level.count * level.completionPercentage);
+        scoreGoal = Math.max(Math.round(level.count * level.completionPercentage),1);
         isMuted = game.prefs.getBoolean("settingsMute");
         doVibrate = game.prefs.getBoolean("settingsVibrate");
 
@@ -236,12 +236,6 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
-                    if (!isMuted) {
-                        clickSound.play();
-                    }
-                    if (doVibrate) {
-                        Gdx.input.vibrate(25);
-                    }
                     if (!paused) {
                        pauseGame();
                     } else {
@@ -298,14 +292,24 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.position = position;
 
                     /*  Physics  */
-                    if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
+                    if (dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
                         Vector2 direction = dot.direction;
-                        direction.x = -direction.x;
+                        direction.x = -Math.abs(direction.x);
                         dot.direction = direction;
                     }
-                    if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2) || dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
+                    if (dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
                         Vector2 direction = dot.direction;
-                        direction.y = -direction.y;
+                        direction.y = -Math.abs(direction.y);
+                        dot.direction = direction;
+                    }
+                    if (dot.position.x <= 0 + (dotTexture.getWidth() * dot.size / 2)) {
+                        Vector2 direction = dot.direction;
+                        direction.x = Math.abs(direction.x);
+                        dot.direction = direction;
+                    }
+                    if (dot.position.y <= 0 + (dotTexture.getWidth() * dot.size / 2)) {
+                        Vector2 direction = dot.direction;
+                        direction.y = Math.abs(direction.y);
                         dot.direction = direction;
                     }
                 } else {
@@ -400,12 +404,6 @@ public class GameScreen implements Screen, InputProcessor {
             resumeButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if (!isMuted) {
-                        clickSound.play();
-                    }
-                    if (doVibrate) {
-                        Gdx.input.vibrate(25);
-                    }
                     resumeGame();
                 }
             });
@@ -544,6 +542,12 @@ public class GameScreen implements Screen, InputProcessor {
                 pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
             }
             stage.addActor(pauseTable);
+        }
+        if (!isMuted) {
+            clickSound.play();
+        }
+        if (doVibrate) {
+            Gdx.input.vibrate(25);
         }
     }
 
@@ -772,6 +776,12 @@ public class GameScreen implements Screen, InputProcessor {
         pauseTable.remove();
         pauseTable = new Table();
         justResumed = true;
+        if (!isMuted) {
+            clickSound.play();
+        }
+        if (doVibrate) {
+            Gdx.input.vibrate(25);
+        }
     }
 
     @Override

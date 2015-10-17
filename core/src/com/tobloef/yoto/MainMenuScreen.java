@@ -31,8 +31,8 @@ public class MainMenuScreen implements Screen {
     private Texture levelsTexturePressed;
     private Texture randomTexture;
     private Texture randomTexturePressed;
-    private Texture customTexture;
-    private Texture customTexturePressed;
+    private Texture shopTexture;
+    private Texture shopTexturePressed;
     private Texture settingsTexture;
     private Texture settingsTexturePressed;
     private Sound clickSound;
@@ -48,7 +48,7 @@ public class MainMenuScreen implements Screen {
 
     ImageButton.ImageButtonStyle levelsButtonStyle;
     ImageButton.ImageButtonStyle randomButtonStyle;
-    ImageButton.ImageButtonStyle customButtonStyle;
+    ImageButton.ImageButtonStyle shopButtonStyle;
     ImageButton.ImageButtonStyle settingsButtonStyle;
     Label.LabelStyle labelStyleBig;
     Label.LabelStyle labelStyleMedium;
@@ -70,8 +70,8 @@ public class MainMenuScreen implements Screen {
         levelsTexturePressed = game.manager.get("levels_icon_pressed.png", Texture.class);
         randomTexture = game.manager.get("random_icon.png", Texture.class);
         randomTexturePressed = game.manager.get("random_icon_pressed.png", Texture.class);
-        customTexture = game.manager.get("customise_icon.png", Texture.class);
-        customTexturePressed = game.manager.get("customise_icon_pressed.png", Texture.class);
+        shopTexture = game.manager.get("shop_icon.png", Texture.class);
+        shopTexturePressed = game.manager.get("shop_icon_pressed.png", Texture.class);
         settingsTexture = game.manager.get("settings_icon.png", Texture.class);
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
         clickSound = game.manager.get("click.mp3", Sound.class);
@@ -82,8 +82,8 @@ public class MainMenuScreen implements Screen {
         levelsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         randomTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         randomTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        customTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        customTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        shopTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        shopTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         settingsTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         settingsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -95,9 +95,9 @@ public class MainMenuScreen implements Screen {
         randomButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(randomTexture));
         randomButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(randomTexturePressed));
 
-        customButtonStyle = new ImageButton.ImageButtonStyle();
-        customButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(customTexture));
-        customButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(customTexturePressed));
+        shopButtonStyle = new ImageButton.ImageButtonStyle();
+        shopButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(shopTexture));
+        shopButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(shopTexturePressed));
 
         settingsButtonStyle = new ImageButton.ImageButtonStyle();
         settingsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(settingsTexture));
@@ -174,8 +174,8 @@ public class MainMenuScreen implements Screen {
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
 
-        ImageButton customButton = new ImageButton(customButtonStyle);
-        customButton.addListener(new ClickListener() {
+        ImageButton shopButton = new ImageButton(shopButtonStyle);
+        shopButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (!isMuted) {
@@ -184,27 +184,10 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                if (false) {
-                    game.setScreen(new TestGameScreen(game));
-                } else {
-                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-                    dialog.setTitle("Coming Soon!");
-                    dialog.setMessage("Custom levels are still being worked on, so look forward to the next update!");
-
-                    dialog.setClickListener(new ButtonClickListener() {
-                        @Override
-                        public void click(int button) {
-
-                        }
-                    });
-
-                    dialog.addButton("Will do!");
-
-                    dialog.build().show();
-                }
+                //Do seething
             }
         });
-        Label customLabel = new Label("Custom", labelStyleMedium);
+        Label shopLabel = new Label("Shop", labelStyleMedium);
 
         ImageButton settingsButton = new ImageButton(settingsButtonStyle);
         settingsButton.addListener(new ClickListener() {
@@ -229,12 +212,12 @@ public class MainMenuScreen implements Screen {
             table.row();
             table.add(levelsButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * -20).padLeft(game.sizeModifier * 40).uniformX();
             table.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
-            table.add(customButton).expandX().size(game.sizeModifier * 250).uniformX();
+            table.add(shopButton).expandX().size(game.sizeModifier * 250).uniformX();
             table.add(settingsButton).expandX().size(game.sizeModifier * 260).padRight(game.sizeModifier * 40).uniformX();
             table.row();
             table.add(levelsLabel).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
             table.add(randomLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(customLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
+            table.add(shopLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
             table.add(settingsLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
             table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -160f);
@@ -245,10 +228,10 @@ public class MainMenuScreen implements Screen {
             table.add(levelsLabel).padBottom(game.sizeModifier * 120).padRight(game.sizeModifier * -30).top();
             table.add(randomLabel).padBottom(game.sizeModifier * 120).padLeft(game.sizeModifier * -30).top();
             table.row();
-            table.add(customButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
+            table.add(shopButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
             table.add(settingsButton).size(game.sizeModifier * 260).padLeft(game.sizeModifier * -30);
             table.row();
-            table.add(customLabel).expand().padRight(game.sizeModifier * -30).top();
+            table.add(shopLabel).expand().padRight(game.sizeModifier * -30).top();
             table.add(settingsLabel).expand().padLeft(game.sizeModifier * -30).top();
         }
         stage.addActor(table);
@@ -294,8 +277,8 @@ public class MainMenuScreen implements Screen {
         levelsTexturePressed.dispose();
         randomTexture.dispose();
         randomTexturePressed.dispose();
-        customTexture.dispose();
-        customTexturePressed.dispose();
+        shopTexture.dispose();
+        shopTexturePressed.dispose();
         settingsTexture.dispose();
         settingsTexturePressed.dispose();
         clickSound.dispose();
