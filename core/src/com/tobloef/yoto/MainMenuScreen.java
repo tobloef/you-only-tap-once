@@ -184,7 +184,7 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                //Do seething
+                game.setScreen(new ShopScreen(game));
             }
         });
         Label shopLabel = new Label("Shop", labelStyleMedium);

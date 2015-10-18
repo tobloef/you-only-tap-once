@@ -12,12 +12,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -55,10 +52,13 @@ public class GameScreen implements Screen, InputProcessor {
     private Texture settingsTexturePressed;
     private Texture homeTexture;
     private Texture homeTexturePressed;
+    private Texture skipTexture;
+    private Texture skipTexturePressed;
     private Sound popSound;
     private Sound clickSound;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
+    private BitmapFont tinyFont;
 
     private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
@@ -89,8 +89,10 @@ public class GameScreen implements Screen, InputProcessor {
     ImageButtonStyle customiseButtonStyle;
     ImageButtonStyle settingsButtonStyle;
     ImageButtonStyle homeButtonStyle;
+    ImageButtonStyle skipButtonStyle;
     LabelStyle labelStyleBig;
     LabelStyle labelStyleMedium;
+    LabelStyle labelStyleTiny;
 
     private Level level;
 
@@ -130,11 +132,14 @@ public class GameScreen implements Screen, InputProcessor {
         settingsTexturePressed = game.manager.get("settings_icon_pressed.png", Texture.class);
         homeTexture = game.manager.get("home_icon.png", Texture.class);
         homeTexturePressed = game.manager.get("home_icon_pressed.png", Texture.class);
+        skipTexture = game.manager.get("skip_icon.png", Texture.class);
+        skipTexturePressed = game.manager.get("skip_icon_pressed.png", Texture.class);
         popSound = game.manager.get("pop.mp3", Sound.class);
         clickSound = game.manager.get("click.mp3", Sound.class);
         timeSincePop = System.currentTimeMillis();
         bigFont = game.manager.get("big_font.ttf", BitmapFont.class);
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
+        tinyFont = game.manager.get("tiny_font.ttf", BitmapFont.class);
 
         pauseTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         pauseTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -155,6 +160,8 @@ public class GameScreen implements Screen, InputProcessor {
         settingsTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         homeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         homeTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        skipTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        skipTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         pauseButtonStyle = new ImageButtonStyle();
         pauseButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(pauseTexture));
@@ -193,11 +200,18 @@ public class GameScreen implements Screen, InputProcessor {
         homeButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(homeTexture));
         homeButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(homeTexturePressed));
 
+        skipButtonStyle = new ImageButton.ImageButtonStyle();
+        skipButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(skipTexture));
+        skipButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(skipTexturePressed));
+
         labelStyleBig = new Label.LabelStyle();
         labelStyleBig.font = bigFont;
 
         labelStyleMedium = new Label.LabelStyle();
         labelStyleMedium.font = mediumFont;
+
+        labelStyleTiny = new Label.LabelStyle();
+        labelStyleTiny.font = tinyFont;
 
         pauseButton = new ImageButton(pauseButtonStyle);
         pauseButton.setSize(200f * game.sizeModifier, 200f * game.sizeModifier);
@@ -616,9 +630,7 @@ public class GameScreen implements Screen, InputProcessor {
 
                         dialog.build().show();
                     }
-                    if (game.prefs.getInteger("levelsAvailable") > level.levelID) {
-                        game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
-                    }
+                    game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
                 } else {
                     GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
                     dialog.setTitle("No more levels");
@@ -638,6 +650,7 @@ public class GameScreen implements Screen, InputProcessor {
                     dialog.addButton("No");
 
                     dialog.build().show();
+                    game.setScreen(new MainMenuScreen(game));
                 }
             }
         });
@@ -657,6 +670,67 @@ public class GameScreen implements Screen, InputProcessor {
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);
+
+        ImageButton skipButton = new ImageButton(skipButtonStyle);
+        skipButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                if (game.prefs.getInteger("skips") > 0) {
+                    game.prefs.putInteger("skips", game.prefs.getInteger("skips") - 1);
+                    game.prefs.putInteger("levelsAvailable", game.prefs.getInteger("levelsAvailable") + 1);
+                    game.prefs.flush();
+                    if (level.levelID < game.levels.size()-1) {
+                        game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
+                    } else {
+                        GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                        dialog.setTitle("No more levels");
+                        dialog.setMessage("You've cleared the last level. Until new levels are released, how about rating this game on Google Play?");
+
+                        dialog.setClickListener(new ButtonClickListener() {
+
+                            @Override
+                            public void click(int button) {
+                                if (button == 0) {
+                                    Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
+                                }
+                            }
+                        });
+
+                        dialog.addButton("Sure!");
+                        dialog.addButton("No");
+
+                        dialog.build().show();
+                        game.setScreen(new MainMenuScreen(game));
+                    }
+                } else {
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("No skips left");
+                    dialog.setMessage("You currently have no skips left. Would you like to buy some?");
+
+                    dialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            if (button == 1) {
+                                game.setScreen(new ShopScreen(game));
+                            }
+                        }
+                    });
+
+                    dialog.addButton("No");
+                    dialog.addButton("Yes");
+
+                    dialog.build().show();
+                }
+            }
+        });
+        Label skipLabel = new Label("Skip", labelStyleMedium);
+        Label skipsLeftLabel = new Label(game.prefs.getInteger("skips") + " left", labelStyleTiny);
 
         ImageButton levelsButton = new ImageButton(levelsButtonStyle);
         levelsButton.addListener(new ClickListener() {
@@ -716,7 +790,7 @@ public class GameScreen implements Screen, InputProcessor {
             if (level.levelID == -1) {
                 endTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
             } else {
-                endTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
+                endTable.add(skipButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
             }
             endTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 30);
             endTable.add(settingsButton).expandX().size(game.sizeModifier * 250).uniformX();
@@ -729,7 +803,7 @@ public class GameScreen implements Screen, InputProcessor {
             if (level.levelID == -1) {
                 endTable.add(randomLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
             } else {
-                endTable.add(levelsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
+                endTable.add(skipLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
             }
             endTable.add(homeLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
             endTable.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * 30);
@@ -738,26 +812,30 @@ public class GameScreen implements Screen, InputProcessor {
             endTable.row();
             endTable.add(scoreLabel).colspan(2).padBottom(game.sizeModifier * 70);
             endTable.row();
-            if (score < scoreGoal || level.levelID == -1) {
-                endTable.add(restartButton).size(game.sizeModifier * 250).uniformX().expandX().padLeft(game.sizeModifier * 50);
-            } else {
-                endTable.add(nextButton).size(game.sizeModifier * 310).uniformX().expandX().padLeft(game.sizeModifier * 50);
-            }
+            endTable.add(restartButton).size(game.sizeModifier * 250).uniformX().expandX().padLeft(game.sizeModifier * 50);
             if (level.levelID == -1) {
                 endTable.add(randomButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
             } else {
-                endTable.add(levelsButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
+                if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
+                    endTable.add(skipButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
+                } else {
+                    endTable.add(nextButton).size(game.sizeModifier * 310).uniformX().expandX().padRight(game.sizeModifier * 50);
+                }
             }
             endTable.row();
-            if (score < scoreGoal || level.levelID == -1) {
-                endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
-            } else {
-                endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
-            }
+            endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
+
             if (level.levelID == -1) {
                 endTable.add(randomLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
             } else {
-                endTable.add(levelsLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
+                    endTable.add(skipLabel).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                    endTable.row();
+                    endTable.add();
+                    endTable.add(skipsLeftLabel).padBottom(game.sizeModifier * 70).padTop(game.sizeModifier * -100).uniformX().padRight(game.sizeModifier * 50);
+                } else {
+                    endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                }
             }
             endTable.row();
             endTable.add(homeButton).size(game.sizeModifier * 270).expandX().uniformX().padLeft(game.sizeModifier * 50);

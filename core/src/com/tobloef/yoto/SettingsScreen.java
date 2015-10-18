@@ -44,8 +44,6 @@ public class SettingsScreen implements Screen {
     private Texture enableVibrationTexturePressed;
     private Texture disableVibrationTexture;
     private Texture disableVibrationTexturePressed;
-    private Texture backButtonTexture;
-    private Texture backButtonTexturePressed;
     private Sound clickSound;
 
     private Stage stage;
@@ -100,8 +98,6 @@ public class SettingsScreen implements Screen {
         enableVibrationTexturePressed = game.manager.get("enable_vibration_icon_pressed.png", Texture.class);
         disableVibrationTexture = game.manager.get("disable_vibration_icon.png", Texture.class);
         disableVibrationTexturePressed = game.manager.get("disable_vibration_icon_pressed.png", Texture.class);
-        backButtonTexture = game.manager.get("back_icon.png", Texture.class);
-        backButtonTexturePressed = game.manager.get("back_icon_pressed.png", Texture.class);
         clickSound = game.manager.get("click.mp3", Sound.class);
 
         backTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -118,8 +114,6 @@ public class SettingsScreen implements Screen {
         enableVibrationTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         disableVibrationTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         disableVibrationTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        backButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        backButtonTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         twitterTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         twitterTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         contactTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -160,10 +154,6 @@ public class SettingsScreen implements Screen {
         disableVibrationButtonStyle = new ImageButtonStyle();
         disableVibrationButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(disableVibrationTexture));
         disableVibrationButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(disableVibrationTexturePressed));
-
-        backButtonStyle = new ImageButtonStyle();
-        backButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(backButtonTexture));
-        backButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(backButtonTexturePressed));
 
         labelStyleBig = new LabelStyle();
         labelStyleBig.font = bigFont;
@@ -348,7 +338,7 @@ public class SettingsScreen implements Screen {
             table.add(rateLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
             table.add(vibrationLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
         } else {
-            table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 50).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
+            table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 70).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
             table.add(titleLabel).uniformX().colspan(2);
             table.add().uniformX().colspan(2);
             table.row();
@@ -359,16 +349,16 @@ public class SettingsScreen implements Screen {
             table.add(vibrationLabel).expand().padRight(100 * game.sizeModifier).top().colspan(3);
             table.row();
             table.add(rateButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
-            table.add(restorePurchasesButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
+            table.add(contactButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
             table.row();
             table.add(rateLabel).expand().top().padLeft(100 * game.sizeModifier).colspan(3);
-            table.add(restorePurchasesLabel).expand().top().padRight(100 * game.sizeModifier).colspan(3);
+            table.add(contactLabel).expand().top().padRight(100 * game.sizeModifier).colspan(3);
             table.row();
-            table.add(twitterButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(game.sizeModifier * 140).colspan(3);
-            table.add(contactButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).padTop(game.sizeModifier * 140).colspan(3);
+            table.add(twitterButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(game.sizeModifier * 100).colspan(3);
+            table.add(restorePurchasesButton).size(game.sizeModifier * 240).padRight(100 * game.sizeModifier).padTop(game.sizeModifier * 100).colspan(3);
             table.row();
-            table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 100).padLeft(100 * game.sizeModifier).colspan(3);
-            table.add(contactLabel).expand().top().padBottom(game.sizeModifier * 100).padRight(100 * game.sizeModifier).colspan(3);
+            table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).padLeft(100 * game.sizeModifier).colspan(3);
+            table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).padRight(100 * game.sizeModifier).colspan(3);
         }
         stage.addActor(table);
     }

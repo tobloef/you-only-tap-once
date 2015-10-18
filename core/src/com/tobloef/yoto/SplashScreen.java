@@ -36,8 +36,8 @@ public class SplashScreen implements Screen {
     public void show() {
         startTime = System.currentTimeMillis();
 
-        if (!game.prefs.contains("levelsAvailable")) {
-            game.prefs.putInteger("levelsAvailable", 0);
+        if (!game.prefs.contains("skips")) {
+            game.prefs.putInteger("skips", 3);
             game.prefs.flush();
         }
 
@@ -75,6 +75,13 @@ public class SplashScreen implements Screen {
         mediumFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * mediumFontSize) * 0.05f);
         game.manager.load("medium_font.ttf", BitmapFont.class, mediumFontParams);
 
+        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        mediumFontParamsNoShadow.fontFileName = "arial.ttf";
+        mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
+        mediumFontParamsNoShadow.fontParameters.kerning = false;
+        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier * mediumFontSize);
+        game.manager.load("medium_font_no_shadow.ttf", BitmapFont.class, mediumFontParamsNoShadow);
+
         FreetypeFontLoader.FreeTypeFontLoaderParameter smallFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         int smallFontSize = 96;
         smallFontParams.fontFileName = "arial.ttf";
@@ -86,12 +93,16 @@ public class SplashScreen implements Screen {
         smallFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * smallFontSize) * 0.05f);
         game.manager.load("small_font.ttf", BitmapFont.class, smallFontParams);
 
-        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFontParamsNoShadow = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        mediumFontParamsNoShadow.fontFileName = "arial.ttf";
-        mediumFontParamsNoShadow.fontParameters.color = Color.WHITE;
-        mediumFontParamsNoShadow.fontParameters.kerning = false;
-        mediumFontParamsNoShadow.fontParameters.size = Math.round(sizeModifier * mediumFontSize);
-        game.manager.load("medium_font_no_shadow.ttf", BitmapFont.class, mediumFontParamsNoShadow);
+        FreetypeFontLoader.FreeTypeFontLoaderParameter tinyFontParams = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        int tinyFontSize = 64;
+        tinyFontParams.fontFileName = "arial.ttf";
+        tinyFontParams.fontParameters.color = Color.WHITE;
+        tinyFontParams.fontParameters.kerning = false;
+        tinyFontParams.fontParameters.size = Math.round(sizeModifier * tinyFontSize);
+        tinyFontParams.fontParameters.shadowColor = new Color(0, 0, 0, 0.5f);
+        tinyFontParams.fontParameters.shadowOffsetX = Math.round((sizeModifier * tinyFontSize) * 0.05f);
+        tinyFontParams.fontParameters.shadowOffsetY = Math.round((sizeModifier * tinyFontSize) * 0.05f);
+        game.manager.load("tiny_font.ttf", BitmapFont.class, tinyFontParams);
 
         game.manager.load("pop.mp3", Sound.class);
         game.manager.load("click.mp3", Sound.class);
@@ -140,6 +151,8 @@ public class SplashScreen implements Screen {
         game.manager.load("restore_icon_pressed.png", Texture.class);
         game.manager.load("shop_icon.png", Texture.class);
         game.manager.load("shop_icon_pressed.png", Texture.class);
+        game.manager.load("skip_icon.png", Texture.class);
+        game.manager.load("skip_icon_pressed.png", Texture.class);
 
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
