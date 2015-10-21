@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.pay.PurchaseSystem;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,8 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
-import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class ShopScreen implements Screen {
     YouOnlyTapOnce game;
@@ -45,8 +44,12 @@ public class ShopScreen implements Screen {
     Label.LabelStyle labelStyleMedium;
     Label.LabelStyle labelStyleSmall;
     Label.LabelStyle labelStyleTiny;
+    
+    private String skips10ID = "10skips";
+    private String skips50ID = "50skips";
+    private String skips2ID = "2skips";
 
-
+    public static final String GOOGLE_PLAY_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjcWnlkahMj3YLaOTzeqQrx72ZnAUwWlQtJ+vkmrJtcs43IHadshwOjtuLQ4K1Rx1JsRKTBuypp+6aDupbfZzd9rpAwP4a+fT6MAhnQUJXeBpckpfBS/OveOoktwNyHqRHvz2aJ72wix/f55O9mmLY+N81EJcvg4I/lOvlNySOZQyVnrNKepv/mN0f7NUc/J7rYK9nxjrZqda7vU+EuSSs7FgGA1O0jRrXdxFaDnuBAFVQH8aqvTYyKKrt+sopOZ+it7M0P08/VQq9fB1OUSQVllFkyTiJwBTHQzy288WM7ITnHJdW43DHNL9YvWu+/lhHZi5c3+EtH1yA3tvDcPEDQIDAQAB";
 
     public ShopScreen(YouOnlyTapOnce game) {
         this.game = game;
@@ -132,23 +135,54 @@ public class ShopScreen implements Screen {
         skipsButton10.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(10);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips10ID);
+                } catch (Exception e) {
+
+                }
             }
         });
         Label skipsLabel10 = new Label("10 skips", labelStyleSmall);
         Label priceLabel10 = new Label("$0.99", labelStyleMedium);
         skipsLabel10.setAlignment(2);
         skipsLabel10.addListener(new ClickListener() {
+
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(10);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips10ID);
+                } catch (Exception e) {
+
+                }
             }
         });
         priceLabel10.setAlignment(2);
         priceLabel10.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(10);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips10ID);
+                } catch (Exception e) {
+
+                }
             }
         });
 
@@ -156,7 +190,17 @@ public class ShopScreen implements Screen {
         skipsButton50.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(50);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips50ID);
+                } catch (Exception e) {
+
+                }
             }
         });
         Label skipsLabel50 = new Label("50 skips", labelStyleSmall);
@@ -165,14 +209,34 @@ public class ShopScreen implements Screen {
         skipsLabel50.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(50);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips50ID);
+                } catch (Exception e) {
+
+                }
             }
         });
         priceLabel50.setAlignment(2);
         priceLabel50.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buySkips(50);
+                if (!isMuted) {
+                    clickSound.play();
+                }
+                if (doVibrate) {
+                    Gdx.input.vibrate(25);
+                }
+                try {
+                    PurchaseSystem.purchase(skips50ID);
+                } catch (Exception e) {
+
+                }
             }
         });
 
@@ -188,6 +252,16 @@ public class ShopScreen implements Screen {
 
         Label supportDeveloperLabel = new Label("By making a purchase you support\nfurther development of this and\nother games\n\nThank you!", labelStyleTiny);
         supportDeveloperLabel.setAlignment(2);
+        supportDeveloperLabel.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    PurchaseSystem.purchase(skips2ID);
+                } catch (Exception e) {
+
+                }
+            }
+        });
 
         Label removeAdsLabel = new Label("Any purchase will remove all ads", labelStyleTiny);
         removeAdsLabel.setAlignment(2);
@@ -239,32 +313,6 @@ public class ShopScreen implements Screen {
         game.screenSize.x = width;
         game.screenSize.y = height;
         show();
-    }
-
-    public void buySkips(int num){
-        if (!isMuted) {
-            clickSound.play();
-        }
-        if (doVibrate) {
-            Gdx.input.vibrate(25);
-        }
-
-        //If success
-        game.prefs.putInteger("skips", game.prefs.getInteger("skips") + 10);
-        game.prefs.putBoolean("hasBought", true);
-        game.prefs.flush();
-
-        GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-        dialog.setTitle("Purchase Successful!");
-        dialog.setMessage("Thank you for supporting the game. " + num + " skips has been added and all ads has been removed.");
-        dialog.setClickListener(new ButtonClickListener() {
-            @Override
-            public void click(int button) {
-
-            }
-        });
-        dialog.addButton("Continue");
-        dialog.build().show();
     }
 
     @Override

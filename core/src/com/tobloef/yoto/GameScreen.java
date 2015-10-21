@@ -141,6 +141,8 @@ public class GameScreen implements Screen, InputProcessor {
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         tinyFont = game.manager.get("tiny_font.ttf", BitmapFont.class);
 
+        dotTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         pauseTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         pauseTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         resumeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -478,7 +480,7 @@ public class GameScreen implements Screen, InputProcessor {
                     if (doVibrate) {
                         Gdx.input.vibrate(25);
                     }
-                    game.setScreen(new GameScreen(game, game.randomLevel(true)));
+                    game.setScreen(new GameScreen(game, game.randomLevel()));
                 }
             });
             Label randomLabel = new Label("New", labelStyleMedium);
@@ -666,7 +668,7 @@ public class GameScreen implements Screen, InputProcessor {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new GameScreen(game, game.randomLevel(true)));
+                game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
         Label randomLabel = new Label("New", labelStyleMedium);

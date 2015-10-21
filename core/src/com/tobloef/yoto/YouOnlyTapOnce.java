@@ -26,8 +26,6 @@ public class YouOnlyTapOnce extends Game {
     @Override
     public void create() {
         prefs = Gdx.app.getPreferences("Game Storage");
-        prefs.putInteger("levelsAvailable", 92);
-        prefs.putInteger("skips", 100);
         manager = new AssetManager();
         batch = new SpriteBatch();
         screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -53,23 +51,15 @@ public class YouOnlyTapOnce extends Game {
         return low + (high - low) * biasedFloat;
     }
 
-    public Level randomLevel(boolean trueRandom) {
-        float randMaxSize;
-        float randSize;
+    public Level randomLevel() {
         int randCount = Math.round(biasedRandom(5, 300, 2));
-        float randSpeed = random.nextFloat() * (8f - 5f) + 5f;
-        float randCompletion = random.nextFloat() * (1f - 0.7f) + 0.7f;
-        if (trueRandom) {
-            randSize = biasedRandom(0.3f, 4, 2)/10f;
-            randMaxSize = random.nextFloat() * (5 - 1) + 1;
-        } else {
-            randSize = 0f;
-            while (randSize < 0.1f) {
-                randSize = (0.4f - (((randCount - 100f) * 2f) / 1000f) + (random.nextFloat() * (0.2f - -0.2f) + -0.2f)) / 2;
-            }
-            randMaxSize = Math.max(2, (float) Math.pow(Math.E, Math.log(1.15f) / randSize) + (random.nextFloat() * (1f - -1f) + -1f));
-        }
-        Level level = new Level(-1, randCount, randSize, randMaxSize, randSpeed, randCompletion);
+        float randSpeed = Math.round(biasedRandom(0, 8, 0.5f));
+        float randCompletion = Math.round(biasedRandom(0.7f, 1, 0.85f));
+        float avgSize = (float) Math.max((0.8f - (0.14f * Math.log(randCount))), 0.01f);
+        float randSize = biasedRandom(avgSize*0.6f, avgSize*1.4f, 1f);
+        float randMaxSize = biasedRandom(1f, 8f, (float) (4f * Math.pow(0.99f, randCount)));
+
+        Level level = new Level(-1, randCount, randSize * sizeModifier, randMaxSize, randSpeed, randCompletion);
         return level;
     }
 }

@@ -204,7 +204,7 @@ public class SettingsScreen implements Screen {
         restorePurchasesButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //Do something
+               //What should i do here?
             }
         });
         Label restorePurchasesLabel = new Label("Restore\nPurchases", labelStyleSmall);

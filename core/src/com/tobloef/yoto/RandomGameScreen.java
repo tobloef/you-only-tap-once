@@ -40,7 +40,7 @@ public class RandomGameScreen implements Screen, InputProcessor {
         score = 0;
         hasEnded = false;
         shouldEnd = false;
-        level = game.randomLevel(true);
+        level = game.randomLevel();
         game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
@@ -157,7 +157,7 @@ public class RandomGameScreen implements Screen, InputProcessor {
         dots.clear();
         games += 1;
         System.out.println(wins/games);
-        level = game.randomLevel(true);
+        level = game.randomLevel();
         scoreGoal = Math.round(level.count * level.completionPercentage);
         score = 0;
         hasEnded = false;

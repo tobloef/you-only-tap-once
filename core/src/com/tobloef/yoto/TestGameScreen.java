@@ -45,7 +45,7 @@ public class TestGameScreen implements Screen, InputProcessor {
         score = 0;
         hasEnded = false;
         shouldEnd = false;
-        level = game.randomLevel(true);
+        level = game.randomLevel();
         game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
@@ -168,7 +168,7 @@ public class TestGameScreen implements Screen, InputProcessor {
                 System.out.println(dateFormat.format(date) + " Added: " + s);
                 levelFile.writeString(s + "\n", true);
             }
-            level = game.randomLevel(true);
+            level = game.randomLevel();
             games = 0;
             wins = 0;
             scoreGoal = Math.round(level.count * level.completionPercentage);

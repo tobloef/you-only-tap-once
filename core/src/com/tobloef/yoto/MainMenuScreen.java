@@ -169,7 +169,7 @@ public class MainMenuScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                game.setScreen(new GameScreen(game, game.randomLevel(true)));
+                game.setScreen(new GameScreen(game, game.randomLevel()));
             }
         });
         Label randomLabel = new Label("Random", labelStyleMedium);
