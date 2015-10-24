@@ -44,7 +44,7 @@ public class ShopScreen implements Screen {
     Label.LabelStyle labelStyleMedium;
     Label.LabelStyle labelStyleSmall;
     Label.LabelStyle labelStyleTiny;
-    
+
     private String skips10ID = "10skips";
     private String skips50ID = "50skips";
     private String skips2ID = "2skips";
@@ -269,32 +269,28 @@ public class ShopScreen implements Screen {
         table = new Table();
         table.setFillParent(true);
 
-        if (game.screenSize.x > game.screenSize.y) {
-
-        } else {
-            table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 60).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
-            table.add(titleLabel).uniformX().colspan(2);
-            table.add().uniformX().colspan(2);
-            table.row();
-            table.add(skipDescriptionLabel).colspan(6).padTop(game.sizeModifier * 150);
-            table.row();
-            table.add(underlineLabel1).colspan(6).padTop(game.sizeModifier * -80);
-            table.row();
-            table.add(skipsButton10).size(game.sizeModifier * 250).padLeft(130 * game.sizeModifier).padTop(game.sizeModifier * 20).colspan(3);
-            table.add(skipsButton50).size(game.sizeModifier * 250).padRight(130 * game.sizeModifier).padTop(game.sizeModifier * 20).colspan(3);
-            table.row();
-            table.add(skipsLabel10).top().padTop(game.sizeModifier * -20).padLeft(130 * game.sizeModifier).colspan(3);
-            table.add(skipsLabel50).top().padTop(game.sizeModifier * -20).padRight(130 * game.sizeModifier).colspan(3);
-            table.row();
-            table.add(priceLabel10).padBottom(game.sizeModifier * 0).padLeft(130 * game.sizeModifier).colspan(3);
-            table.add(priceLabel50).padBottom(game.sizeModifier * 0).padRight(130 * game.sizeModifier).colspan(3);
-            table.row();
-            table.add(removeAdsLabel).colspan(6).padTop(game.sizeModifier * 50);
-            table.row();
-            table.add(underlineLabel2).colspan(6).padTop(game.sizeModifier * -70).padBottom(game.sizeModifier * 120);
-            table.row();
-            table.add(supportDeveloperLabel).colspan(6).expand().top();
-        }
+        table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 60).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
+        table.add(titleLabel).uniformX().colspan(2);
+        table.add().uniformX().colspan(2);
+        table.row();
+        table.add(skipDescriptionLabel).colspan(6).padTop(game.sizeModifier * 150);
+        table.row();
+        table.add(underlineLabel1).colspan(6).padTop(game.sizeModifier * -80);
+        table.row();
+        table.add(skipsButton10).size(game.sizeModifier * 250).padLeft(130 * game.sizeModifier).padTop(game.sizeModifier * 20).colspan(3);
+        table.add(skipsButton50).size(game.sizeModifier * 250).padRight(130 * game.sizeModifier).padTop(game.sizeModifier * 20).colspan(3);
+        table.row();
+        table.add(skipsLabel10).top().padTop(game.sizeModifier * -20).padLeft(130 * game.sizeModifier).colspan(3);
+        table.add(skipsLabel50).top().padTop(game.sizeModifier * -20).padRight(130 * game.sizeModifier).colspan(3);
+        table.row();
+        table.add(priceLabel10).padBottom(game.sizeModifier * 0).padLeft(130 * game.sizeModifier).colspan(3);
+        table.add(priceLabel50).padBottom(game.sizeModifier * 0).padRight(130 * game.sizeModifier).colspan(3);
+        table.row();
+        table.add(removeAdsLabel).colspan(6).padTop(game.sizeModifier * 50);
+        table.row();
+        table.add(underlineLabel2).colspan(6).padTop(game.sizeModifier * -70).padBottom(game.sizeModifier * 120);
+        table.row();
+        table.add(supportDeveloperLabel).colspan(6).expand().top();
         stage.addActor(table);
     }
 
@@ -310,8 +306,6 @@ public class ShopScreen implements Screen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         game.sizeModifier = Math.min(width, height) / 1080f;
-        game.screenSize.x = width;
-        game.screenSize.y = height;
         show();
     }
 

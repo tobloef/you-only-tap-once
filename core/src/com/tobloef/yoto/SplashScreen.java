@@ -214,7 +214,6 @@ public class SplashScreen implements Screen {
         /*  Load Levels  */
         FileHandle levelFile = Gdx.files.internal("Levels.txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(levelFile.read()));
-        
         String line;
         int id = 0;
         try {

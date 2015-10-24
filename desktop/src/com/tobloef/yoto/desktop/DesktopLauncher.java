@@ -8,13 +8,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "You Only Tap Once";
-		if (true) {
-			config.width = 757;
-			config.height = 1345;
-		} else {
-			config.width = 1345;
-			config.height = 757;
-		}
+		config.width = 675;
+		config.height = 1200;
 		config.fullscreen = false;
 		new LwjglApplication(new YouOnlyTapOnce(), config);
 	}

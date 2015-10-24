@@ -207,33 +207,19 @@ public class MainMenuScreen implements Screen {
         table = new Table();
         table.setFillParent(true);
 
-        if (game.screenSize.x > game.screenSize.y) {
-            table.add(logoImageHorizontal).colspan(4).padBottom(game.sizeModifier * 80).size(game.sizeModifier * 1704, game.sizeModifier * 213);
-            table.row();
-            table.add(levelsButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * -20).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
-            table.add(shopButton).expandX().size(game.sizeModifier * 250).uniformX();
-            table.add(settingsButton).expandX().size(game.sizeModifier * 260).padRight(game.sizeModifier * 40).uniformX();
-            table.row();
-            table.add(levelsLabel).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(randomLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(shopLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(settingsLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
-        } else {
-            table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -160f);
-            table.row();
-            table.add(levelsButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
-            table.add(randomButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
-            table.row();
-            table.add(levelsLabel).padBottom(game.sizeModifier * 120).padRight(game.sizeModifier * -30).top();
-            table.add(randomLabel).padBottom(game.sizeModifier * 120).padLeft(game.sizeModifier * -30).top();
-            table.row();
-            table.add(shopButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
-            table.add(settingsButton).size(game.sizeModifier * 260).padLeft(game.sizeModifier * -30);
-            table.row();
-            table.add(shopLabel).expand().padRight(game.sizeModifier * -30).top();
-            table.add(settingsLabel).expand().padLeft(game.sizeModifier * -30).top();
-        }
+        table.add(logoImage).colspan(2).size(game.sizeModifier * 950).padTop(game.sizeModifier * -75f).padBottom(game.sizeModifier * -160f);
+        table.row();
+        table.add(levelsButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
+        table.add(randomButton).size(game.sizeModifier * 250).padLeft(game.sizeModifier * -30);
+        table.row();
+        table.add(levelsLabel).padBottom(game.sizeModifier * 120).padRight(game.sizeModifier * -30).top();
+        table.add(randomLabel).padBottom(game.sizeModifier * 120).padLeft(game.sizeModifier * -30).top();
+        table.row();
+        table.add(shopButton).size(game.sizeModifier * 250).padRight(game.sizeModifier * -30);
+        table.add(settingsButton).size(game.sizeModifier * 260).padLeft(game.sizeModifier * -30);
+        table.row();
+        table.add(shopLabel).expand().padRight(game.sizeModifier * -30).top();
+        table.add(settingsLabel).expand().padLeft(game.sizeModifier * -30).top();
         stage.addActor(table);
     }
 
@@ -249,8 +235,6 @@ public class MainMenuScreen implements Screen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         game.sizeModifier = Math.min(width, height) / 1080f;
-        game.screenSize.x = width;
-        game.screenSize.y = height;
         show();
     }
 

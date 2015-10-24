@@ -180,7 +180,7 @@ public class SettingsScreen implements Screen {
                 return true;
             }
         });
-        stage.setDebugAll(false);
+        stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
 
@@ -204,7 +204,7 @@ public class SettingsScreen implements Screen {
         restorePurchasesButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-               //What should i do here?
+                //What should i do here?
             }
         });
         Label restorePurchasesLabel = new Label("Restore\nPurchases", labelStyleSmall);
@@ -325,41 +325,27 @@ public class SettingsScreen implements Screen {
         table = new Table();
         table.setFillParent(true);
 
-        if (game.screenSize.x > game.screenSize.y) {
-            table.add(settingsLabel).colspan(4).padBottom(game.sizeModifier * 80);
-            table.row();
-            table.add(muteButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * 0).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(rateButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * 20).uniformX();
-            table.add(restorePurchasesButton).expandX().size(game.sizeModifier * 250).padBottom(game.sizeModifier * 20).uniformX();
-            table.add(vibrationButton).expandX().size(game.sizeModifier * 260).padRight(game.sizeModifier * 40).padBottom(game.sizeModifier * 20).uniformX();
-            table.row();
-            table.add(muteLabel).expandX().padBottom(game.sizeModifier * 180).padLeft(game.sizeModifier * 40).uniformX();
-            table.add(restorePurchasesLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(rateLabel).expandX().padBottom(game.sizeModifier * 180).uniformX();
-            table.add(vibrationLabel).expandX().padBottom(game.sizeModifier * 180).padRight(game.sizeModifier * 40).uniformX();
-        } else {
-            table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 70).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
-            table.add(titleLabel).uniformX().colspan(2);
-            table.add().uniformX().colspan(2);
-            table.row();
-            table.add(muteButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(50 * game.sizeModifier).colspan(3);
-            table.add(vibrationButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).padTop(50 * game.sizeModifier).colspan(3);
-            table.row();
-            table.add(muteLabel).expand().padLeft(100 * game.sizeModifier).top().colspan(3);
-            table.add(vibrationLabel).expand().padRight(100 * game.sizeModifier).top().colspan(3);
-            table.row();
-            table.add(rateButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
-            table.add(contactButton).size(game.sizeModifier * 250).padRight(100 * game.sizeModifier).colspan(3).padTop(game.sizeModifier * 150);
-            table.row();
-            table.add(rateLabel).expand().top().padLeft(100 * game.sizeModifier).colspan(3);
-            table.add(contactLabel).expand().top().padRight(100 * game.sizeModifier).colspan(3);
-            table.row();
-            table.add(twitterButton).size(game.sizeModifier * 250).padLeft(100 * game.sizeModifier).padTop(game.sizeModifier * 100).colspan(3);
-            table.add(restorePurchasesButton).size(game.sizeModifier * 240).padRight(100 * game.sizeModifier).padTop(game.sizeModifier * 100).colspan(3);
-            table.row();
-            table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).padLeft(100 * game.sizeModifier).colspan(3);
-            table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).padRight(100 * game.sizeModifier).colspan(3);
-        }
+        table.add(backButton).width(game.sizeModifier * 225).height(255 * game.sizeModifier).padTop(20 * game.sizeModifier).colspan(2);
+        table.add(titleLabel).colspan(2);
+        table.add().colspan(2);
+        table.row();
+        table.add(muteButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);
+        table.add(vibrationButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);
+        table.row();
+        table.add(muteLabel).expand().top().colspan(3);
+        table.add(vibrationLabel).expand().top().colspan(3);
+        table.row();
+        table.add(rateButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150);
+        table.add(contactButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150);
+        table.row();
+        table.add(rateLabel).expand().top().colspan(3);
+        table.add(contactLabel).expand().top().colspan(3);
+        table.row();
+        table.add(twitterButton).size(game.sizeModifier * 250).padTop(game.sizeModifier * 100).colspan(3);
+        table.add(restorePurchasesButton).size(game.sizeModifier * 240).padTop(game.sizeModifier * 100).colspan(3);
+        table.row();
+        table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3);
+        table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3);
         stage.addActor(table);
     }
 
@@ -375,8 +361,6 @@ public class SettingsScreen implements Screen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         game.sizeModifier = Math.min(width, height) / 1080f;
-        game.screenSize.x = width;
-        game.screenSize.y = height;
         show();
     }
 

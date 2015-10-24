@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import de.tomgrill.gdxdialogs.core.GDXDialogs;
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
@@ -17,8 +16,6 @@ public class YouOnlyTapOnce extends Game {
     public AssetManager manager;
     public SpriteBatch batch;
     public ArrayList<Level> levels = new ArrayList<Level>();
-    ;
-    public Vector2 screenSize;
     public float sizeModifier;
     public Random random = new Random();
     GDXDialogs dialogs;
@@ -28,8 +25,7 @@ public class YouOnlyTapOnce extends Game {
         prefs = Gdx.app.getPreferences("Game Storage");
         manager = new AssetManager();
         batch = new SpriteBatch();
-        screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sizeModifier = Math.min(screenSize.x, screenSize.y) / 1080f;
+        sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) / 1080f;
         dialogs = GDXDialogsSystem.install();
 
         this.setScreen(new SplashScreen(this));

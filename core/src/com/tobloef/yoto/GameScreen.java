@@ -103,10 +103,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-        game.screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, game.screenSize.x, game.screenSize.y);
-        scoreGoal = Math.max(Math.round(level.count * level.completionPercentage),1);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        scoreGoal = Math.max(Math.round(level.count * level.completionPercentage), 1);
         isMuted = game.prefs.getBoolean("settingsMute");
         doVibrate = game.prefs.getBoolean("settingsVibrate");
 
@@ -227,7 +226,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         scoreLabel = new Label(score + "/" + scoreGoal, labelStyleBig);
         scoreLabel.setHeight(128 * game.sizeModifier);
-        scoreLabel.setPosition(25 * game.sizeModifier, game.screenSize.y - scoreLabel.getHeight() - (30 * game.sizeModifier));
+        scoreLabel.setPosition(25 * game.sizeModifier, Gdx.graphics.getHeight() - scoreLabel.getHeight() - (30 * game.sizeModifier));
 
         stage = new Stage(new ScreenViewport());
         stage.setDebugAll(false);
@@ -253,7 +252,7 @@ public class GameScreen implements Screen, InputProcessor {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
                     if (!paused) {
-                       pauseGame();
+                        pauseGame();
                     } else {
                         resumeGame();
                     }
@@ -275,8 +274,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         /*  Spawn the dots  */
         for (int i = 0; i < level.count; i++) {
-            dots.add(new Dot(new Vector2(game.random.nextFloat() * (game.screenSize.x - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2),
-                    game.random.nextFloat() * (game.screenSize.y - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2)),
+            dots.add(new Dot(new Vector2(game.random.nextFloat() * (Gdx.graphics.getWidth() - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2),
+                    game.random.nextFloat() * (Gdx.graphics.getHeight() - ((dotTexture.getWidth() * level.dotSize / 2) * 2)) + (dotTexture.getWidth() * level.dotSize / 2)),
                     new Vector2(game.random.nextFloat() * 2f - 1f, game.random.nextFloat() * 2f - 1f).nor(), level.speed, level.dotSize, level.maxSize));
         }
     }
@@ -308,12 +307,12 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.position = position;
 
                     /*  Physics  */
-                    if (dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.x) {
+                    if (dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= Gdx.graphics.getWidth()) {
                         Vector2 direction = dot.direction;
                         direction.x = -Math.abs(direction.x);
                         dot.direction = direction;
                     }
-                    if (dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= game.screenSize.y) {
+                    if (dot.position.y + (dotTexture.getWidth() * dot.size / 2) >= Gdx.graphics.getHeight()) {
                         Vector2 direction = dot.direction;
                         direction.y = -Math.abs(direction.y);
                         dot.direction = direction;
@@ -514,49 +513,27 @@ public class GameScreen implements Screen, InputProcessor {
             Label customiseLabel = new Label("Edit", labelStyleMedium);
             customiseLabel.setAlignment(1);
 
-            if (game.screenSize.x > game.screenSize.y) {
-                pauseTable.add(pauseLabel).colspan(4).padBottom(game.sizeModifier * 130);
-                pauseTable.row();
-                pauseTable.add(resumeButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 50);
-                pauseTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 10);
-                if (level.levelID != -1) {
-                    pauseTable.add(levelsButton).expandX().size(game.sizeModifier * 250).uniformX();
-                } else {
-                    pauseTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX();
-                }
-                pauseTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 50);
-                pauseTable.row();
-                pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 50);
-                pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padLeft(game.sizeModifier * 10);
-                if (level.levelID != -1) {
-                    pauseTable.add(levelsLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-                } else {
-                    pauseTable.add(randomLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX();
-                }
-                pauseTable.add(homeLabel).padTop(game.sizeModifier * 20).expandX().padBottom(game.sizeModifier * 220).uniformX().padRight(game.sizeModifier * 50);
+            pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
+            pauseTable.row();
+            pauseTable.add(resumeButton).size(game.sizeModifier * 230);
+            pauseTable.add(restartButton).size(game.sizeModifier * 230);
+            pauseTable.row();
+            pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
+            pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
+            pauseTable.row();
+            if (level.levelID != -1) {
+                pauseTable.add(levelsButton).size(game.sizeModifier * 270);
             } else {
-                pauseTable.add(pauseLabel).colspan(2).padTop(game.sizeModifier * 250).padBottom(game.sizeModifier * 150);
-                pauseTable.row();
-                pauseTable.add(resumeButton).size(game.sizeModifier * 230);
-                pauseTable.add(restartButton).size(game.sizeModifier * 230);
-                pauseTable.row();
-                pauseTable.add(resumeLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
-                pauseTable.add(restartLabel).padTop(game.sizeModifier * 20).padBottom(game.sizeModifier * 130).top();
-                pauseTable.row();
-                if (level.levelID != -1) {
-                    pauseTable.add(levelsButton).size(game.sizeModifier * 270);
-                } else {
-                    pauseTable.add(randomButton).size(game.sizeModifier * 270);
-                }
-                pauseTable.add(homeButton).size(game.sizeModifier * 250);
-                pauseTable.row();
-                if (level.levelID != -1) {
-                    pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
-                } else {
-                    pauseTable.add(randomLabel).expand().padTop(game.sizeModifier * 20).top();
-                }
-                pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
+                pauseTable.add(randomButton).size(game.sizeModifier * 270);
             }
+            pauseTable.add(homeButton).size(game.sizeModifier * 250);
+            pauseTable.row();
+            if (level.levelID != -1) {
+                pauseTable.add(levelsLabel).expand().padTop(game.sizeModifier * 20).top();
+            } else {
+                pauseTable.add(randomLabel).expand().padTop(game.sizeModifier * 20).top();
+            }
+            pauseTable.add(homeLabel).expand().padTop(game.sizeModifier * 20).top();
             stage.addActor(pauseTable);
         }
         if (!isMuted) {
@@ -607,8 +584,8 @@ public class GameScreen implements Screen, InputProcessor {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                if (level.levelID+1 < game.levels.size()) {
-                    if (game.prefs.getBoolean("remindRate") && level.levelID <= game.levels.size() && (level.levelID+1)%20 == 0) {
+                if (level.levelID + 1 < game.levels.size()) {
+                    if (game.prefs.getBoolean("remindRate") && level.levelID <= game.levels.size() && (level.levelID + 1) % 20 == 0) {
                         GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
                         dialog.setTitle("Like this game?");
                         dialog.setMessage("Congratulations on clearing level " + (level.levelID + 1) + "! Would you like to rate the game on Google Play?");
@@ -687,7 +664,7 @@ public class GameScreen implements Screen, InputProcessor {
                     game.prefs.putInteger("skips", game.prefs.getInteger("skips") - 1);
                     game.prefs.putInteger("levelsAvailable", game.prefs.getInteger("levelsAvailable") + 1);
                     game.prefs.flush();
-                    if (level.levelID < game.levels.size()-1) {
+                    if (level.levelID < game.levels.size() - 1) {
                         game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
                     } else {
                         GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
@@ -779,73 +756,42 @@ public class GameScreen implements Screen, InputProcessor {
         });
         Label homeLabel = new Label("Home", labelStyleMedium);
 
-        if (game.screenSize.x > game.screenSize.y) {
-            endTable.add(scoreTitleLabel).colspan(6).padTop(game.sizeModifier * 75).padBottom(game.sizeModifier * -25);
-            endTable.row();
-            endTable.add(scoreLabel).colspan(6).padBottom(game.sizeModifier * 50);
-            endTable.row();
-            if (score < scoreGoal || level.levelID == -1) {
-                endTable.add(restartButton).expandX().size(game.sizeModifier * 230).uniformX().padLeft(game.sizeModifier * 40).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
-            } else {
-                endTable.add(nextButton).expandX().size(game.sizeModifier * 250).uniformX().padLeft(game.sizeModifier * 40).padRight(game.sizeModifier * -20).padBottom(game.sizeModifier * -30);
-            }
-            if (level.levelID == -1) {
-                endTable.add(randomButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
-            } else {
-                endTable.add(skipButton).expandX().size(game.sizeModifier * 250).uniformX().padBottom(game.sizeModifier * -30);
-            }
-            endTable.add(homeButton).expandX().size(game.sizeModifier * 250).uniformX().padRight(game.sizeModifier * 30);
-            endTable.add(settingsButton).expandX().size(game.sizeModifier * 250).uniformX();
-            endTable.row();
-            if (score < scoreGoal || level.levelID == -1) {
-                endTable.add(restartLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 40);
-            } else {
-                endTable.add(nextLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * -20).padLeft(game.sizeModifier * 40);
-            }
-            if (level.levelID == -1) {
-                endTable.add(randomLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
-            } else {
-                endTable.add(skipLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
-            }
-            endTable.add(homeLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX();
-            endTable.add(settingsLabel).padTop(game.sizeModifier * 0).expandX().padBottom(game.sizeModifier * 300).uniformX().padRight(game.sizeModifier * 30);
-        } else {
-            endTable.add(scoreTitleLabel).colspan(2).padTop(game.sizeModifier * 190);
-            endTable.row();
-            endTable.add(scoreLabel).colspan(2).padBottom(game.sizeModifier * 70);
-            endTable.row();
-            endTable.add(restartButton).size(game.sizeModifier * 250).uniformX().expandX().padLeft(game.sizeModifier * 50);
-            if (level.levelID == -1) {
-                endTable.add(randomButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
-            } else {
-                if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
-                    endTable.add(skipButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
-                } else {
-                    endTable.add(nextButton).size(game.sizeModifier * 310).uniformX().expandX().padRight(game.sizeModifier * 50);
-                }
-            }
-            endTable.row();
-            endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
 
-            if (level.levelID == -1) {
-                endTable.add(randomLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+        endTable.add(scoreTitleLabel).colspan(2).padTop(game.sizeModifier * 190);
+        endTable.row();
+        endTable.add(scoreLabel).colspan(2).padBottom(game.sizeModifier * 70);
+        endTable.row();
+        endTable.add(restartButton).size(game.sizeModifier * 250).uniformX().expandX().padLeft(game.sizeModifier * 50);
+        if (level.levelID == -1) {
+            endTable.add(randomButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
+        } else {
+            if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
+                endTable.add(skipButton).size(game.sizeModifier * 270).uniformX().expandX().padRight(game.sizeModifier * 50);
             } else {
-                if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
-                    endTable.add(skipLabel).top().expandX().uniformX().padRight(game.sizeModifier * 50);
-                    endTable.row();
-                    endTable.add();
-                    endTable.add(skipsLeftLabel).padBottom(game.sizeModifier * 70).padTop(game.sizeModifier * -100).uniformX().padRight(game.sizeModifier * 50);
-                } else {
-                    endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
-                }
+                endTable.add(nextButton).size(game.sizeModifier * 310).uniformX().expandX().padRight(game.sizeModifier * 50);
             }
-            endTable.row();
-            endTable.add(homeButton).size(game.sizeModifier * 270).expandX().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(settingsButton).expandX().size(game.sizeModifier * 270).uniformX().padRight(game.sizeModifier * 50);
-            endTable.row();
-            endTable.add(homeLabel).top().expand().uniformX().padLeft(game.sizeModifier * 50);
-            endTable.add(settingsLabel).top().expand().uniformX().padRight(game.sizeModifier * 50);
         }
+        endTable.row();
+        endTable.add(restartLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padLeft(game.sizeModifier * 50);
+
+        if (level.levelID == -1) {
+            endTable.add(randomLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+        } else {
+            if (score < scoreGoal && game.prefs.getInteger("levelsAvailable") == level.levelID) {
+                endTable.add(skipLabel).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+                endTable.row();
+                endTable.add();
+                endTable.add(skipsLeftLabel).padBottom(game.sizeModifier * 70).padTop(game.sizeModifier * -100).uniformX().padRight(game.sizeModifier * 50);
+            } else {
+                endTable.add(nextLabel).padBottom(game.sizeModifier * 100).top().expandX().uniformX().padRight(game.sizeModifier * 50);
+            }
+        }
+        endTable.row();
+        endTable.add(homeButton).size(game.sizeModifier * 270).expandX().uniformX().padLeft(game.sizeModifier * 50);
+        endTable.add(settingsButton).expandX().size(game.sizeModifier * 270).uniformX().padRight(game.sizeModifier * 50);
+        endTable.row();
+        endTable.add(homeLabel).top().expand().uniformX().padLeft(game.sizeModifier * 50);
+        endTable.add(settingsLabel).top().expand().uniformX().padRight(game.sizeModifier * 50);
         stage.addActor(endTable);
     }
 
@@ -868,23 +814,9 @@ public class GameScreen implements Screen, InputProcessor {
     public void resize(int width, int height) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, width, height);
-        if (game.screenSize.x != width && game.screenSize.y != height) {
-            game.screenSize = new Vector2(width, height);
-            for (Dot dot : dots) {
-                if (width > height) {
-                    dot.position = dot.position.rotate(90);
-                    dot.direction = dot.direction.rotate(90);
-                    dot.position.x += width;
-                } else {
-                    dot.position = dot.position.rotate(-90);
-                    dot.direction = dot.direction.rotate(-90);
-                    dot.position.y += height;
-                }
-            }
-        }
         stage.getViewport().update(width, height, true);
         pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() - (15 * game.sizeModifier), Gdx.graphics.getHeight() - pauseButton.getHeight() - (15 * game.sizeModifier));
-        scoreLabel.setPosition(25 * game.sizeModifier, game.screenSize.y - scoreLabel.getHeight() - (30 * game.sizeModifier));
+        scoreLabel.setPosition(25 * game.sizeModifier, Gdx.graphics.getHeight() - scoreLabel.getHeight() - (30 * game.sizeModifier));
         tint.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (paused) {
             resumeGame();
