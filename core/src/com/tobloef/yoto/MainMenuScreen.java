@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -24,7 +23,7 @@ import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class MainMenuScreen implements Screen {
-    YouOnlyTapOnce game;
+    private final YouOnlyTapOnce game;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
     private Texture levelsTexture;
@@ -44,14 +43,13 @@ public class MainMenuScreen implements Screen {
     private Table table;
     private Texture logoTexture;
     private Texture logoTextureHorizontal;
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
 
-    ImageButton.ImageButtonStyle levelsButtonStyle;
-    ImageButton.ImageButtonStyle randomButtonStyle;
-    ImageButton.ImageButtonStyle shopButtonStyle;
-    ImageButton.ImageButtonStyle settingsButtonStyle;
-    Label.LabelStyle labelStyleBig;
-    Label.LabelStyle labelStyleMedium;
+    private ImageButton.ImageButtonStyle levelsButtonStyle;
+    private ImageButton.ImageButtonStyle randomButtonStyle;
+    private ImageButton.ImageButtonStyle shopButtonStyle;
+    private ImageButton.ImageButtonStyle settingsButtonStyle;
+    private Label.LabelStyle labelStyleBig;
+    private Label.LabelStyle labelStyleMedium;
 
     public MainMenuScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -226,7 +224,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(game.blue.r, game.blue.g, game.blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }

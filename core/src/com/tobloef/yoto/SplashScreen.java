@@ -25,22 +25,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class SplashScreen implements Screen {
-    YouOnlyTapOnce game;
+    private static final String GOOGLE_PLAY_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjcWnlkahMj3YLaOTzeqQrx72ZnAUwWlQtJ+vkmrJtcs43IHadshwOjtuLQ4K1Rx1JsRKTBuypp+6aDupbfZzd9rpAwP4a+fT6MAhnQUJXeBpckpfBS/OveOoktwNyHqRHvz2aJ72wix/f55O9mmLY+N81EJcvg4I/lOvlNySOZQyVnrNKepv/mN0f7NUc/J7rYK9nxjrZqda7vU+EuSSs7FgGA1O0jRrXdxFaDnuBAFVQH8aqvTYyKKrt+sopOZ+it7M0P08/VQq9fB1OUSQVllFkyTiJwBTHQzy288WM7ITnHJdW43DHNL9YvWu+/lhHZi5c3+EtH1yA3tvDcPEDQIDAQAB";
+    private final YouOnlyTapOnce game;
+    private final long minSplashTime = 2000L;
+    private final String skips10ID = "10skips";
+    private final String skips50ID = "50skips";
+    private final String skips2ID = "2skips";
     private Texture splashTexture;
     private float sizeModifier;
     private Vector2 screenSize;
     private OrthographicCamera camera;
-
-    private long minSplashTime = 000L;
     private long startTime;
-    private String skips10ID = "10skips";
-    private String skips50ID = "50skips";
-    private String skips2ID = "2skips";
-
-    public static final String GOOGLE_PLAY_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjcWnlkahMj3YLaOTzeqQrx72ZnAUwWlQtJ+vkmrJtcs43IHadshwOjtuLQ4K1Rx1JsRKTBuypp+6aDupbfZzd9rpAwP4a+fT6MAhnQUJXeBpckpfBS/OveOoktwNyHqRHvz2aJ72wix/f55O9mmLY+N81EJcvg4I/lOvlNySOZQyVnrNKepv/mN0f7NUc/J7rYK9nxjrZqda7vU+EuSSs7FgGA1O0jRrXdxFaDnuBAFVQH8aqvTYyKKrt+sopOZ+it7M0P08/VQq9fB1OUSQVllFkyTiJwBTHQzy288WM7ITnHJdW43DHNL9YvWu+/lhHZi5c3+EtH1yA3tvDcPEDQIDAQAB";
-
-
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
 
     public SplashScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -177,35 +172,38 @@ public class SplashScreen implements Screen {
 
             PurchaseObserver purchaseObserver = new PurchaseObserver() {
                 @Override
-                public void handleRestore (Transaction[] transactions) {
+                public void handleRestore(Transaction[] transactions) {
 
                 }
+
                 @Override
-                public void handleRestoreError (Throwable e) {
+                public void handleRestoreError(Throwable e) {
                     throw new GdxRuntimeException(e);
                 }
 
                 @Override
-                public void handleInstall () {
+                public void handleInstall() {
 
                 }
 
                 @Override
-                public void handleInstallError (Throwable e) {
+                public void handleInstallError(Throwable e) {
                     Gdx.app.log("ERROR", "PurchaseObserver: handleInstallError!: " + e.getMessage());
                     throw new GdxRuntimeException(e);
                 }
+
                 @Override
-                public void handlePurchase (Transaction transaction) {
+                public void handlePurchase(Transaction transaction) {
                     checkTransaction(transaction.getIdentifier(), false);
                 }
+
                 @Override
-                public void handlePurchaseError (Throwable e) {	//--- Amazon IAP: this will be called for cancelled
+                public void handlePurchaseError(Throwable e) {    //--- Amazon IAP: this will be called for cancelled
                     throw new GdxRuntimeException(e);
                 }
 
                 @Override
-                public void handlePurchaseCanceled () {	//will not be called by amazonIAP
+                public void handlePurchaseCanceled() {    //will not be called by amazonIAP
                 }
             };
             PurchaseSystem.install(purchaseObserver, config);
@@ -217,8 +215,8 @@ public class SplashScreen implements Screen {
         String line;
         int id = 0;
         try {
-            while ((line = br.readLine()) != null)   {
-              if (!line.startsWith("#")) {
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("#")) {
                     String[] s = line.split(",");
                     Level level = new Level(id++, Integer.parseInt(s[0]), Float.parseFloat(s[1]) * sizeModifier, Float.parseFloat(s[2]), Float.parseFloat(s[3]), Float.parseFloat(s[4]));
                     game.levels.add(level);
@@ -235,7 +233,7 @@ public class SplashScreen implements Screen {
             game.setScreen(new MainMenuScreen(game));
         }
 
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(game.blue.r, game.blue.g, game.blue.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
@@ -269,26 +267,30 @@ public class SplashScreen implements Screen {
         splashTexture.dispose();
     }
 
-    public boolean checkTransaction (String id, Boolean restore) {
+    private boolean checkTransaction(String id, Boolean restore) {
         boolean returnbool = false;
         System.out.println("Checking transaction");
-        if (id.equals(skips10ID)) {
-            System.out.println("Bought 10 skips");
-            buySkips(10);
-            returnbool = true;
-        } else if (id.equals(skips50ID)) {
-            System.out.println("Bought 50 skips");
-            buySkips(50);
-            returnbool = true;
-        } else if (id.equals(skips2ID)) {
-            System.out.println("Bought 2 skips");
-            buySkips(2);
-            returnbool = true;
+        switch (id) {
+            case skips10ID:
+                System.out.println("Bought 10 skips");
+                buySkips(10);
+                returnbool = true;
+                break;
+            case skips50ID:
+                System.out.println("Bought 50 skips");
+                buySkips(50);
+                returnbool = true;
+                break;
+            case skips2ID:
+                System.out.println("Bought 2 skips");
+                buySkips(2);
+                returnbool = true;
+                break;
         }
         return returnbool;
     }
 
-    public void buySkips(int num){
+    private void buySkips(int num) {
         System.out.println("buySkips");
 
         game.prefs.putInteger("skips", game.prefs.getInteger("skips") + num);

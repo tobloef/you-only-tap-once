@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -22,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class SettingsScreen implements Screen {
-    YouOnlyTapOnce game;
+    private final YouOnlyTapOnce game;
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
     private BitmapFont smallFont;
@@ -50,23 +49,22 @@ public class SettingsScreen implements Screen {
     private Table table;
     private Label vibrationLabel;
     private Label muteLabel;
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
 
     private boolean doVibrate;
     private boolean isMuted;
 
-    ImageButtonStyle backButtonStyle;
-    ImageButtonStyle muteButtonStyle;
-    ImageButtonStyle unmuteButtonStyle;
-    ImageButtonStyle restorePurchasesButtonStyle;
-    ImageButtonStyle rateButtonStyle;
-    ImageButtonStyle twitterButtonStyle;
-    ImageButtonStyle contactButtonStyle;
-    ImageButtonStyle enableVibrationButtonStyle;
-    ImageButtonStyle disableVibrationButtonStyle;
-    LabelStyle labelStyleBig;
-    LabelStyle labelStyleMedium;
-    LabelStyle labelStyleSmall;
+    private ImageButtonStyle backButtonStyle;
+    private ImageButtonStyle muteButtonStyle;
+    private ImageButtonStyle unmuteButtonStyle;
+    private ImageButtonStyle restorePurchasesButtonStyle;
+    private ImageButtonStyle rateButtonStyle;
+    private ImageButtonStyle twitterButtonStyle;
+    private ImageButtonStyle contactButtonStyle;
+    private ImageButtonStyle enableVibrationButtonStyle;
+    private ImageButtonStyle disableVibrationButtonStyle;
+    private LabelStyle labelStyleBig;
+    private LabelStyle labelStyleMedium;
+    private LabelStyle labelStyleSmall;
 
     public SettingsScreen(final YouOnlyTapOnce game) {
         this.game = game;
@@ -183,8 +181,6 @@ public class SettingsScreen implements Screen {
         stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
-
-        Label settingsLabel = new Label("Settings", labelStyleBig);
 
         ImageButton backButton = new ImageButton(backButtonStyle);
         backButton.addListener(new ClickListener() {
@@ -352,7 +348,7 @@ public class SettingsScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(game.blue.r, game.blue.g, game.blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }

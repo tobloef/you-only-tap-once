@@ -12,9 +12,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -23,14 +26,11 @@ import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class GameScreen implements Screen, InputProcessor {
-    final YouOnlyTapOnce game;
+    private final YouOnlyTapOnce game;
+    private final Array<Dot> dots = new Array<>();
+    private final Level level;
     private OrthographicCamera camera;
-
     private Color backgroundColor;
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
-    private Color green = new Color(75f / 255f, 175f / 255f, 75f / 255f, 1);
-    private Color red = new Color(190f / 255f, 60f / 255f, 60f / 255f, 1);
-
     private Texture dotTexture;
     private Texture shadowTexture;
     private Texture pauseTexture;
@@ -59,8 +59,6 @@ public class GameScreen implements Screen, InputProcessor {
     private BitmapFont bigFont;
     private BitmapFont mediumFont;
     private BitmapFont tinyFont;
-
-    private Array<Dot> dots = new Array<Dot>();
     private long timeSincePop;
     private boolean hasTouched = false;
     private boolean hasEnded = false;
@@ -72,29 +70,25 @@ public class GameScreen implements Screen, InputProcessor {
     private int scoreGoal;
     private boolean isMuted;
     private boolean doVibrate;
-
     private Stage stage;
     private Image tint;
     private Label scoreLabel;
     private ImageButton pauseButton;
     private Table pauseTable = new Table();
     private Table endTable = new Table();
-
-    ImageButtonStyle pauseButtonStyle;
-    ImageButtonStyle resumeButtonStyle;
-    ImageButtonStyle nextButtonStyle;
-    ImageButtonStyle randomButtonStyle;
-    ImageButtonStyle restartButtonStyle;
-    ImageButtonStyle levelsButtonStyle;
-    ImageButtonStyle customiseButtonStyle;
-    ImageButtonStyle settingsButtonStyle;
-    ImageButtonStyle homeButtonStyle;
-    ImageButtonStyle skipButtonStyle;
-    LabelStyle labelStyleBig;
-    LabelStyle labelStyleMedium;
-    LabelStyle labelStyleTiny;
-
-    private Level level;
+    private ImageButtonStyle pauseButtonStyle;
+    private ImageButtonStyle resumeButtonStyle;
+    private ImageButtonStyle nextButtonStyle;
+    private ImageButtonStyle randomButtonStyle;
+    private ImageButtonStyle restartButtonStyle;
+    private ImageButtonStyle levelsButtonStyle;
+    private ImageButtonStyle customiseButtonStyle;
+    private ImageButtonStyle settingsButtonStyle;
+    private ImageButtonStyle homeButtonStyle;
+    private ImageButtonStyle skipButtonStyle;
+    private LabelStyle labelStyleBig;
+    private LabelStyle labelStyleMedium;
+    private LabelStyle labelStyleTiny;
 
     public GameScreen(final YouOnlyTapOnce game, Level level) {
         this.game = game;
@@ -109,7 +103,7 @@ public class GameScreen implements Screen, InputProcessor {
         isMuted = game.prefs.getBoolean("settingsMute");
         doVibrate = game.prefs.getBoolean("settingsVibrate");
 
-        backgroundColor = blue;
+        backgroundColor = game.blue;
         dotTexture = game.manager.get("dot_white.png", Texture.class);
         shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
         pauseTexture = game.manager.get("pause_icon.png", Texture.class);
@@ -396,17 +390,17 @@ public class GameScreen implements Screen, InputProcessor {
                 }
             }
             if (completed) {
-                backgroundColor.lerp(green, Gdx.graphics.getDeltaTime() * 5f);
+                backgroundColor.lerp(game.green, Gdx.graphics.getDeltaTime() * 5f);
             }
             if (!completed && shouldEnd) {
-                backgroundColor.lerp(red, Gdx.graphics.getDeltaTime() * 5f);
+                backgroundColor.lerp(game.red, Gdx.graphics.getDeltaTime() * 5f);
             }
         }
 
         stage.draw();
     }
 
-    public void pauseGame() {
+    private void pauseGame() {
         if (!hasEnded) {
             paused = true;
             tint.setVisible(true);
@@ -544,7 +538,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
-    public void endGame() {
+    private void endGame() {
         scoreLabel.setVisible(false);
         pauseButton.setVisible(false);
 
@@ -711,21 +705,6 @@ public class GameScreen implements Screen, InputProcessor {
         Label skipLabel = new Label("Skip", labelStyleMedium);
         Label skipsLeftLabel = new Label(game.prefs.getInteger("skips") + " left", labelStyleTiny);
 
-        ImageButton levelsButton = new ImageButton(levelsButtonStyle);
-        levelsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!isMuted) {
-                    clickSound.play();
-                }
-                if (doVibrate) {
-                    Gdx.input.vibrate(25);
-                }
-                game.setScreen(new LevelSelectScreen(game));
-            }
-        });
-        Label levelsLabel = new Label("Levels", labelStyleMedium);
-
         ImageButton settingsButton = new ImageButton(settingsButtonStyle);
         settingsButton.addListener(new ClickListener() {
             @Override
@@ -795,7 +774,7 @@ public class GameScreen implements Screen, InputProcessor {
         stage.addActor(endTable);
     }
 
-    public void resumeGame() {
+    private void resumeGame() {
         paused = false;
         popSound.resume();
         tint.setVisible(false);

@@ -1,12 +1,12 @@
 package com.tobloef.yoto;
 
 public class Level {
-    public int levelID;
-    public int count;
-    public float dotSize;
-    public float maxSize;
-    public float speed;
-    public float completionPercentage;
+    public final int levelID;
+    public final int count;
+    public final float dotSize;
+    public final float maxSize;
+    public final float speed;
+    public final float completionPercentage;
 
     public Level(int levelID, int count, float dotSize, float maxSize, float speed, float completionPercentage) {
         this.levelID = levelID;

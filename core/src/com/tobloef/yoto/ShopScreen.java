@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,11 +20,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class ShopScreen implements Screen {
-    YouOnlyTapOnce game;
-
+    private final YouOnlyTapOnce game;
+    private final String skips10ID = "10skips";
+    private final String skips50ID = "50skips";
+    private final String skips2ID = "2skips";
     private Stage stage;
     private Table table;
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
     private boolean doVibrate;
     private boolean isMuted;
     private Sound clickSound;
@@ -37,19 +37,12 @@ public class ShopScreen implements Screen {
     private Texture backButtonTexturePressed;
     private Texture skipButtonTexture;
     private Texture skipButtonTexturePressed;
-
-    ImageButton.ImageButtonStyle backButtonStyle;
-    ImageButton.ImageButtonStyle skipButtonStyle;
-    Label.LabelStyle labelStyleBig;
-    Label.LabelStyle labelStyleMedium;
-    Label.LabelStyle labelStyleSmall;
-    Label.LabelStyle labelStyleTiny;
-
-    private String skips10ID = "10skips";
-    private String skips50ID = "50skips";
-    private String skips2ID = "2skips";
-
-    public static final String GOOGLE_PLAY_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjcWnlkahMj3YLaOTzeqQrx72ZnAUwWlQtJ+vkmrJtcs43IHadshwOjtuLQ4K1Rx1JsRKTBuypp+6aDupbfZzd9rpAwP4a+fT6MAhnQUJXeBpckpfBS/OveOoktwNyHqRHvz2aJ72wix/f55O9mmLY+N81EJcvg4I/lOvlNySOZQyVnrNKepv/mN0f7NUc/J7rYK9nxjrZqda7vU+EuSSs7FgGA1O0jRrXdxFaDnuBAFVQH8aqvTYyKKrt+sopOZ+it7M0P08/VQq9fB1OUSQVllFkyTiJwBTHQzy288WM7ITnHJdW43DHNL9YvWu+/lhHZi5c3+EtH1yA3tvDcPEDQIDAQAB";
+    private ImageButton.ImageButtonStyle backButtonStyle;
+    private ImageButton.ImageButtonStyle skipButtonStyle;
+    private Label.LabelStyle labelStyleBig;
+    private Label.LabelStyle labelStyleMedium;
+    private Label.LabelStyle labelStyleSmall;
+    private Label.LabelStyle labelStyleTiny;
 
     public ShopScreen(YouOnlyTapOnce game) {
         this.game = game;
@@ -143,7 +136,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips10ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -163,7 +156,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips10ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -180,7 +173,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips10ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -198,7 +191,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips50ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -217,7 +210,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips50ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -234,7 +227,7 @@ public class ShopScreen implements Screen {
                 }
                 try {
                     PurchaseSystem.purchase(skips50ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -257,7 +250,7 @@ public class ShopScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 try {
                     PurchaseSystem.purchase(skips2ID);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -297,7 +290,7 @@ public class ShopScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(game.blue.r, game.blue.g, game.blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }

@@ -12,9 +12,6 @@ public class Dot {
     public float lifetime = 0;
     public boolean shouldCount = false;
 
-    public Dot() {
-    }
-
     public Dot(Vector2 position, Vector2 direction, float speed, float size, float maxSize) {
         this.position = position;
         this.direction = direction;

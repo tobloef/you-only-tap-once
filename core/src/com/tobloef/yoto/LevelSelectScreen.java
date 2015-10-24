@@ -15,14 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class LevelSelectScreen implements Screen {
-    YouOnlyTapOnce game;
+    private final YouOnlyTapOnce game;
     private ShapeRenderer shapeRenderer;
     private BitmapFont menuFont;
     private BitmapFont menuFontNoShadow;
@@ -37,10 +36,6 @@ public class LevelSelectScreen implements Screen {
     private TextButtonStyle buttonStyleOff;
     private LabelStyle labelStyle;
     private ImageButtonStyle backButtonStyle;
-    private ScrollPaneStyle scrollPanelStyle;
-
-    private Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
-    private Color clear = new Color(50f / 255f, 130f / 255f, 200f / 255f, 0f);
 
     private boolean doVibrate;
     private boolean isMuted;
@@ -133,7 +128,6 @@ public class LevelSelectScreen implements Screen {
                 }
             }
         }
-        scrollPanelStyle = new ScrollPaneStyle();
         scrollPane = new ScrollPane(innerTable);
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setupOverscroll(30f, 30f, 150f);
@@ -164,16 +158,16 @@ public class LevelSelectScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(blue.r, blue.g, blue.b, 1);
+        Gdx.gl.glClearColor(game.blue.r, game.blue.g, game.blue.b, 1);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(blue);
+        shapeRenderer.setColor(game.blue);
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), 10 * game.sizeModifier);
-        shapeRenderer.rect(0, 10 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, blue, blue, clear, clear);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 275 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, clear, clear, blue, blue);
+        shapeRenderer.rect(0, 10 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, game.blue, game.blue, game.clear, game.clear);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 275 * game.sizeModifier, Gdx.graphics.getWidth(), 50 * game.sizeModifier, game.clear, game.clear, game.blue, game.blue);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
