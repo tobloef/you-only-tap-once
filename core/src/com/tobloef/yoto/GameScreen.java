@@ -27,7 +27,7 @@ import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class GameScreen implements Screen, InputProcessor {
     private final YouOnlyTapOnce game;
-    private final Array<Dot> dots = new Array<>();
+    private final Array<Dot> dots = new Array<Dot>();
     private final Level level;
     private OrthographicCamera camera;
     private Color backgroundColor;
@@ -103,7 +103,8 @@ public class GameScreen implements Screen, InputProcessor {
         isMuted = game.prefs.getBoolean("settingsMute");
         doVibrate = game.prefs.getBoolean("settingsVibrate");
 
-        backgroundColor = game.blue;
+        backgroundColor = game.blue.cpy();
+
         dotTexture = game.manager.get("dot_white.png", Texture.class);
         shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
         pauseTexture = game.manager.get("pause_icon.png", Texture.class);

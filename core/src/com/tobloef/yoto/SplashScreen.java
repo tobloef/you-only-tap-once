@@ -30,7 +30,6 @@ public class SplashScreen implements Screen {
     private final long minSplashTime = 2000L;
     private final String skips10ID = "10skips";
     private final String skips50ID = "50skips";
-    private final String skips2ID = "2skips";
     private Texture splashTexture;
     private float sizeModifier;
     private Vector2 screenSize;
@@ -167,7 +166,6 @@ public class SplashScreen implements Screen {
             PurchaseManagerConfig config = new PurchaseManagerConfig();
             config.addOffer(new Offer().setType(OfferType.CONSUMABLE).setIdentifier(skips10ID));
             config.addOffer(new Offer().setType(OfferType.CONSUMABLE).setIdentifier(skips50ID));
-            config.addOffer(new Offer().setType(OfferType.CONSUMABLE).setIdentifier(skips2ID));
             config.addStoreParam(PurchaseManagerConfig.STORE_NAME_ANDROID_GOOGLE, GOOGLE_PLAY_KEY);
 
             PurchaseObserver purchaseObserver = new PurchaseObserver() {
@@ -270,22 +268,14 @@ public class SplashScreen implements Screen {
     private boolean checkTransaction(String id, Boolean restore) {
         boolean returnbool = false;
         System.out.println("Checking transaction");
-        switch (id) {
-            case skips10ID:
+        if (id.equals(skips10ID)) {
                 System.out.println("Bought 10 skips");
                 buySkips(10);
                 returnbool = true;
-                break;
-            case skips50ID:
-                System.out.println("Bought 50 skips");
-                buySkips(50);
-                returnbool = true;
-                break;
-            case skips2ID:
-                System.out.println("Bought 2 skips");
-                buySkips(2);
-                returnbool = true;
-                break;
+        } else if (id.equals(skips50ID)) {
+            System.out.println("Bought 50 skips");
+            buySkips(50);
+            returnbool = true;
         }
         return returnbool;
     }

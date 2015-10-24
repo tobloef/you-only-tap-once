@@ -73,6 +73,7 @@ public class LevelSelectScreen implements Screen {
                 return true;
             }
         };
+        stage.setDebugAll(true);
 
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
@@ -147,8 +148,8 @@ public class LevelSelectScreen implements Screen {
         });
         Label titleLabel = new Label("Levels", labelStyle);
 
-        table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 100).padTop(20 * game.sizeModifier).expandX().uniformX();
-        table.add(titleLabel).expandX();
+        table.add(backButton).height(225 * game.sizeModifier).width(225 * game.sizeModifier).padLeft(game.sizeModifier * 50).padTop(20 * game.sizeModifier).expandX().uniformX().left();
+        table.add(titleLabel).expandX().uniformX();
         table.add().expandX().uniformX();
         table.row();
         table.add(scrollPane).expandX().colspan(3).padTop(game.sizeModifier * -20f);

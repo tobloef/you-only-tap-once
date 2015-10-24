@@ -104,7 +104,7 @@ public class ShopScreen implements Screen {
                 return true;
             }
         });
-        stage.setDebugAll(false);
+        stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
 
@@ -245,16 +245,6 @@ public class ShopScreen implements Screen {
 
         Label supportDeveloperLabel = new Label("By making a purchase you support\nfurther development of this and\nother games\n\nThank you!", labelStyleTiny);
         supportDeveloperLabel.setAlignment(2);
-        supportDeveloperLabel.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                try {
-                    PurchaseSystem.purchase(skips2ID);
-                } catch (Exception ignored) {
-
-                }
-            }
-        });
 
         Label removeAdsLabel = new Label("Any purchase will remove all ads", labelStyleTiny);
         removeAdsLabel.setAlignment(2);
@@ -262,9 +252,9 @@ public class ShopScreen implements Screen {
         table = new Table();
         table.setFillParent(true);
 
-        table.add(backButton).height(225 * game.sizeModifier).padLeft(game.sizeModifier * 60).padTop(20 * game.sizeModifier).left().uniformX().colspan(2);
-        table.add(titleLabel).uniformX().colspan(2);
-        table.add().uniformX().colspan(2);
+        table.add(backButton).height(225 * game.sizeModifier).width(225 * game.sizeModifier).padLeft(game.sizeModifier * 100).padTop(20 * game.sizeModifier).uniformX().colspan(2).expandX().left();
+        table.add(titleLabel).uniformX().colspan(2).expandX();
+        table.add().uniformX().colspan(2).expandX();
         table.row();
         table.add(skipDescriptionLabel).colspan(6).padTop(game.sizeModifier * 150);
         table.row();

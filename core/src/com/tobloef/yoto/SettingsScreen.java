@@ -321,9 +321,9 @@ public class SettingsScreen implements Screen {
         table = new Table();
         table.setFillParent(true);
 
-        table.add(backButton).width(game.sizeModifier * 225).height(255 * game.sizeModifier).padTop(20 * game.sizeModifier).colspan(2);
-        table.add(titleLabel).colspan(2);
-        table.add().colspan(2);
+        table.add(backButton).height(225 * game.sizeModifier).width(225 * game.sizeModifier).padLeft(game.sizeModifier * 115).padTop(20 * game.sizeModifier).uniformX().colspan(2).expandX().left();
+        table.add(titleLabel).uniformX().colspan(2).expandX();
+        table.add().uniformX().colspan(2).expandX();
         table.row();
         table.add(muteButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);
         table.add(vibrationButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);

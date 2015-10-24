@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class YouOnlyTapOnce extends Game {
-    public final ArrayList<Level> levels = new ArrayList<>();
-    public final Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
-    public final Color green = new Color(75f / 255f, 175f / 255f, 75f / 255f, 1);
-    public final Color red = new Color(190f / 255f, 60f / 255f, 60f / 255f, 1);
-    public final Color clear = new Color(50f / 255f, 130f / 255f, 200f / 255f, 0f);
-    public final Random random = new Random();
+    public final ArrayList<Level> levels = new ArrayList<Level>();
+    public Color blue = new Color(50f / 255f, 130f / 255f, 200f / 255f, 1);
+    public Color green = new Color(75f / 255f, 175f / 255f, 75f / 255f, 1);
+    public Color red = new Color(190f / 255f, 60f / 255f, 60f / 255f, 1);
+    public Color clear = new Color(50f / 255f, 130f / 255f, 200f / 255f, 0f);
+    public Random random = new Random();
     public Preferences prefs;
     public AssetManager manager;
     public SpriteBatch batch;
@@ -28,6 +28,7 @@ public class YouOnlyTapOnce extends Game {
     @Override
     public void create() {
         prefs = Gdx.app.getPreferences("Game Storage");
+        prefs.putInteger("levelsAvailable", 1000);
         manager = new AssetManager();
         batch = new SpriteBatch();
         sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) / 1080f;
