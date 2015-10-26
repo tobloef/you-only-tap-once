@@ -104,7 +104,6 @@ public class ShopScreen implements Screen {
                 return true;
             }
         });
-        stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
 

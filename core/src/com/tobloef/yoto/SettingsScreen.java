@@ -178,7 +178,6 @@ public class SettingsScreen implements Screen {
                 return true;
             }
         });
-        stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
 
@@ -325,23 +324,23 @@ public class SettingsScreen implements Screen {
         table.add(titleLabel).uniformX().colspan(2).expandX();
         table.add().uniformX().colspan(2).expandX();
         table.row();
-        table.add(muteButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);
-        table.add(vibrationButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3);
+        table.add(muteButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).padLeft(game.sizeModifier * 100).colspan(3);
+        table.add(vibrationButton).size(game.sizeModifier * 250).padTop(50 * game.sizeModifier).colspan(3).padRight(game.sizeModifier * 100);
         table.row();
-        table.add(muteLabel).expand().top().colspan(3);
-        table.add(vibrationLabel).expand().top().colspan(3);
+        table.add(muteLabel).expand().top().colspan(3).padLeft(game.sizeModifier * 100);
+        table.add(vibrationLabel).expand().top().colspan(3).padRight(game.sizeModifier * 100);
         table.row();
-        table.add(rateButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150);
-        table.add(contactButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150);
+        table.add(rateButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150).padLeft(game.sizeModifier * 100);
+        table.add(contactButton).size(game.sizeModifier * 250).colspan(3).padTop(game.sizeModifier * 150).padRight(game.sizeModifier * 100);
         table.row();
-        table.add(rateLabel).expand().top().colspan(3);
-        table.add(contactLabel).expand().top().colspan(3);
+        table.add(rateLabel).expand().top().colspan(3).padLeft(game.sizeModifier * 100);
+        table.add(contactLabel).expand().top().colspan(3).padRight(game.sizeModifier * 100);
         table.row();
-        table.add(twitterButton).size(game.sizeModifier * 250).padTop(game.sizeModifier * 100).colspan(3);
-        table.add(restorePurchasesButton).size(game.sizeModifier * 240).padTop(game.sizeModifier * 100).colspan(3);
+        table.add(twitterButton).size(game.sizeModifier * 250).padTop(game.sizeModifier * 100).colspan(3).padLeft(game.sizeModifier * 100);
+        table.add(restorePurchasesButton).size(game.sizeModifier * 240).padTop(game.sizeModifier * 100).colspan(3).padRight(game.sizeModifier * 100);
         table.row();
-        table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3);
-        table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3);
+        table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3).padLeft(game.sizeModifier * 100);
+        table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3).padRight(game.sizeModifier * 100);
         stage.addActor(table);
     }
 
