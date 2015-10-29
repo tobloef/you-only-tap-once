@@ -28,7 +28,6 @@ public class YouOnlyTapOnce extends Game {
     @Override
     public void create() {
         prefs = Gdx.app.getPreferences("Game Storage");
-        prefs.putInteger("levelsAvailable", 1000);
         manager = new AssetManager();
         batch = new SpriteBatch();
         sizeModifier = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) / 1080f;

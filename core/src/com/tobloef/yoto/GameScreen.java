@@ -656,31 +656,65 @@ public class GameScreen implements Screen, InputProcessor {
                     Gdx.input.vibrate(25);
                 }
                 if (game.prefs.getInteger("skips") > 0) {
-                    game.prefs.putInteger("skips", game.prefs.getInteger("skips") - 1);
-                    game.prefs.putInteger("levelsAvailable", game.prefs.getInteger("levelsAvailable") + 1);
-                    game.prefs.flush();
-                    if (level.levelID < game.levels.size() - 1) {
-                        game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
-                    } else {
-                        GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
-                        dialog.setTitle("No more levels");
-                        dialog.setMessage("You've cleared the last level. Until new levels are released, how about rating this game on Google Play?");
+                    final int[] skip = {0};
+                    GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                    dialog.setTitle("Do you want to use a skip?");
+                    dialog.setMessage("Are you sure you want to use a skip?");
 
-                        dialog.setClickListener(new ButtonClickListener() {
+                    dialog.setClickListener(new ButtonClickListener() {
 
-                            @Override
-                            public void click(int button) {
-                                if (button == 0) {
-                                    Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
-                                }
+                        @Override
+                        public void click(int button) {
+                            if (button == 0) {
+                                game.prefs.putInteger("skips", game.prefs.getInteger("skips") - 1);
+                                game.prefs.putInteger("levelsAvailable", game.prefs.getInteger("levelsAvailable") + 1);
+                                game.prefs.flush();
+                                skip[0] = 1;
+                            } else {
+                                skip[0] = -1;
                             }
-                        });
+                            System.out.println("Set skip to " + skip[0]);
+                        }
+                    });
 
-                        dialog.addButton("Sure!");
-                        dialog.addButton("No");
+                    dialog.addButton("Yes");
+                    dialog.addButton("No");
+                    System.out.println("Before show");
+                    dialog.build().show();
+                    System.out.println("After show");
+                    while (skip[0] == 0) {
+                        try {
+                            System.out.println(skip[0]);
+                            Thread.sleep(100L);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println("After while");
+                    if (skip[0] == 1) {
+                        if (level.levelID < game.levels.size() - 1) {
+                            game.setScreen(new GameScreen(game, game.levels.get(level.levelID + 1)));
+                        } else {
+                            GDXButtonDialog noLevelsDialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                            noLevelsDialog.setTitle("No more levels");
+                            noLevelsDialog.setMessage("You've cleared the last level. Until new levels are released, how about rating this game on Google Play?");
 
-                        dialog.build().show();
-                        game.setScreen(new MainMenuScreen(game));
+                            noLevelsDialog.setClickListener(new ButtonClickListener() {
+
+                                @Override
+                                public void click(int button) {
+                                    if (button == 0) {
+                                        Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
+                                    }
+                                }
+                            });
+
+                            noLevelsDialog.addButton("Sure!");
+                            noLevelsDialog.addButton("No");
+
+                            noLevelsDialog.build().show();
+                            game.setScreen(new MainMenuScreen(game));
+                        }
                     }
                 } else {
                     GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);

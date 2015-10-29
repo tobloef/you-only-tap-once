@@ -19,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
+import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class SettingsScreen implements Screen {
     private final YouOnlyTapOnce game;
@@ -31,8 +33,8 @@ public class SettingsScreen implements Screen {
     private Texture muteTexturePressed;
     private Texture unmuteTexture;
     private Texture unmuteTexturePressed;
-    private Texture restorePurchasesTexture;
-    private Texture restorePurchasesTexturePressed;
+    private Texture resetTexture;
+    private Texture resetTexturePressed;
     private Texture rateTexture;
     private Texture rateTexturePressed;
     private Texture twitterTexture;
@@ -56,7 +58,7 @@ public class SettingsScreen implements Screen {
     private ImageButtonStyle backButtonStyle;
     private ImageButtonStyle muteButtonStyle;
     private ImageButtonStyle unmuteButtonStyle;
-    private ImageButtonStyle restorePurchasesButtonStyle;
+    private ImageButtonStyle resetButtonStyle;
     private ImageButtonStyle rateButtonStyle;
     private ImageButtonStyle twitterButtonStyle;
     private ImageButtonStyle contactButtonStyle;
@@ -84,8 +86,8 @@ public class SettingsScreen implements Screen {
         muteTexturePressed = game.manager.get("mute_icon_pressed.png", Texture.class);
         unmuteTexture = game.manager.get("unmute_icon.png", Texture.class);
         unmuteTexturePressed = game.manager.get("unmute_icon_pressed.png", Texture.class);
-        restorePurchasesTexture = game.manager.get("restore_icon.png", Texture.class);
-        restorePurchasesTexturePressed = game.manager.get("restore_icon_pressed.png", Texture.class);
+        resetTexture = game.manager.get("restart_icon.png", Texture.class);
+        resetTexturePressed = game.manager.get("restart_icon_pressed.png", Texture.class);
         rateTexture = game.manager.get("rate_icon.png", Texture.class);
         rateTexturePressed = game.manager.get("rate_icon_pressed.png", Texture.class);
         twitterTexture = game.manager.get("twitter_icon.png", Texture.class);
@@ -104,8 +106,8 @@ public class SettingsScreen implements Screen {
         muteTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         unmuteTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         unmuteTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        restorePurchasesTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        restorePurchasesTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        resetTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        resetTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         rateTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         rateTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         enableVibrationTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -129,9 +131,9 @@ public class SettingsScreen implements Screen {
         unmuteButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(unmuteTexture));
         unmuteButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(unmuteTexturePressed));
 
-        restorePurchasesButtonStyle = new ImageButtonStyle();
-        restorePurchasesButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(restorePurchasesTexture));
-        restorePurchasesButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(restorePurchasesTexturePressed));
+        resetButtonStyle = new ImageButtonStyle();
+        resetButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(resetTexture));
+        resetButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(resetTexturePressed));
 
         rateButtonStyle = new ImageButtonStyle();
         rateButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(rateTexture));
@@ -195,15 +197,33 @@ public class SettingsScreen implements Screen {
             }
         });
 
-        ImageButton restorePurchasesButton = new ImageButton(restorePurchasesButtonStyle);
-        restorePurchasesButton.addListener(new ClickListener() {
+        ImageButton resetButton = new ImageButton(resetButtonStyle);
+        resetButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //What should i do here?
+                GDXButtonDialog dialog = game.dialogs.newDialog(GDXButtonDialog.class);
+                dialog.setTitle("Are you sure?");
+                dialog.setMessage("Are you sure you want to reset all your progress? This cannot be undone.");
+
+                dialog.setClickListener(new ButtonClickListener() {
+
+                    @Override
+                    public void click(int button) {
+                        if (button == 0) {
+                            game.prefs.putInteger("levelsAvailable", 0);
+                            game.prefs.flush();
+                        }
+                    }
+                });
+
+                dialog.addButton("Yes");
+                dialog.addButton("No");
+
+                dialog.build().show();
             }
         });
-        Label restorePurchasesLabel = new Label("Restore\nPurchases", labelStyleSmall);
-        restorePurchasesLabel.setAlignment(2);
+        Label resetLabel = new Label("Reset\nProgress", labelStyleSmall);
+        resetLabel.setAlignment(2);
 
         ImageButton rateButton = new ImageButton(rateButtonStyle);
         rateButton.addListener(new ClickListener() {
@@ -215,7 +235,7 @@ public class SettingsScreen implements Screen {
                 if (doVibrate) {
                     Gdx.input.vibrate(25);
                 }
-                Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto");
+                Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.tobloef.yoto.android");
             }
         });
         Label rateLabel = new Label("Rate\n", labelStyleSmall);
@@ -250,7 +270,7 @@ public class SettingsScreen implements Screen {
                 Gdx.net.openURI("mailto:tobloef@gmail.com?subject=You Only Tap Once");
             }
         });
-        Label contactLabel = new Label("Contact", labelStyleSmall);
+        Label contactLabel = new Label("Feedback", labelStyleSmall);
         contactLabel.setAlignment(2);
 
         final ImageButton vibrationButton;
@@ -337,10 +357,10 @@ public class SettingsScreen implements Screen {
         table.add(contactLabel).expand().top().colspan(3).padRight(game.sizeModifier * 100);
         table.row();
         table.add(twitterButton).size(game.sizeModifier * 250).padTop(game.sizeModifier * 100).colspan(3).padLeft(game.sizeModifier * 100);
-        table.add(restorePurchasesButton).size(game.sizeModifier * 240).padTop(game.sizeModifier * 100).colspan(3).padRight(game.sizeModifier * 100);
+        table.add(resetButton).size(game.sizeModifier * 240).padTop(game.sizeModifier * 100).colspan(3).padRight(game.sizeModifier * 100);
         table.row();
         table.add(twitterLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3).padLeft(game.sizeModifier * 100);
-        table.add(restorePurchasesLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3).padRight(game.sizeModifier * 100);
+        table.add(resetLabel).expand().top().padBottom(game.sizeModifier * 200).colspan(3).padRight(game.sizeModifier * 100);
         stage.addActor(table);
     }
 
@@ -384,8 +404,8 @@ public class SettingsScreen implements Screen {
         muteTexturePressed.dispose();
         unmuteTexture.dispose();
         unmuteTexturePressed.dispose();
-        restorePurchasesTexture.dispose();
-        restorePurchasesTexturePressed.dispose();
+        resetTexture.dispose();
+        resetTexturePressed.dispose();
         rateTexture.dispose();
         rateTexturePressed.dispose();
         enableVibrationTexture.dispose();
