@@ -104,7 +104,8 @@ public class GameScreen implements Screen, InputProcessor {
         doVibrate = game.prefs.getBoolean("settingsVibrate");
 
         backgroundColor = game.blue.cpy();
-
+        
+        //Get assets loaded by asset manager
         dotTexture = game.manager.get("dot_white.png", Texture.class);
         shadowTexture = game.manager.get("dot_shadow.png", Texture.class);
         pauseTexture = game.manager.get("pause_icon.png", Texture.class);
@@ -135,8 +136,7 @@ public class GameScreen implements Screen, InputProcessor {
         mediumFont = game.manager.get("medium_font.ttf", BitmapFont.class);
         tinyFont = game.manager.get("tiny_font.ttf", BitmapFont.class);
 
-        dotTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
+        //Set all button textures' filter to liniar. This way they'll look a lot better when scaled
         pauseTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         pauseTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         resumeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -159,6 +159,7 @@ public class GameScreen implements Screen, InputProcessor {
         skipTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         skipTexturePressed.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        //Below we define a bunch of ImageButtonStyles for the buttons. I should probably use a skins file.
         pauseButtonStyle = new ImageButtonStyle();
         pauseButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(pauseTexture));
         pauseButtonStyle.imageDown = new TextureRegionDrawable(new TextureRegion(pauseTexturePressed));
@@ -284,9 +285,11 @@ public class GameScreen implements Screen, InputProcessor {
         /*  Render Sprites  */
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+        //First the shadows
         for (Dot dot : dots) {
             game.batch.draw(shadowTexture, (dot.position.x - dotTexture.getWidth() * dot.size / 2) + (dotTexture.getWidth() * dot.size * 0.2f * level.dotSize), (dot.position.y - dotTexture.getWidth() * dot.size / 2) - (dotTexture.getWidth() * 0.2f * level.dotSize), dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
+        //Then the dots
         for (Dot dot : dots) {
             game.batch.draw(dotTexture, dot.position.x - dotTexture.getWidth() * dot.size / 2, dot.position.y - dotTexture.getWidth() * dot.size / 2, dotTexture.getWidth() * dot.size, dotTexture.getWidth() * dot.size);
         }
@@ -302,6 +305,7 @@ public class GameScreen implements Screen, InputProcessor {
                     dot.position = position;
 
                     /*  Physics  */
+                    //If the dot hits one of the sides, change the direction.
                     if (dot.position.x + (dotTexture.getWidth() * dot.size / 2) >= Gdx.graphics.getWidth()) {
                         Vector2 direction = dot.direction;
                         direction.x = -Math.abs(direction.x);
@@ -323,7 +327,6 @@ public class GameScreen implements Screen, InputProcessor {
                         dot.direction = direction;
                     }
                 } else {
-
                     /*  Dot Collision  */
                     for (int i = 0; i < dots.size; i++) {
                         if (!dots.get(i).activated && dots.get(i) != dot) {
@@ -390,6 +393,7 @@ public class GameScreen implements Screen, InputProcessor {
                     endGame();
                 }
             }
+            //Fade the background color to either green or red
             if (completed) {
                 backgroundColor.lerp(game.green, Gdx.graphics.getDeltaTime() * 5f);
             }
@@ -400,7 +404,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         stage.draw();
     }
-
+    
+    //Display a pause menu and pause the game
     private void pauseGame() {
         if (!hasEnded) {
             paused = true;
@@ -539,6 +544,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    //End the game and dusplay game over menu
     private void endGame() {
         scoreLabel.setVisible(false);
         pauseButton.setVisible(false);
@@ -809,6 +815,7 @@ public class GameScreen implements Screen, InputProcessor {
         stage.addActor(endTable);
     }
 
+    //Resumes the game after it has been paused
     private void resumeGame() {
         paused = false;
         popSound.resume();
@@ -824,6 +831,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    //If the game is resized there's a few things we need to update
     @Override
     public void resize(int width, int height) {
         camera = new OrthographicCamera();

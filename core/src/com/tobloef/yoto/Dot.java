@@ -12,6 +12,7 @@ public class Dot {
     public float lifetime = 0;
     public boolean shouldCount = false;
 
+    //The general moving dot
     public Dot(Vector2 position, Vector2 direction, float speed, float size, float maxSize) {
         this.position = position;
         this.direction = direction;
@@ -21,6 +22,7 @@ public class Dot {
         state = 0;
     }
 
+    //Used for the initial dot the player place
     public Dot(Vector2 position, float maxSize) {
         this.position = position;
         this.maxSize = maxSize;

@@ -95,9 +95,11 @@ public class LevelSelectScreen implements Screen {
 
         table = new Table();
         table.setFillParent(true);
+        //Here we create a table with all the levels
         innerTable = new Table();
         for (int i = 0; i < game.levels.size(); i++) {
             TextButton textButton;
+            //If the level id is less than the maximum level available enable the button to be used
             if (i <= game.prefs.getInteger("levelsAvailable")) {
                 textButton = new TextButton(Integer.toString(i + 1), buttonStyleOn);
                 final int finalI = i;
@@ -110,22 +112,17 @@ public class LevelSelectScreen implements Screen {
                         if (doVibrate) {
                             Gdx.input.vibrate(25);
                         }
+                        //Go to the level corresponding to the button clicked
                         game.setScreen(new GameScreen(game, game.levels.get(finalI)));
                     }
                 });
             } else {
+                //If the level isn't available yet just create a unclickable button
                 textButton = new TextButton(Integer.toString(i + 1), buttonStyleOff);
             }
-            if (Gdx.graphics.getWidth() > Gdx.graphics.getHeight()) {
-                innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
-                if ((i + 1) % 7 == 0 && i != 0) {
-                    innerTable.row();
-                }
-            } else {
-                innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
-                if ((i + 1) % 4 == 0 && i != 0) {
-                    innerTable.row();
-                }
+            innerTable.add(textButton).width(game.sizeModifier * 250f).height(game.sizeModifier * 200f);
+            if ((i + 1) % 4 == 0 && i != 0) {
+                innerTable.row();
             }
         }
         scrollPane = new ScrollPane(innerTable);
